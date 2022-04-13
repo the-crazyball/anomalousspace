@@ -1,0 +1,16 @@
+{
+    "api" : {
+        "port" : 3000,
+        "secretKey" : "sometext"
+    },
+  
+    "mongodb" : {
+        "host" : "",
+        "reconnect_attempts": 10,
+        "reconnect_interval": 1000
+    },
+
+    "guild": {
+        "prefix": "!s"
+    }
+  }
