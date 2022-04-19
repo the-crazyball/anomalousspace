@@ -32,7 +32,26 @@ client.requester = require("./library/requester")(client);
 client.helpers = require("./library/helpers")(client);
 client.extends = require("./library/extends")(client);
 
+
+
 const init = async () => {
+
+  // load images needed for canvas, load once and reuse
+  const starImages = new Map();
+  starImages.set('M', await client.canvas.loadImage('../shared/images/stars/star_red01.png'))
+  starImages.set('K', await client.canvas.loadImage('../shared/images/stars/star_red_giant01.png'))
+  starImages.set('G', await client.canvas.loadImage('../shared/images/stars/star_yellow01.png'))
+  starImages.set('F', await client.canvas.loadImage('../shared/images/stars/star_white01.png'))
+  starImages.set('A', await client.canvas.loadImage('../shared/images/stars/star_white_giant01.png'))
+  starImages.set('B', await client.canvas.loadImage('../shared/images/stars/star_blue01.png'))
+  starImages.set('O', await client.canvas.loadImage('../shared/images/stars/star_blue_giant01.png'))
+
+  // BH (blackhole)
+  // AN (anomaly)
+  // WH (wormhole)
+
+  client.images = starImages;
+
 
   // game related commands are loaded in the game loader.
   const commands = readdirSync("./commands/").filter(file => file.endsWith(".js"));

@@ -44,6 +44,11 @@ module.exports = client => {
         isInteger: function(value) {
             //return (typeof n == 'number' && /^[-]?[0-9]+$/.test(n+''));
             return /^-?\d+$/.test(value);
+        },
+        pointyHexPixel: function(center, size, i)  {
+            const angleDeg = 60 * i - 30
+            const angleRad = Math.PI / 180 * angleDeg
+            return { x: center.x + size * Math.cos(angleRad), y: center.y + size * Math.sin(angleRad)}
         }
     }
 }

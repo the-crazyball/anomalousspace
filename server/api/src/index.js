@@ -40,6 +40,7 @@ app.use('/guild', require('./routes/private/guild')(client));
 app.use('/user', require('./routes/private/user')(client));
 app.use('/warp', require('./routes/private/warp')(client));
 app.use('/scan', require('./routes/private/scan')(client));
+app.use('/map', require('./routes/private/map')(client));
 
 /* Listen on http */
 app.listen(client.apiSettings.api.port, () => {

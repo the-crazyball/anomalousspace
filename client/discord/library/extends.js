@@ -8,6 +8,9 @@ const {
 
 module.exports = client => {
     return {
+        attachment: function(img, name) {
+            return new MessageAttachment(img, name)
+        },
         embedPages: function() {
             
         },

@@ -1,10 +1,19 @@
+const Grid = require('../library/map/grid');
+
 exports.run = async (client, message, [action, key, ...value], level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
-   
-    let userData = await client.requester.getUser(message.member.user);
+    const depth = 2;
 
-    const canvas = client.canvas.createCanvas(500, 350);
+    let userData = await client.requester.getUser(message.member.user);
+    let mapData = await client.requester.getMap(message.member.user, { depth: depth });
+
+    const canvas = client.canvas.createCanvas(650, 600);
   	const context = canvas.getContext('2d');
+    const background = await client.canvas.loadImage('../shared/images/back.jpg');
+
+    context.drawImage(background, 0, 0);
+
+    context.setTransform(1, 0, 0, 1, canvas.width / 2 | 0, canvas.height / 2 | 0);
 
     let imageCounter = 0;
     
@@ -13,231 +22,69 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         url: `attachment://image${imageCounter}.png`
     }
 
-    const scale = 20;
+    const d = Math.abs(depth)
+    const gameWidth = canvas.width;
 
-    let xReal = userData.ship.sector.x * scale + scale / 2;
-    let yReal = userData.ship.sector.y * scale + scale / 2;
-    xReal -= canvas.width / 2; // center on the canvas
-    yReal -= canvas.height / 2;
-    let mapX = xReal;
-    let mapY = yReal;
+    const hexagonWidth = gameWidth / ((d * 2) + 1);
+    const size = ~~(hexagonWidth / (Math.sqrt(3) / 2) / 2);
 
-    console.log(mapX, mapY, xReal, yReal);
-    return
-    if (args[0] && (!client.helpers.isInteger(args[0]) || !client.helpers.isInteger(args[1]))) return;
+    const hexGrid = new Grid(depth, size);
     
-    const x = args[0] || null;
-    const y = args[1] || null;
-    const z = 0;
-
-    let sectorData = await client.requester.scan(message.member.user, {
-        type: 'sector',
-        coordinates: {
-            x: x,
-            y: y,
-            z: z
-        }
-    });
-
-    const title = `System Scan Results`;
-
-    if (!sectorData) {
-        const sectorEmbed = client.extends.embed();
-        sectorEmbed.title = title;
-        sectorEmbed.description = `Scan results detected... nothing of interest in this sector.
-
-**Coordinates** \`${x}\`,\`${y}\`,\`${z}\``;
-
-        await message.channel.send({
-            embeds: [sectorEmbed],
-            components: []
-        });
-        return;
-    }
-
-    const previousButton = client.extends.button({
-        id: 'btn_prev',
-        label: '<',
-        style: 'PRIMARY'
-    })
-
-    const firstButton = client.extends.button({
-        id: 'btn_first',
-        label: '<<',
-        style: 'PRIMARY'
-    })
-
-    const nextButton = client.extends.button({
-        id: 'btn_next',
-        label: '>',
-        style: 'PRIMARY'
-    })
-
-    const lastButton = client.extends.button({
-        id: 'btn_last',
-        label: '>>',
-        style: 'PRIMARY'
-    })
-
-    const blankButton = client.extends.button({
-        id: 'btn_blank',
-        label: 'Page 1 of 4',
-        style: 'SECONDARY',
-        disabled: true
-    })
-
-    const rowPaging = client.extends.row().addComponents(firstButton).addComponents(previousButton).addComponents(blankButton).addComponents(nextButton).addComponents(lastButton);
-
     
-    const description = `System \`${sectorData.name}\` with a class \`${sectorData.type.class}\` star and \`${sectorData.planets.length}\` astronomical object(s).
+    hexGrid.allToList().map(async h => {
 
-**Coordinates** \`${sectorData.coordinates.x}\`,\`${sectorData.coordinates.y}\`,\`${sectorData.coordinates.z}\`
+        let exists = true;
+        
+        context.strokeStyle = "#38abc9";
 
-**Faction** \`unknown\`
-**Anomalies** \`unknown\`
-\u200B    
-`;
+        const pixels = [0, 1, 2, 3, 4, 5].map(v => client.helpers.pointyHexPixel(h.centerPixel, h.size, v))
+        const startPixel = pixels[0]
 
-    let fields = [];
+        const sectorData = mapData.hexes.find(mapHex => mapHex.q === h.q && mapHex.r === h.r).type;
 
-    for (var i = 0; i < sectorData.planets.length; i++) {
-
-        const planetIcon = {
-            'Desert': '<:planet_desert:962037563231715338>',
-            'Rock': '<:planet_rock:962047597214838914>',
-            'Ocean': '<:planet_ocean:962048027953090660>'
+        if (sectorData) {
+            // we can use diameter here, later perhaps.
+            // sectorData.diameter
+            context.drawImage(client.images.get(sectorData.class), 100, 100, 1000, 1000, h.centerPixel.x - 20, h.centerPixel.y - 20, 50, 50);
         }
 
-        fields.push({
-            name: `${sectorData.planets[i].name} ${planetIcon[sectorData.planets[i].type]}`,
-            value: `<:bullet2:962045846462029835> Population \`${client.helpers.numberWithCommas(sectorData.planets[i].population)}\`\n<:bullet2:962045846462029835> Satellites \`${sectorData.planets[i].satellites.length}\`\n\n**Resources**\n<:resource_thorium:962030123752759399> Thorium \`${Math.round(sectorData.planets[i].resources.thorium * 200)}\`\n<:resource_plutonium:962030124037963867> Plutonium \`${Math.round(sectorData.planets[i].resources.plutonium * 200)}\`\n<:resource_uranium:962030123824083044> Uranium \`${Math.round(sectorData.planets[i].resources.uranium * 200)}\`\n<:resource_rock2:962029930466668595> Rock \`${Math.round(sectorData.planets[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
-            inline: true  
-        });
-
-        if (i + 1 === pageCount * 2 || i + 1 === sectorData.planets.length) {
-            let components = [];
-
-            const sectorEmbed = client.extends.embed();
-            sectorEmbed.title = title;
-            sectorEmbed.description = description;
-            //sectorEmbed.description += `\n\nPage \`${pageCount} of ${~~(sectorData.planets.length / 2)}\``;
-            sectorEmbed.fields = fields;
-
-            components.push(rowPaging);
-
-            const page = {
-                embeds: [sectorEmbed],
-                components: components
-            };
-
-            pageCount++;
-            pages.push(page);
-            fields = [];
+        context.beginPath()
+        context.moveTo(startPixel.x, startPixel.y)
+        for (let i = 1; i <= 5; i++) {
+            context.lineTo(pixels[i].x, pixels[i].y)
         }
-        rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-        rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-        rowPaging.components[2].disabled = true;
-        rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-        rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-        rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-    };
+        context.lineTo(startPixel.x, startPixel.y)
 
-    const scanMessage = await message.channel.send(pages[currentPage]);
-
-    const collector = client.extends.collector(scanMessage, message.author);
-
-    collector.on('collect', async (i) => {
-        if (i.customId === "btn_first") {
-            currentPage = 0;
-
-            rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-            rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-            rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-            rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-            rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-            await scanMessage.edit(pages[currentPage]);
+        context.fillStyle = 'rgba(56, 171, 201, 0.1)';
+        context.fill();
+        if (h.q === 0 && h.r === 0) {
+            context.lineWidth = 4;
+        } else {
+            context.lineWidth = 1;
         }
-        if (i.customId === "btn_last") {
+        context.stroke()
+        
+        context.closePath()
 
-            currentPage = pages.length - 1;
-
-            rowPaging.components[0].disabled = false;
-            rowPaging.components[1].disabled = false;
-            rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-            rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-            rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-            await scanMessage.edit(pages[currentPage]);
-        }
-        if (i.customId === "btn_next") {
-            currentPage++;
-
-            rowPaging.components[0].disabled = false;
-            rowPaging.components[1].disabled = false;
-            rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-            rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-            rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-            await scanMessage.edit(pages[currentPage]);
-        }
-        if (i.customId === "btn_prev")  {
-            currentPage--;
-
-            rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-            rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-            rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-            rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-            rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-            await scanMessage.edit(pages[currentPage]);
-
-        }
-        if (i.customId === "btn_warp") {
-            let result = await client.requester.warpStart(message.member.user);
-
-            const warpEmbed1 = client.extends.embed();
-            warpEmbed1.title = `The Light`
-            warpEmbed1.description = `You enter the warp gate and suddenly feel as if you senses have intensified and see a bright light surrounding you and your ship....`
-            
-            scanMessage.edit({
-                embeds: [warpEmbed1],
-                components: []
-            })
-            .then(() => { // Wait until the first message is sent
-                setTimeout(() => {
-                    const warpEmbed2 = client.extends.embed();
-                    warpEmbed2.title = `An Unexpected Event`;
-                    warpEmbed2.description = `Everything is going so fast... You hear something, a noise that you can't identify, you suddenly feel the ship turning out of control...`
-            
-                    message.channel.send({
-                        embeds: [warpEmbed2],
-                        components: []
-                    })
-                    .then(() => {
-                        setTimeout(() => {
-                            const warpEmbed3 = client.extends.embed();
-                            warpEmbed3.title = `Did I die?`;
-                            warpEmbed3.description = `You have a feeling that this is it, you are going to die!\n\nBut as soon as your thought of dying ends, the bright light disappears, the ship stops turning and starts difting in space.\n\nYou look around to get your bearings to see where you are...`
-                            //warpEmbed3.addField('Current Location', `\`Unknown\` Sector \`Unknown\``, true)
-
-                            const dieMessage = message.channel.send({
-                                embeds: [warpEmbed3],
-                                components: []
-                            })
-
-
-                        }, 2000)
-                    })
-                }, 2000)
-            })
-
-
-            console.log(result)
-        }
+        context.font = "1px";
+        context.fillStyle = "#ffffff";
+        const x = userData.ship.sector.x - h.q;
+        const y = userData.ship.sector.y - h.r;
+        const textWidth = context.measureText(`${x},${y}`).width
+        context.fillText(`${x},${y}`, h.centerPixel.x - textWidth / 2, h.centerPixel.y + h.height / 2 - 20);
     });
-    collector.on("end", (collectors, reason) => {
+
+    context.imageSmoothingEnabled = false;
+    
+    const attachment = client.extends.attachment(canvas.toBuffer(), `image${imageCounter}.png`);
+    imageCounter++;
+
+    embedMsg.title = `Map`;
+
+    await message.channel.send({
+        embeds: [embedMsg], components: [], files: [attachment], attachments: []
     });
+
 };
 
 exports.conf = {

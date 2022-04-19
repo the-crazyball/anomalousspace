@@ -27,7 +27,7 @@ module.exports = class Game {
     this.galaxy.type = types[typeNum]
     this.galaxy.color = colors[typeNum];
     this.galaxy.name = `G${this.galaxy.type.charAt(0).toUpperCase()}${x}${y}`;
-    console.log(this.galaxy.name)
+
     //const stellarDensity = rndDouble(0.001, 0.2);
     //const numberOfStars = Math.ceil(Math.pow(10, 3) * stellarDensity); 
   }
@@ -40,6 +40,109 @@ module.exports = class Game {
   async getUser(user) {
     return await this.client.database.findOrCreateUser(user, true);
   }
+  async getMap(user, blueprint) {
+    const userData = await this.getUser(user);
+
+    const x = userData.ship.sector.x;
+    const y = userData.ship.sector.y;
+    const z = userData.ship.sector.z;
+
+    const d = Math.abs(blueprint.depth);
+
+    const hexes = new Map();
+
+    for (let q = -d; q <= d; q++) {
+      for (let r = -d; r <= d; r++) {
+          if (Math.abs(q + r) <= d) {
+
+            const sectorX = x - q;
+            const sectorY = y - r;
+        
+            seedrandom(`GS${sectorX}${sectorY}`, { global: true });
+
+            let exists = (rndInt(0, 4) == 1);
+
+            if(exists) {
+              const types = [
+                {
+                  class: 'M', // star_red01
+                  diameter: rndDouble(0.1, 0.7),
+                  color: 'ff6343',
+                  chance: 0.15
+                },
+                {
+                  class: 'K', // star_red_giant01
+                  diameter: rndDouble(0.7, 0.96),
+                  color: 'ffa953',
+                  chance: 0.20
+                },
+                {
+                  class: 'G', // star_yellow01
+                  diameter: rndDouble(0.96, 1.15),
+                  color: 'fff663',
+                  chance: 0.18
+                },
+                {
+                  class: 'F', // star_white01
+                  diameter: rndDouble(1.15, 1.4),
+                  color: 'ffffff',
+                  chance: 0.15
+                },
+                {
+                  class: 'A', // star_white_giant01
+                  diameter: rndDouble(1.4, 1.8),
+                  color: 'cacdff',
+                  chance: 0.10
+                },
+                {
+                  class: 'B', // star_blue01
+                  diameter: rndDouble(1.8, 2.2),
+                  color: '8d95ff',
+                  chance: 0.05
+                },
+                {
+                  class: 'O', // star_blue_giant01
+                  diameter: rndDouble(2.2, 3.0),
+                  color: '646ffc',
+                  chance: 0.02
+                },
+                {
+                  class: 'BH', // blackhole
+                  diameter: rndDouble(1.4, 1.8),
+                  color: '000000',
+                  chance: 0.05
+                },
+                {
+                  class: 'AN', // anomaly
+                  diameter: rndDouble(1, 1),
+                  color: 'ff0000',
+                  chance: 0.05
+                },
+                {
+                  class: 'WH', // wormhole
+                  diameter: rndDouble(1, 1),
+                  color: 'ff00d9',
+                  chance: 0.05
+                }
+              ]
+              const systemType = selectByChance(types);
+              hexes.set([q, r], { type: systemType, q: q, r: r });
+            } else {
+              hexes.set([q, r], { q: q, r: r })
+            }
+            
+          }
+      }
+    }
+    const list = []
+    hexes.forEach((h) => {
+      list.push(h)
+    })
+    const result = {  
+      hexes: list
+    }
+    return result;
+  }
   async scan(user, blueprint) {
 
     const userData = await this.getUser(user);
@@ -49,7 +152,7 @@ module.exports = class Game {
     const z = blueprint.coordinates.z || userData.ship.sector.z;
 
     seedrandom(`GS${x}${y}`, { global: true });
-    let exists = (rndInt(0, 25) == 1);
+    let exists = (rndInt(0, 4) == 1);
 			if (!exists) return false;
 
 			const stellarDensity = rndDouble(0.001, 0.001);
