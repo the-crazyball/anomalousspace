@@ -46,7 +46,7 @@ module.exports = class Database {
     if(this.cache.users.get(userID)){
       return isLean ? this.cache.users.get(userID).toJSON() : this.cache.users.get(userID);
     } else {
-      let user = (isLean ? await this.userModel.findOne({ id: userID }).populate('ship').lean() : await this.userModel.findOne({ is: userID }).populate('ship'));
+      let user = (isLean ? await this.userModel.findOne({ discordId: userID }).populate('ship').lean() : await this.userModel.findOne({ discordId: userID }).populate('ship'));
       if(user){
         if(!isLean) this.cache.users.set(userID, user);
         return user;

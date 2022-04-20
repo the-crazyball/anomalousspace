@@ -1,5 +1,10 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
+
+    let userData = await client.requester.getUser(message.member.user);
+
+    if (!userData.ship) return;
+    
     let currentPage = 0;
     let pages = [];
     let pageCount = 1;

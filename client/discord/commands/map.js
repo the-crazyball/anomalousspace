@@ -5,6 +5,9 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     const depth = 2;
 
     let userData = await client.requester.getUser(message.member.user);
+
+    if (!userData.ship) return;
+    
     let mapData = await client.requester.getMap(message.member.user, { depth: depth });
 
     const canvas = client.canvas.createCanvas(650, 600);
@@ -43,9 +46,8 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         const sectorData = mapData.hexes.find(mapHex => mapHex.q === h.q && mapHex.r === h.r).type;
 
         if (sectorData) {
-            // we can use diameter here, later perhaps.
-            // sectorData.diameter
-            context.drawImage(client.images.get(sectorData.class), 100, 100, 1000, 1000, h.centerPixel.x - 20, h.centerPixel.y - 20, 50, 50);
+            const imgSize = 50 * sectorData.diameter;
+            context.drawImage(client.images.get(sectorData.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
         }
 
         context.beginPath()

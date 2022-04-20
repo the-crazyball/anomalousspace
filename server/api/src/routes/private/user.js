@@ -16,7 +16,7 @@ module.exports = client => {
 
   /* Our guild create endpoint */
   router.post('/get', (req, res) => {
-    client.game.getUser(req.body.user)
+    client.game.getUser(req.body.user, true)
       .then((user) => {
         res.json({ status: 'success', user })
       })

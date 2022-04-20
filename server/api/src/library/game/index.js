@@ -37,11 +37,28 @@ module.exports = class Game {
   async getGuild(guild) {
     return await this.client.database.findOrCreateGuild(guild, true);
   }
-  async getUser(user) {
-    return await this.client.database.findOrCreateUser(user, true);
+  async getUser(user, isLean) {
+    return await this.client.database.findOrCreateUser(user, isLean);
+  }
+  async warpTo(user, blueprint) {
+    const userData = await this.getUser(user, false);
+
+    const x = userData.ship.sector.x;
+    const y = userData.ship.sector.y;
+    const z = userData.ship.sector.z;
+
+    userData.ship.sector.x = blueprint.toCoord.x;
+    userData.ship.sector.y = blueprint.toCoord.y;
+    await userData.save();
+    await userData.ship.save();
+
+    const result = {  
+      cost: 'fuel cost'
+    }
+    return result;
   }
   async getMap(user, blueprint) {
-    const userData = await this.getUser(user);
+    const userData = await this.getUser(user, true);
 
     const x = userData.ship.sector.x;
     const y = userData.ship.sector.y;
@@ -66,7 +83,7 @@ module.exports = class Game {
               const types = [
                 {
                   class: 'M', // star_red01
-                  diameter: rndDouble(0.1, 0.7),
+                  diameter: rndDouble(0.5, 0.7),
                   color: 'ff6343',
                   chance: 0.15
                 },
@@ -78,31 +95,31 @@ module.exports = class Game {
                 },
                 {
                   class: 'G', // star_yellow01
-                  diameter: rndDouble(0.96, 1.15),
+                  diameter: rndDouble(0.96, 1.0),
                   color: 'fff663',
                   chance: 0.18
                 },
                 {
                   class: 'F', // star_white01
-                  diameter: rndDouble(1.15, 1.4),
+                  diameter: rndDouble(1.0, 1.2),
                   color: 'ffffff',
                   chance: 0.15
                 },
                 {
                   class: 'A', // star_white_giant01
-                  diameter: rndDouble(1.4, 1.8),
+                  diameter: rndDouble(1.2, 1.4),
                   color: 'cacdff',
                   chance: 0.10
                 },
                 {
                   class: 'B', // star_blue01
-                  diameter: rndDouble(1.8, 2.2),
+                  diameter: rndDouble(1.4, 1.6),
                   color: '8d95ff',
                   chance: 0.05
                 },
                 {
                   class: 'O', // star_blue_giant01
-                  diameter: rndDouble(2.2, 3.0),
+                  diameter: rndDouble(1.6, 1.8),
                   color: '646ffc',
                   chance: 0.02
                 },
@@ -145,7 +162,7 @@ module.exports = class Game {
   }
   async scan(user, blueprint) {
 
-    const userData = await this.getUser(user);
+    const userData = await this.getUser(user, true);
 
     const x = blueprint.coordinates.x || userData.ship.sector.x;
     const y = blueprint.coordinates.y || userData.ship.sector.y;

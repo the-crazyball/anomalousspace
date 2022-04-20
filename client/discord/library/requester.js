@@ -24,6 +24,23 @@ module.exports = client => {
           })
       })
     },
+    warpTo: function(user, blueprint) {
+      return new Promise((resolve, reject) => {
+        instance.post(`/warp/to`, { user, blueprint })
+        .then(res => {
+            if (res.data && res.data.status === 'success') {
+              resolve(res.data.result)
+            } else if (res.data && res.data.status === 'error') {
+              client.logger.log(`API request\n'${res.data.reason}'`, "error");
+            } else reject(new Error('Unexpected Response from api.'))
+            
+        })
+        .catch(e => {
+          client.logger.log(`API request error: '${e.response.data.status}', URL: '${e.config.url}'`, "error");
+          reject(e);
+        })
+      })
+    },
     getMap: function(user, blueprint) {
       return new Promise((resolve, reject) => {
         instance.post(`/map/get`, { user, blueprint })
