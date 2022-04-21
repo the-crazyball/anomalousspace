@@ -6,7 +6,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     let userData = await client.requester.getUser(message.member.user);
 
     if (!userData.ship) return;
-    
+
     // using args from the command entered for coordinates to warp to
     // example: 23 56 0 (x, y, z)
     // note that z is not used is always 0 at the moment, for future expansion
@@ -25,8 +25,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         }
     });
 
-    
-    console.log(returnData)
 };
 
 exports.conf = {

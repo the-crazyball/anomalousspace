@@ -4,7 +4,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     let userData = await client.requester.getUser(message.member.user);
 
     if (!userData.ship) return;
-    
+
     let currentPage = 0;
     let pages = [];
     let pageCount = 1;
@@ -99,7 +99,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         fields.push({
             name: `${sectorData.planets[i].name} ${planetIcon[sectorData.planets[i].type]}`,
-            value: `<:bullet2:962045846462029835> Population \`${client.helpers.numberWithCommas(sectorData.planets[i].population)}\`\n<:bullet2:962045846462029835> Satellites \`${sectorData.planets[i].satellites.length}\`\n\n**Resources**\n<:resource_thorium:962030123752759399> Thorium \`${Math.round(sectorData.planets[i].resources.thorium * 200)}\`\n<:resource_plutonium:962030124037963867> Plutonium \`${Math.round(sectorData.planets[i].resources.plutonium * 200)}\`\n<:resource_uranium:962030123824083044> Uranium \`${Math.round(sectorData.planets[i].resources.uranium * 200)}\`\n<:resource_rock2:962029930466668595> Rock \`${Math.round(sectorData.planets[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
+            value: `<:bullet2:962045846462029835> Population \`${client.helpers.numberWithCommas(sectorData.planets[i].population)}\`\n<:bullet2:962045846462029835> Satellites \`${sectorData.planets[i].satellites.length}\`\n\n**Resources**\n<:resource_thorium:962030123752759399> Torsium \`${Math.round(sectorData.planets[i].resources.thorium * 200)}\`\n<:resource_plutonium:962030124037963867> Plutonium \`${Math.round(sectorData.planets[i].resources.plutonium * 200)}\`\n<:resource_uranium:962030123824083044> Uranium \`${Math.round(sectorData.planets[i].resources.uranium * 200)}\`\n<:resource_rock2:962029930466668595> Rock \`${Math.round(sectorData.planets[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
             inline: true  
         });
 

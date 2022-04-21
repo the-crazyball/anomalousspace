@@ -7,7 +7,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     let userData = await client.requester.getUser(message.member.user);
 
     if (!userData.ship) return;
-    
+
     let mapData = await client.requester.getMap(message.member.user, { depth: depth });
 
     const canvas = client.canvas.createCanvas(650, 600);
@@ -50,6 +50,8 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
             context.drawImage(client.images.get(sectorData.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
         }
 
+        
+
         context.beginPath()
         context.moveTo(startPixel.x, startPixel.y)
         for (let i = 1; i <= 5; i++) {
@@ -74,6 +76,16 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         const y = userData.ship.sector.y - h.r;
         const textWidth = context.measureText(`${x},${y}`).width
         context.fillText(`${x},${y}`, h.centerPixel.x - textWidth / 2, h.centerPixel.y + h.height / 2 - 20);
+
+
+        if (h.q === 0 && h.r === 0) {
+            context.beginPath()
+            context.lineWidth = 1;
+            context.arc(h.centerPixel.x, h.centerPixel.y, h.size-15, 0, 2 * Math.PI);
+            context.strokeStyle = "#ffffff";
+            context.stroke()
+            context.closePath()
+        }
     });
 
     context.imageSmoothingEnabled = false;
