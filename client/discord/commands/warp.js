@@ -7,12 +7,26 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
     if (!userData.ship) return;
 
+    const errorMsg = async () => {
+        const embedMsg = client.extends.embed();
+        embedMsg.title = 'Oops...';
+        embedMsg.description = `You have entered invalid coordinates.\n\nUse: \`${settings.prefix} warp {x} {y}\`\n\n⦁ \`{x}\` number in the positive or negative range.\n⦁ \`{y}\` number in the positive or negative range.`;
+
+        await message.channel.send({
+            embeds: [embedMsg], components: [], files: [], attachments: []
+        });
+    }
+
     // using args from the command entered for coordinates to warp to
     // example: 23 56 0 (x, y, z)
     // note that z is not used is always 0 at the moment, for future expansion
 
-    if (args[0] && (!client.helpers.isInteger(args[0]) || !client.helpers.isInteger(args[1]))) return;
-    
+    if ((args[0] && (!client.helpers.isInteger(args[0]) || !client.helpers.isInteger(args[1]))) || !args[0]) {
+        errorMsg();
+
+        return;
+    }
+
     const x = args[0] || null;
     const y = args[1] || null;
     const z = 0;
