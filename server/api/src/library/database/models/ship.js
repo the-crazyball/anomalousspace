@@ -7,11 +7,22 @@ const schema = mongoose.Schema({
     level: { type: Number, default: 1 },
 
     galaxy: { type: String, default: 'GE7413' },
-    sector: { 
-        name: { type: String, default: 'GSG00005130' },
+    sector: { type: String, default: 'GSG00005130' },
+    position: { 
         x: { type: Number, default: 51 },
         y: { type: Number, default: 30 },
         z: { type: Number, default: 0 }
+    },
+
+    warpEngine: {
+        fuel: { type: Number, default: 0 },
+        fuelMax: { type: Number, default: 100 },
+        class: { type: Number, default: 1 }
+    },
+    jumpEngine: {
+        fuel: { type: Number, default: 10 },
+        fuelMax: { type: Number, default: 10 },
+        class: { type: Number, default: 1 }
     },
 
     armor: {},

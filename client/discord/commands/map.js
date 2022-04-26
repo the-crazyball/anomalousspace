@@ -72,8 +72,8 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 
         context.font = "1px";
         context.fillStyle = "#ffffff";
-        const x = userData.ship.sector.x - h.q;
-        const y = userData.ship.sector.y - h.r;
+        const x = userData.ship.position.x - h.q;
+        const y = userData.ship.position.y - h.r;
         const textWidth = context.measureText(`${x},${y}`).width
         context.fillText(`${x},${y}`, h.centerPixel.x - textWidth / 2, h.centerPixel.y + h.height / 2 - 20);
 

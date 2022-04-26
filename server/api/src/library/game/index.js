@@ -43,12 +43,12 @@ module.exports = class Game {
   async warpTo(user, blueprint) {
     const userData = await this.getUser(user, false);
 
-    const x = userData.ship.sector.x;
-    const y = userData.ship.sector.y;
-    const z = userData.ship.sector.z;
+    const x = userData.ship.position.x;
+    const y = userData.ship.position.y;
+    const z = userData.ship.position.z;
 
-    userData.ship.sector.x = blueprint.toCoord.x;
-    userData.ship.sector.y = blueprint.toCoord.y;
+    userData.ship.position.x = blueprint.toCoord.x;
+    userData.ship.position.y = blueprint.toCoord.y;
     await userData.save();
     await userData.ship.save();
 
@@ -60,9 +60,9 @@ module.exports = class Game {
   async getMap(user, blueprint) {
     const userData = await this.getUser(user, true);
 
-    const x = userData.ship.sector.x;
-    const y = userData.ship.sector.y;
-    const z = userData.ship.sector.z;
+    const x = userData.ship.position.x;
+    const y = userData.ship.position.y;
+    const z = userData.ship.position.z;
 
     const d = Math.abs(blueprint.depth);
 
@@ -164,9 +164,9 @@ module.exports = class Game {
 
     const userData = await this.getUser(user, true);
 
-    const x = blueprint.coordinates.x || userData.ship.sector.x;
-    const y = blueprint.coordinates.y || userData.ship.sector.y;
-    const z = blueprint.coordinates.z || userData.ship.sector.z;
+    const x = blueprint.coordinates.x || userData.ship.position.x;
+    const y = blueprint.coordinates.y || userData.ship.position.y;
+    const z = blueprint.coordinates.z || userData.ship.position.z;
 
     seedrandom(`GS${x}${y}`, { global: true });
     let exists = (rndInt(0, 4) == 1);
