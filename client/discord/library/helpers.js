@@ -49,6 +49,22 @@ module.exports = client => {
             const angleDeg = 60 * i - 30
             const angleRad = Math.PI / 180 * angleDeg
             return { x: center.x + size * Math.cos(angleRad), y: center.y + size * Math.sin(angleRad)}
+        },
+        createMapCanvas: async function(width, height) {
+            client.canvas.registerFont('../shared/fonts/unispace/unispace rg.ttf', { family: 'Unispace Regular' })
+            const canvas = client.canvas.createCanvas(width, height);
+            const context = canvas.getContext('2d');
+            const background = await client.canvas.loadImage('../shared/images/back.jpg');
+
+            context.drawImage(background, 0, 0);
+
+            context.setTransform(1, 0, 0, 1, canvas.width / 2 | 0, canvas.height / 2 | 0);
+            context.imageSmoothingEnabled = false;
+
+            return {
+                canvas,
+                context
+            }
         }
     }
 }

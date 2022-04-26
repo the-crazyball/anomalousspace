@@ -7,10 +7,10 @@ const schema = mongoose.Schema({
     level: { type: Number, default: 1 },
 
     galaxy: { type: String, default: 'GE7413' },
-    sector: { type: String, default: 'GSG00005130' },
+    sector: { type: String, default: 'GSG00004931' },
     position: { 
-        x: { type: Number, default: 51 },
-        y: { type: Number, default: 30 },
+        x: { type: Number, default: 49 },
+        y: { type: Number, default: 31 },
         z: { type: Number, default: 0 }
     },
 

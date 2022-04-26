@@ -10,13 +10,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 
     let mapData = await client.requester.getMap(message.member.user, { depth: depth });
 
-    const canvas = client.canvas.createCanvas(650, 600);
-  	const context = canvas.getContext('2d');
-    const background = await client.canvas.loadImage('../shared/images/back.jpg');
-
-    context.drawImage(background, 0, 0);
-
-    context.setTransform(1, 0, 0, 1, canvas.width / 2 | 0, canvas.height / 2 | 0);
+    const { canvas, context } = await client.helpers.createMapCanvas(650, 600);
 
     let imageCounter = 0;
     
@@ -50,8 +44,6 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
             context.drawImage(client.images.get(sectorData.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
         }
 
-        
-
         context.beginPath()
         context.moveTo(startPixel.x, startPixel.y)
         for (let i = 1; i <= 5; i++) {
@@ -70,7 +62,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         
         context.closePath()
 
-        context.font = "1px";
+        context.font = "14px Unispace Regular";
         context.fillStyle = "#ffffff";
         const x = userData.ship.position.x - h.q;
         const y = userData.ship.position.y - h.r;
@@ -87,8 +79,6 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
             context.closePath()
         }
     });
-
-    context.imageSmoothingEnabled = false;
     
     const attachment = client.extends.attachment(canvas.toBuffer(), `image${imageCounter}.png`);
     imageCounter++;

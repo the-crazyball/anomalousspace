@@ -8,6 +8,12 @@ const {
 
 module.exports = client => {
     return {
+        select: function(blueprint) {
+            return new MessageSelectMenu()
+                .setCustomId(blueprint.id)
+                .setPlaceholder(blueprint.placeHolder)
+                .addOptions(blueprint.options);
+        },
         attachment: function(img, name) {
             return new MessageAttachment(img, name)
         },
