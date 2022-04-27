@@ -6,7 +6,10 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 
     let userData = await client.requester.getUser(message.member.user);
 
-    if (!userData.ship) return;
+    if (!userData.ship) {
+        await client.container.commands.get('play').run(client, message, [action, key, ...value], level);
+        return
+    }
 
     let mapData = await client.requester.getMap(message.member.user, { depth: depth });
 

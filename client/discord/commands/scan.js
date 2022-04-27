@@ -3,7 +3,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
     let userData = await client.requester.getUser(message.member.user);
 
-    if (!userData.ship) return;
+    if (!userData.ship) {
+        await client.container.commands.get('play').run(client, message, args, level);
+        return
+    }
 
     let currentPage = 0;
     let pages = [];

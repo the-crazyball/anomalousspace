@@ -5,6 +5,8 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 
     const startEmbed = client.extends.embed();
 
+    let components = [];
+
     if (!userData.ship) {
         startEmbed.title = `Message from Star Command`;
         startEmbed.description = `Welcome ${message.author.toString()}, it has come to our attention that you are interested in helping us find and analyse the \`Unknown\` anomaly that appeared in our galaxy. 
@@ -14,24 +16,28 @@ Your \`Explorer\` class ship is ready to head out through the warp gate that wil
 Also one last thing, we recently upgraded our warp gate to allow us to travel further out in our galaxy and reach this anomaly.
 
 Good luck!`;
-        startEmbed.addField('Current Location', `\`Orithyia Galaxy\` Sector \`-201\`,\`689\``, true)
+        startEmbed.addField('Current Location', `\`Orithyia Galaxy\` Sector \`-201\`,\`689\``, true);
+        
+        const btnWarp = client.extends.button({
+            id: 'btn_warp',
+            label: 'Enter Warp Gate',
+            style: 'PRIMARY'
+        })
+
+        
+        const buttons = client.extends.row()
+            .addComponents(btnWarp);
+
+        components.push(buttons);
     } else {
         startEmbed.title = `Hi ${message.author.username}`;
         startEmbed.description = `Welcome back! We are so glad you came back, we missed you so much!`;
     }
 
-    const btnWarp = client.extends.button({
-        id: 'btn_warp',
-        label: 'Enter Warp Gate',
-        style: 'PRIMARY'
-    })
-
-    const buttons = client.extends.row()
-        .addComponents(btnWarp);
-
+    
     const startMessage = await message.channel.send({
         embeds: [startEmbed],
-        components: [buttons]
+        components: components
     });
 
     const collector = client.extends.collector(startMessage, message.author);
