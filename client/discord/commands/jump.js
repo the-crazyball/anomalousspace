@@ -6,18 +6,28 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     let imageCounter = 0;
 
     let userData = await client.requester.getUser(message.member.user);
+    if (!userData.ship) return;
+
     let mapData = null;
-    const depth = 1; // TODO hardcoding to 1 for now, this needs to be the ship jump drive level/class
     let sectors = [];
     let embedMsg = null;
     let selectedJumpToSector = null;
-
-    if (!userData.ship) return;
+    const depth = userData.ship.jumpEngine.class; // this is the jump engines level/class, determines max jump distance
 
     const errorMsg = async () => {
         const embedMsg = client.extends.embed();
         embedMsg.title = 'Oops...';
         embedMsg.description = `You have entered invalid coordinates.\n\nUse: \`${settings.prefix} warp {x} {y}\`\n\n⦁ \`{x}\` number in the positive or negative range.\n⦁ \`{y}\` number in the positive or negative range.`;
+
+        await message.channel.send({
+            embeds: [embedMsg], components: [], files: [], attachments: []
+        });
+    }
+
+    const jumpFail = async ({ x, y, reason }) => {
+        const embedMsg = client.extends.embed();
+        embedMsg.title = 'Oops...';
+        embedMsg.description = `System malfunction, unable to jump to sector \`${x}\`, \`${y}\`, the jump drive didn't complete it's full cycle as expected. Running diagnostics...\n\nDiagnostics Result:\n\n⦁ \`${reason}\``;
 
         await message.channel.send({
             embeds: [embedMsg], components: [], files: [], attachments: []
@@ -94,6 +104,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             const toSector = jumpTo.split(',');
             const sectorData = hexGrid.allToList().find(hex => hex.q === parseInt(toSector[0]) && hex.r === parseInt(toSector[1]));
             
+            // create line and arrow
             const x1 = 0;
             const y1 = 0;
             const x2 = sectorData.centerPixel.x;
@@ -125,6 +136,21 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             context.lineTo(x2, y2);
             context.closePath();
             context.fill()
+
+            // highlight hex
+            const pixels = [0, 1, 2, 3, 4, 5].map(v => client.helpers.pointyHexPixel(sectorData.centerPixel, sectorData.size, v));
+            const startPixel = pixels[0];
+
+            context.beginPath()
+            context.moveTo(startPixel.x, startPixel.y)
+            for (let i = 1; i <= 5; i++) {
+                context.lineTo(pixels[i].x, pixels[i].y)
+            }
+            context.lineTo(startPixel.x, startPixel.y)
+            context.fillStyle = 'rgba(19, 165, 28, 1.0)';
+            context.lineWidth = 4;
+            context.stroke()
+            context.closePath()
         }
   
 
@@ -190,22 +216,24 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 const z = 0;
 
                 // TODO change to jumpTo engine
-                let returnData = await client.requester.warpTo(message.member.user, {
+                let returnData = await client.requester.jumpTo(message.member.user, {
                     toCoord: {
                         x: x,
                         y: y,
                         z: z
                     }
                 });
-                embedMsg.title = 'Jump Completed'
-                embedMsg.description = `You successfully jumped to sector \`${x}\`,\`${y}\`.`;
 
-                await jumpMsg.edit({
-                    embeds: [embedMsg], components: [], files: [], attachments: []
-                });
-
-                console.log(returnData);
-
+                if (returnData.canJump) {
+                    embedMsg.title = 'Jump Completed'
+                    embedMsg.description = `You successfully jumped to sector \`${x}\`,\`${y}\`.`;
+            
+                    await jumpMsg.edit({
+                        embeds: [embedMsg], components: [], files: [], attachments: []
+                    });
+                } else {
+                    jumpFail({ x, y, reason: 'Jump drive level to low to jump that far away.' });
+                }
             }
             if (i.customId === "select_sector") {
                 sectorSelect.options.forEach(r => {
@@ -250,7 +278,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     const y = args[1] || null;
     const z = 0;
 
-    let returnData = await client.requester.warpTo(message.member.user, {
+    let returnData = await client.requester.jumpTo(message.member.user, {
         toCoord: {
             x: x,
             y: y,
@@ -258,6 +286,17 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         }
     });
 
+    if (returnData.canJump) {
+        embedMsg = client.extends.embed();
+        embedMsg.title = 'Jump Completed'
+        embedMsg.description = `You successfully jumped to sector \`${x}\`,\`${y}\`.`;
+
+        await message.channel.send({
+            embeds: [embedMsg], components: [], files: [], attachments: []
+        });
+    } else {
+        jumpFail({ x, y, reason: 'Jump drive level to low to jump that far away.' });
+    }
 };
 
 exports.conf = {

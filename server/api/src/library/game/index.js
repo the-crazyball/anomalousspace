@@ -40,6 +40,45 @@ module.exports = class Game {
   async getUser(user, isLean) {
     return await this.client.database.findOrCreateUser(user, isLean);
   }
+  async jumpTo(user, blueprint) {
+    const userData = await this.getUser(user, false);
+    
+    const result = {};
+    let fuelCost = 0;
+
+    const x = userData.ship.position.x;
+    const y = userData.ship.position.y;
+    const z = userData.ship.position.z;
+
+    const d = Math.abs(userData.ship.jumpEngine.class);
+
+    // this is a check to make sure we aren't jumping to a sector outside our jump range
+    let canJump = false;
+
+    for (let q = -d; q <= d; q++) {
+      for (let r = -d; r <= d; r++) {
+          if (Math.abs(q + r) <= d) {
+            const sectorX = x - q;
+            const sectorY = y - r;
+
+            if (sectorX === parseInt(blueprint.toCoord.x) && sectorY === parseInt(blueprint.toCoord.y))
+              canJump = true;
+          }
+      }
+    }
+
+    if (canJump) {
+      userData.ship.position.x = blueprint.toCoord.x;
+      userData.ship.position.y = blueprint.toCoord.y;
+      await userData.save();
+      await userData.ship.save();
+    }
+
+    result.canJump = canJump;  
+    result.fuelCost = fuelCost;
+
+    return result;
+  }
   async warpTo(user, blueprint) {
     const userData = await this.getUser(user, false);
 

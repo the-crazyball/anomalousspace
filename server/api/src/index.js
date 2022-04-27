@@ -39,6 +39,7 @@ app.use('/stats', require('./routes/private/stats')(client));
 app.use('/guild', require('./routes/private/guild')(client));
 app.use('/user', require('./routes/private/user')(client));
 app.use('/warp', require('./routes/private/warp')(client));
+app.use('/jump', require('./routes/private/jump')(client));
 app.use('/scan', require('./routes/private/scan')(client));
 app.use('/map', require('./routes/private/map')(client));
 
