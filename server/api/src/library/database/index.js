@@ -51,7 +51,7 @@ module.exports = class Database {
         if(!isLean) this.cache.users.set(userID, user);
         return user;
       } else {
-        user = new this.userModel({ discordId: userID });
+        user = new this.userModel({ discordId: userID, discordUsername: username, discordDiscriminator: discriminator });
         await user.save();
         this.cache.users.set(userID, user);
         return isLean ? user.toJSON() : user;

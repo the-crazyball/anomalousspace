@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 
 const schema = mongoose.Schema({
-    // Discord user id
+    // Discord
     discordId: { type: String },
+    discordUsername: { type: String },
+    discordDiscriminator: { type: Number },
 
-    // Slack user id, not used yet
+    // Slack
     slackId: { type: String },
     
     // Username, email, password used for later online play and account linking
