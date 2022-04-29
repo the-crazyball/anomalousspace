@@ -10,11 +10,15 @@ module.exports = class Database {
     this.cache = {};
 		this.cache.users = new Map();
     this.cache.guilds = new Map();
+    this.cache.sectors = new Map();
 
     this.userModel = require("./models/user");
     this.shipModel = require("./models/ship");
     this.guildModel = require("./models/guild")(this.client.apiSettings);
 
+    this.sectorModel = require("./models/sector");
+    this.stellarObjectModel = require("./models/stellarObject");
+    this.astronomicalObjectModel = require("./models/astronomicalObject");
   }
   async deleteGuild({ id: guildID }) {
     if(this.cache.guilds.get(guildID))
@@ -55,6 +59,22 @@ module.exports = class Database {
         await user.save();
         this.cache.users.set(userID, user);
         return isLean ? user.toJSON() : user;
+      }
+    }
+  }
+  async findOrCreateSector({ x, y, z }) {
+    if(this.cache.sectors.get(`${x}${y}${z}`)){
+      return this.cache.sectors.get(`${x}${y}${z}`);
+    } else {
+      let sector = await this.sectorModel.findOne({ x, y, z }).populate('stellarObjects');
+      if(sector){
+        this.cache.sectors.set(`${x}${y}${z}`, sector);
+        return sector;
+      } else {
+        sector = new this.sectorModel({ x, y, z });
+        await sector.save();
+        this.cache.sectors.set(`${x}${y}${z}`, sector);
+        return sector;
       }
     }
   }

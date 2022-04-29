@@ -72,6 +72,15 @@ module.exports = class Game {
       userData.ship.position.y = blueprint.toCoord.y;
       await userData.save();
       await userData.ship.save();
+
+      const sector = await this.client.database.findOrCreateSector({ x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 });
+
+      const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString());
+   
+      if (!visited) {
+        sector.visitedBy.push(userData._id);
+        sector.save();
+      }
     }
 
     result.canJump = canJump;  
@@ -113,7 +122,13 @@ module.exports = class Game {
 
             const sectorX = x - q;
             const sectorY = y - r;
-        
+
+            // check if player visited this sector before.
+            const sector = await this.client.database.findOrCreateSector({ x: sectorX, y: sectorY, z: 0 });
+
+            const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
+            const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
+
             seedrandom(`GS${sectorX}${sectorY}`, { global: true });
 
             let exists = (rndInt(0, 4) == 1);
@@ -182,9 +197,9 @@ module.exports = class Game {
                 }
               ]
               const systemType = selectByChance(types);
-              hexes.set([q, r], { type: systemType, q: q, r: r });
+              hexes.set([q, r], { type: systemType, q: q, r: r, visited: visited, scanned: scanned });
             } else {
-              hexes.set([q, r], { q: q, r: r })
+              hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned })
             }
             
           }
@@ -206,6 +221,15 @@ module.exports = class Game {
     const x = blueprint.coordinates.x || userData.ship.position.x;
     const y = blueprint.coordinates.y || userData.ship.position.y;
     const z = blueprint.coordinates.z || userData.ship.position.z;
+
+    // track scanned sectors
+    const sector = await this.client.database.findOrCreateSector({ x, y, z });
+    const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString());
+   
+    if (!scanned) {
+      sector.scannedBy.push(userData._id);
+      sector.save();
+    }
 
     seedrandom(`GS${x}${y}`, { global: true });
     let exists = (rndInt(0, 4) == 1);

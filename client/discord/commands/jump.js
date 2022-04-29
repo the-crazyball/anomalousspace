@@ -59,11 +59,16 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             const pixels = [0, 1, 2, 3, 4, 5].map(v => client.helpers.pointyHexPixel(h.centerPixel, h.size, v))
             const startPixel = pixels[0]
     
-            const sectorData = mapData.hexes.find(mapHex => mapHex.q === h.q && mapHex.r === h.r).type;
+            const sectorData = mapData.hexes.find(mapHex => mapHex.q === h.q && mapHex.r === h.r);
     
-            if (sectorData) {
-                const imgSize = 70 * sectorData.diameter;
-                context.drawImage(client.images.get(sectorData.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
+            if (sectorData.scanned) {
+                if (sectorData.type) {
+                    const imgSize = 70 * sectorData.type.diameter;
+                    context.drawImage(client.images.get(sectorData.type.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
+                }
+            } else {
+                const imgSize = 100;
+                context.drawImage(client.images.get('unknown'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
             }
     
             context.beginPath()
@@ -73,7 +78,11 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             }
             context.lineTo(startPixel.x, startPixel.y)
     
-            context.fillStyle = 'rgba(56, 171, 201, 0.1)';
+            if (sectorData.visited) {
+                context.fillStyle = 'rgba(56, 171, 201, 0.1)';
+            } else {
+                context.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            }
             context.fill();
             if (h.q === 0 && h.r === 0) {
                 context.lineWidth = 4;
