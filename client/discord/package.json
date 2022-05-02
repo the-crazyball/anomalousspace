@@ -18,6 +18,7 @@
     "enmap": "^5.8.13",
     "fs": "^0.0.1-security",
     "humanize-duration": "^3.27.1",
-    "systeminformation": "^5.11.9"
+    "systeminformation": "^5.11.9",
+    "uuid": "^8.3.2"
   }
 }

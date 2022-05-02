@@ -1,5 +1,8 @@
 'use strict'
 
+const { RewriteFrames } = require('@sentry/integrations');
+const Sentry = require('@sentry/node');
+
 const express = require('express');
 const app = express();
 const helmet = require('helmet');
@@ -8,6 +11,18 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const Game = require('./library/game/index');
 const Database = require('./library/database/index');
+
+Sentry.init({
+  dsn: 'https://2cb9c4fc490248c2ade5e701ec189e63@o1229006.ingest.sentry.io/6374962',
+  tracesSampleRate: 1.0,
+  integrations: [
+    new RewriteFrames({
+      root: global.__dirname,
+    }),
+  ],
+  release: `anomalous-space-bot@v${process.env.npm_package_version}`,
+  environment: "production",
+});
 
 /* Configure our rest client */
 const client = {

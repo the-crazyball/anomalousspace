@@ -23,7 +23,10 @@ module.exports = client => {
         embed: function(blueprint = {}) {
             const colors = {
                 default: client.config.embed_color,
-                red: '#fc0303'
+                red: '#fc0303',
+                success: 0x1f8b4c,
+                warning: 0xc27c0e,
+                error: 0x992d22
             };
 
             return new MessageEmbed()

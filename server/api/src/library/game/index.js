@@ -124,6 +124,7 @@ module.exports = class Game {
             const sectorY = y - r;
 
             // check if player visited this sector before.
+            // TODO this is an issue, adds to many records to the database, should only read not write.
             const sector = await this.client.database.findOrCreateSector({ x: sectorX, y: sectorY, z: 0 });
 
             const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString()) ? true : false;

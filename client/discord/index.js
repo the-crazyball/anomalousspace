@@ -1,7 +1,7 @@
 // Check for correct Node version
 if (Number(process.version.slice(1).split(".")[0]) < 16) throw new Error("Node 16.x or higher is required. Update Node on your system.");
 
-const { Client, Collection } = require('discord.js');
+const { Client, Collection, WebhookClient } = require('discord.js');
 const { readdirSync } = require("fs");
 const logger = require("./library/logger");
 const canvas = require('canvas');
@@ -24,6 +24,7 @@ client.container = {
   levelCache
 };
 
+client.debugHook = new WebhookClient({ url: config.webhook });
 client.canvas = canvas;
 client.config = config;
 client.settings = require("./library/settings");
@@ -31,8 +32,7 @@ client.logger = logger;
 client.requester = require("./library/requester")(client);
 client.helpers = require("./library/helpers")(client);
 client.extends = require("./library/extends")(client);
-
-
+client.errorHandler = require("./library/errorHandler")(client);
 
 const init = async () => {
 
@@ -78,17 +78,20 @@ const init = async () => {
 
   // These 2 process methods will catch exceptions and give *more details* about the error and stack trace.
   process.on("uncaughtException", (err) => {
-    const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
-    logger.error(`Uncaught Exception: ${errorMsg}`);
-    console.error(err);
+    await client.errorHandler.send("Uncaught Exception Error", err);
+
+    //const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
+    //logger.error(`Uncaught Exception: ${errorMsg}`);
+    //console.error(err);
     // Always best practice to let the code crash on uncaught exceptions. 
     // Because you should be catching them anyway.
     process.exit(1);
   });
 
   process.on("unhandledRejection", err => {
-    logger.error(`Unhandled rejection: ${err}`);
-    console.error(err);
+    await client.errorHandler.send("Unhandled Rejection Error", err);
+    //logger.error(`Unhandled rejection: ${err}`);
+    //console.error(err);
   });
 
   client.login(config.token);
