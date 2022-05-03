@@ -1,4 +1,8 @@
 module.exports = async (client, interaction) => {
-    if (interaction.isButton()) await interaction.deferUpdate();
-    if (interaction.isSelectMenu()) await interaction.deferUpdate();
+    try {
+        if (interaction.isButton()) await interaction.deferUpdate();
+        if (interaction.isSelectMenu()) await interaction.deferUpdate();
+    } catch (err) {
+        await client.errorHandler.send("interaction create event", err);
+    }
 };

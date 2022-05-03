@@ -3,7 +3,6 @@
 // goes `client, other, args` when this function is run.
 
 module.exports = async (client, message) => {
-
   const permlevel = client.helpers.permlevel;
   const config = message.config = client.config;
 
@@ -112,6 +111,12 @@ This command requires level ${container.levelCache[cmd.conf.permLevel]} (${cmd.c
 
     client.logger.log(`${config.permLevels.find(l => l.level === level).name} ${message.author.id} ran command ${cmd.help.name}`, "cmd");
   } catch (e) {
+    const errorId = await client.errorHandler.send(
+      "message send event",
+      e,
+      message.guild.name,
+      message
+    );
     console.error(e);
     message.channel.send({
         content: `There was a problem with your request.\n\`\`\`${e.message}\`\`\``
