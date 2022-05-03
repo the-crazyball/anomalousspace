@@ -77,7 +77,7 @@ const init = async () => {
   }
 
   // These 2 process methods will catch exceptions and give *more details* about the error and stack trace.
-  process.on("uncaughtException", (err) => {
+  process.on("uncaughtException", async (err) => {
     await client.errorHandler.send("Uncaught Exception Error", err);
 
     //const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
@@ -88,7 +88,7 @@ const init = async () => {
     process.exit(1);
   });
 
-  process.on("unhandledRejection", err => {
+  process.on("unhandledRejection", async (err) => {
     await client.errorHandler.send("Unhandled Rejection Error", err);
     //logger.error(`Unhandled rejection: ${err}`);
     //console.error(err);

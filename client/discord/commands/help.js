@@ -1,7 +1,20 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
 
-    
+    try {
+        // help
+    } catch (err) {
+        const errorId = await client.errorHandler.send(
+          "Help command",
+          err,
+          message.guild.name,
+          message,
+          undefined
+        );
+        await message.channel.send({
+          embeds: [client.extends.errorEmbed("help", errorId)],
+        });
+    }
 
 };
 
