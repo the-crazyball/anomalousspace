@@ -3,6 +3,16 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
     try {
         // help
+
+        const helpEmbed = client.extends.embed();
+        helpEmbed.title = `Help`;
+        helpEmbed.description = `> You will find all the commands to play the game, to gain more help one a specific command use \`${message.settings.prefix} help {command}\`.`;
+
+        
+        helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
+        helpEmbed.setFooter({ text: `${client.config.copyright}` });
+
+        await message.channel.send({ embeds: [helpEmbed] });
     } catch (err) {
         const errorId = await client.errorHandler.send(
           "Help command",

@@ -9,8 +9,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         aboutEmbed.title = `About Anomalous Space`;
         aboutEmbed.description = `> Explore a vast procedurally generated universe with millions of planets, stars and resources to conquer while avoiding or finding what these unknown anomalies are all about!`;
 
-        aboutEmbed.addField('Contributors', `\`Surfside\`, \`Vraboros\``, true);
-        aboutEmbed.addField('Testers', `\`Surfside\`, \`Vraboros\``, true);
+        aboutEmbed.addField('Contributors', `\`Surfside\`, \`Vraboros\`, \`Elemperor\``, true);
+        aboutEmbed.addField('Testers', `\`Surfside\`, \`Vraboros\`, \`Elemperor\``, true);
 
         aboutEmbed.addField('Developers', `\`Torsin\``, false);
 
