@@ -315,9 +315,10 @@ module.exports = class Game {
 
         const objectTypes = [
           {
+            name: 'Rock',
             object: 'planet',
             class: 'R',
-            type: 'Rock',
+            type: 'planet:rock',
             sizeMult: 1,
             populationMult: 0,
             resources: {
@@ -326,9 +327,10 @@ module.exports = class Game {
             chance: 0.18 // very common
           },
           {
+            name: 'Ocean',
             object: 'planet',
             class: 'O',
-            type: 'Ocean',
+            type: 'planet:ocean',
             sizeMult: 1,
             populationMult: -1,
             resources: {
@@ -337,9 +339,10 @@ module.exports = class Game {
             chance: 0.14 // common
           },
           {
+            name: 'Ice',
             object: 'planet',
             class: 'I',
-            type: 'Ice',
+            type: 'planet:ice',
             sizeMult: 1,
             populationMult: -1,
             resources: {
@@ -348,9 +351,10 @@ module.exports = class Game {
             chance: 0.14 // common
           },
           {
+            name: 'Garden',
             object: 'planet',
             class: 'G',
-            type: 'Garden',
+            type: 'planet:garden',
             sizeMult: 1,
             populationMult: 1,
             resources: {
@@ -359,9 +363,10 @@ module.exports = class Game {
             chance: 0.05 // rare
           },
           {
+            name: 'Gas Giant',
             object: 'planet',
             class: 'GG',
-            type: 'Gas Giant',
+            type: 'planet:gasgiant',
             sizeMult: 2,
             populationMult: 0,
             resources: {
@@ -370,9 +375,10 @@ module.exports = class Game {
             chance: 0.14 // common
           },
           {
+            name: 'Desert',
             object: 'planet',
             class: 'D',
-            type: 'Desert',
+            type: 'planet:desert',
             sizeMult: 1,
             populationMult: -2,
             resources: {
@@ -381,9 +387,10 @@ module.exports = class Game {
             chance: 0.18 // very common
           },
           {
+            name: 'Asteroid',
             object: 'asteroid',
             class: 'A',
-            type: 'Asteroid',
+            type: 'object:asteroid',
             sizeMult: 1,
             populationMult: 0,
             resources: {
@@ -397,7 +404,7 @@ module.exports = class Game {
 
         object.distance = distanceFromStar;
         object.diameter = rndDouble(4.0, 20.0) * object.sizeMult;
-        object.name = `${object.type}-` + Math.max(rndInt(500, 9999), 0);
+        object.name = `${object.name}-` + Math.max(rndInt(500, 9999), 0);
         object.temperature = rndDouble(-200.0, 300.0);
         object.population = Math.max(rndInt(-5000000, 20000000), 0);
         object.ring = rndInt(0, 10) == 1;

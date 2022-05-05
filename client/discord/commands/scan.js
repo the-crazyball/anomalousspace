@@ -1,5 +1,6 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
+    const { customEmojis: emojis } = client;
 
     try {
         let userData = await client.requester.getUser(message.member.user);
@@ -39,7 +40,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             sectorEmbed.title = title;
             sectorEmbed.description = `Scan results detected... nothing of interest in this sector.
 
-    **Coordinates** \`${x}\`,\`${y}\`,\`${z}\``;
+**Coordinates** \`${userData.ship.position.x}\`,\`${userData.ship.position.y}\`,\`${userData.ship.position.z}\``;
 
             await message.channel.send({
                 embeds: [sectorEmbed],
@@ -51,31 +52,31 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const previousButton = client.extends.button({
             id: 'btn_prev',
             label: '<',
-            style: 'PRIMARY'
+            style: 'SECONDARY'
         })
 
         const firstButton = client.extends.button({
             id: 'btn_first',
             label: '<<',
-            style: 'PRIMARY'
+            style: 'SECONDARY'
         })
 
         const nextButton = client.extends.button({
             id: 'btn_next',
             label: '>',
-            style: 'PRIMARY'
+            style: 'SECONDARY'
         })
 
         const lastButton = client.extends.button({
             id: 'btn_last',
             label: '>>',
-            style: 'PRIMARY'
+            style: 'SECONDARY'
         })
 
         const blankButton = client.extends.button({
             id: 'btn_blank',
             label: 'Page 1 of 4',
-            style: 'SECONDARY',
+            style: 'PRIMARY',
             disabled: true
         })
 
@@ -95,15 +96,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         for (var i = 0; i < sectorData.planets.length; i++) {
 
-            const planetIcon = {
-                'Desert': '<:planet_desert:962037563231715338>',
-                'Rock': '<:planet_rock:962047597214838914>',
-                'Ocean': '<:planet_ocean:962048027953090660>'
-            }
-
             fields.push({
-                name: `${sectorData.planets[i].name} ${planetIcon[sectorData.planets[i].type]}`,
-                value: `<:bullet2:962045846462029835> Population \`${client.helpers.numberWithCommas(sectorData.planets[i].population)}\`\n<:bullet2:962045846462029835> Satellites \`${sectorData.planets[i].satellites.length}\`\n\n**Resources**\n<:resource_thorium:962030123752759399> Torsium \`${Math.round(sectorData.planets[i].resources.thorium * 200)}\`\n<:resource_plutonium:962030124037963867> Plutonium \`${Math.round(sectorData.planets[i].resources.plutonium * 200)}\`\n<:resource_uranium:962030123824083044> Uranium \`${Math.round(sectorData.planets[i].resources.uranium * 200)}\`\n<:resource_rock2:962029930466668595> Rock \`${Math.round(sectorData.planets[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
+                name: `${sectorData.planets[i].name} ${emojis.get(sectorData.planets[i].type)}`,
+                value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(sectorData.planets[i].population)}\`\n${emojis.get('bullet')} Satellites \`${sectorData.planets[i].satellites.length}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(sectorData.planets[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(sectorData.planets[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(sectorData.planets[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(sectorData.planets[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
                 inline: true  
             });
 

@@ -12,11 +12,11 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
             startEmbed.title = `Message from Star Command`;
             startEmbed.description = `Welcome ${message.author.toString()}, it has come to our attention that you are interested in helping us find and analyse the \`Unknown\` anomaly that appeared in our galaxy. 
 
-    Your \`Explorer\` class ship is ready to head out through the warp gate that will bring you close to the last known coordinates in Sector \`124\`,\`90\` the anomaly was last detected.
+Your \`Explorer\` class ship is ready to head out through the warp gate that will bring you close to the last known coordinates in Sector \`124\`,\`90\` the anomaly was last detected.
 
-    Also one last thing, we recently upgraded our warp gate to allow us to travel further out in our galaxy and reach this anomaly.
+Also one last thing, we recently upgraded our warp gate to allow us to travel further out in our galaxy and reach this anomaly.
 
-    Good luck!`;
+Good luck!`;
             startEmbed.addField('Current Location', `\`Orithyia Galaxy\` Sector \`-201\`,\`689\``, true);
             
             const btnWarp = client.extends.button({

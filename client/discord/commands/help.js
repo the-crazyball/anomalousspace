@@ -23,7 +23,7 @@ exports.conf = {
     guildOnly: false,
     aliases: [],
     permLevel: "User",
-    requiresAPIConnection: true
+    requiresAPIConnection: false
 };
 
 exports.help = {

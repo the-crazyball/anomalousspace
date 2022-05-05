@@ -36,6 +36,19 @@ client.errorHandler = require("./library/errorHandler")(client);
 
 const init = async () => {
 
+  const emojis = new Map();
+  emojis.set('bullet', '<:bullet2:962045846462029835>');
+  emojis.set('planet:desert', '<:planet_desert:962037563231715338>');
+  emojis.set('planet:rock', '<:planet_rock:962047597214838914>');
+  emojis.set('planet:ocean', '<:planet_ocean:962048027953090660>');
+  emojis.set('resource:thorium', '<:resource_thorium:962030123752759399>');
+  emojis.set('resource:plutonium', '<:resource_plutonium:962030124037963867>');
+  emojis.set('resource:uranium', '<:resource_uranium:962030123824083044>');
+  emojis.set('resource:rock', '<:resource_rock2:962029930466668595>');
+
+
+  client.customEmojis = emojis;
+
   // load images needed for canvas, load once and reuse
   const starImages = new Map();
   starImages.set('M', await client.canvas.loadImage('../shared/images/stars/star_red01.png'))
