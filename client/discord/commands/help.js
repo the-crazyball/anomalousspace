@@ -6,7 +6,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         const helpEmbed = client.extends.embed();
         helpEmbed.title = `Help`;
-        helpEmbed.description = `> You will find all the commands to play the game, to gain more help one a specific command use \`${message.settings.prefix} help {command}\`.`;
+        helpEmbed.description = `> You will find all the commands to play the game, to gain more help on a specific command use \`${message.settings.prefix} help {command}\`.`;
 
         
         helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');

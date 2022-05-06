@@ -97,6 +97,8 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         imageCounter++;
 
         embedMsg.title = `Map`;
+        embedMsg.description = `> View of the surrounding explored and unexplored sectors, each sector is 10 ly in distance.`;
+        embedMsg.setFooter({ text: `${client.config.copyright}` });
 
         await message.channel.send({
             embeds: [embedMsg], components: [], files: [attachment], attachments: []

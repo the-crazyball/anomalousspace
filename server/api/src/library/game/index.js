@@ -100,6 +100,15 @@ module.exports = class Game {
     await userData.save();
     await userData.ship.save();
 
+    const sector = await this.client.database.findOrCreateSector({ x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 });
+
+    const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString());
+   
+    if (!visited) {
+      sector.visitedBy.push(userData._id);
+      sector.save();
+    }
+
     const result = {  
       cost: 'fuel cost'
     }
@@ -502,6 +511,13 @@ module.exports = class Game {
     userData.populate('ship');
     await userData.save();
 
+    await this.warpTo(user, {
+      toCoord: {
+        x: 49,
+        y: 31,
+        z: 0
+      }
+    })
     return userData;
   }
   createGuild() {

@@ -3,15 +3,15 @@ module.exports = async client => {
   client.logger.log(`${client.user.tag}, ready to serve ${client.guilds.cache.map(g => g.memberCount).reduce((a, b) => a + b)} users in ${client.guilds.cache.size} servers.`, "ready");
 
   // send message to webhook
-  const readyEmbed = client.extends.embed({ color: 'success' });
-  readyEmbed.setTitle("Anomalous Space bot is online");
-  readyEmbed.setDescription(
-    `${client.user.username || "Anomalous Space"} has come online.`
-  );
-  readyEmbed.setTimestamp();
-  readyEmbed.setFooter({ text: 'Version 0.1' });
+  //const readyEmbed = client.extends.embed({ color: 'success' });
+  //readyEmbed.setTitle("Anomalous Space bot is online");
+  //readyEmbed.setDescription(
+  //  `${client.user.username || "Anomalous Space"} has come online.`
+  //);
+  //readyEmbed.setTimestamp();
+  //readyEmbed.setFooter({ text: 'Version 0.1' });
 
-  await client.debugHook.send({ embeds: [readyEmbed] });
+  //await client.debugHook.send({ embeds: [readyEmbed] });
 
   setInterval(async () => {
 
