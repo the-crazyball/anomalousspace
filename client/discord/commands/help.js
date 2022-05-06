@@ -1,18 +1,47 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
+    const { customEmojis: emojis, container } = client;
 
     try {
         // help
 
-        const helpEmbed = client.extends.embed();
-        helpEmbed.title = `Help`;
-        helpEmbed.description = `> You will find all the commands to play the game, to gain more help on a specific command use \`${message.settings.prefix} help {command}\`.`;
+        if (!args[0]) {
+            const helpEmbed = client.extends.embed();
+            helpEmbed.title = `Help`;
+            helpEmbed.description = `> You will find all the commands to play the game, to get more information about a specific command type \`${message.settings.prefix} help {command}\`.
 
-        
-        helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
-        helpEmbed.setFooter({ text: `${client.config.copyright}` });
+New to Anomalous Space type \`${message.settings.prefix} play\``;
 
-        await message.channel.send({ embeds: [helpEmbed] });
+            helpEmbed.addField('Gameplay', `\`scan\`, \`jump\`, \`warp\`, \`map\`, \`coordinates\`, \`leaderboard\`, \`about\``, false);
+            helpEmbed.addField('Links', `${emojis.get('bullet')} [Website](${client.config.website})\n${emojis.get('bullet')} [Play & Support Server](${client.config.supportServer})`, false);
+
+            helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
+            helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
+            helpEmbed.setFooter({ text: `${client.config.copyright}` });
+
+            await message.channel.send({ embeds: [helpEmbed] });
+        } else {
+            // Show individual command's help.
+            let command = args[0];
+            if (container.commands.has(command) || container.commands.has(container.aliases.get(command))) {
+                command = container.commands.get(command) ?? container.commands.get(container.aliases.get(command));
+
+                if (level < container.levelCache[command.conf.permLevel]) return;
+                
+                const helpEmbed = client.extends.embed();
+                helpEmbed.title = `${client.helpers.toProperCase(command.help.name)} Help`;
+                helpEmbed.description = `> ${command.help.description}
+
+**Usage** \`${settings.prefix} ${command.help.usage}\`
+
+**Aliases** ${command.conf.aliases.length ? command.conf.aliases.map(alias => `\`${alias}\``).join(', ') : 'none'}`;
+
+                helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
+                helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
+                helpEmbed.setFooter({ text: `${client.config.copyright}` });
+                await message.channel.send({ embeds: [helpEmbed] });
+            }
+        }
     } catch (err) {
         const errorId = await client.errorHandler.send(
           "Help command",

@@ -68,6 +68,11 @@ module.exports = client => {
         },
         substring: function(str, len) {
             return str.length > len ? str.substring(0, len - 3) + "..." : str;
+        },
+        // toProperCase(String) returns a proper-cased string such as: 
+        // toProperCase("Mary had a little lamb") returns "Mary Had A Little Lamb"
+        toProperCase: function(string) {
+            return string.replace(/([^\W_]+[^\s-]*) */g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
         }
     }
 }
