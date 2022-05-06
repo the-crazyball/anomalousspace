@@ -59,6 +59,7 @@ const init = async () => {
   starImages.set('B', await client.canvas.loadImage('../shared/images/stars/star_blue01.png'))
   starImages.set('O', await client.canvas.loadImage('../shared/images/stars/star_blue_giant01.png'))
   starImages.set('unknown', await client.canvas.loadImage('../shared/images/question-mark.png'))
+  starImages.set('ofinterest', await client.canvas.loadImage('../shared/images/exclamation-mark.png'))
 
   // BH (blackhole)
   // AN (anomaly)

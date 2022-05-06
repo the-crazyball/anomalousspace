@@ -17,6 +17,7 @@ module.exports = class Game {
   }
   createGalaxy(x, y) {
 
+    //seedrandom('ASv1.0', { global: true });
     seedrandom(`G${x}${y}`, { global: true });
 
     const colors = ['20941c', 'de1616', '1631de', 'dbdb1a']
@@ -146,44 +147,44 @@ module.exports = class Game {
             if(exists) {
               const types = [
                 {
-                  class: 'M', // star_red01
-                  diameter: rndDouble(0.5, 0.7),
+                  class: 'M',
+                  diameter: rndDouble(0.1, 0.7),
                   color: 'ff6343',
                   chance: 0.15
                 },
                 {
-                  class: 'K', // star_red_giant01
+                  class: 'K',
                   diameter: rndDouble(0.7, 0.96),
                   color: 'ffa953',
                   chance: 0.20
                 },
                 {
-                  class: 'G', // star_yellow01
-                  diameter: rndDouble(0.96, 1.0),
+                  class: 'G',
+                  diameter: rndDouble(0.96, 1.15),
                   color: 'fff663',
                   chance: 0.18
                 },
                 {
-                  class: 'F', // star_white01
-                  diameter: rndDouble(1.0, 1.2),
+                  class: 'F',
+                  diameter: rndDouble(1.15, 1.4),
                   color: 'ffffff',
                   chance: 0.15
                 },
                 {
-                  class: 'A', // star_white_giant01
-                  diameter: rndDouble(1.2, 1.4),
+                  class: 'A',
+                  diameter: rndDouble(1.4, 1.8),
                   color: 'cacdff',
                   chance: 0.10
                 },
                 {
-                  class: 'B', // star_blue01
-                  diameter: rndDouble(1.4, 1.6),
+                  class: 'B',
+                  diameter: rndDouble(1.8, 2.2),
                   color: '8d95ff',
                   chance: 0.05
                 },
                 {
-                  class: 'O', // star_blue_giant01
-                  diameter: rndDouble(1.6, 1.8),
+                  class: 'O',
+                  diameter: rndDouble(2.2, 3.0),
                   color: '646ffc',
                   chance: 0.02
                 },
@@ -206,7 +207,9 @@ module.exports = class Game {
                   chance: 0.05
                 }
               ]
+             
               const systemType = selectByChance(types);
+
               hexes.set([q, r], { type: systemType, q: q, r: r, visited: visited, scanned: scanned });
             } else {
               hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned })
@@ -244,9 +247,6 @@ module.exports = class Game {
     seedrandom(`GS${x}${y}`, { global: true });
     let exists = (rndInt(0, 4) == 1);
 			if (!exists) return false;
-
-			const stellarDensity = rndDouble(0.001, 0.001);
-			const stars = Math.ceil(Math.pow(10, 3) * stellarDensity); 
 
 			const types = [
 				{
@@ -310,6 +310,11 @@ module.exports = class Game {
 					chance: 0.05
 				}
 			]
+      const systemType = selectByChance(types);
+
+      const stellarDensity = rndDouble(0.001, 0.001);
+			const stars = Math.ceil(Math.pow(10, 3) * stellarDensity); 
+
 			//const diameter = rndInt(2, scale);
 	
 			// generate system astronomical objects
@@ -483,8 +488,6 @@ module.exports = class Game {
 				planets.push(object);
 			}	
 
-			const systemType = selectByChance(types);
-
 			const name = `GS${systemType.class}` + `${x}${y}`.padStart(this.galaxy.sectors.toString().length, '0');
 
       const result = {
@@ -498,7 +501,7 @@ module.exports = class Game {
 				type: systemType,//types[rndInt(0, types.length-1)]
 				planets: planets
 			}
-    //console.log(result)
+    
     return result;
   }
   async warpStart(user) {
