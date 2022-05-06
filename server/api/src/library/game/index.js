@@ -514,7 +514,7 @@ module.exports = class Game {
     userData.populate('ship');
     await userData.save();
 
-    // TODO random location, check for planets and neighboring players
+    // TODO check for planets and neighboring players
     const x = rndInt(-10000, 10000);
     const y = rndInt(-10000, 10000);
     const z = 0;

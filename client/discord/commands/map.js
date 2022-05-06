@@ -46,7 +46,6 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
       
             if (sectorData.scanned) {
                 if (sectorData.type) {
-                   
                     if (sectorData.type.class === 'AN') {
                         context.drawImage(client.images.get('ofinterest'), 0, 0, 512, 512, h.centerPixel.x - (50 / 2), h.centerPixel.y - (50 / 2), 50, 50);
                     } else {
