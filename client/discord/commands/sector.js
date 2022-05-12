@@ -107,52 +107,41 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         let fields = [];
 
-        if (sectorData.planets.length) {
-            for (var i = 0; i < sectorData.planets.length; i++) {
+        for (var i = 0; i < sectorData.planets.length; i++) {
 
-                fields.push({
-                    name: `${sectorData.planets[i].name} ${emojis.get(sectorData.planets[i].type)}`,
-                    value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(sectorData.planets[i].population)}\`\n${emojis.get('bullet')} Satellites \`${sectorData.planets[i].satellites.length}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(sectorData.planets[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(sectorData.planets[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(sectorData.planets[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(sectorData.planets[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
-                    inline: true  
-                });
+            fields.push({
+                name: `${sectorData.planets[i].name} ${emojis.get(sectorData.planets[i].type)}`,
+                value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(sectorData.planets[i].population)}\`\n${emojis.get('bullet')} Satellites \`${sectorData.planets[i].satellites.length}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(sectorData.planets[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(sectorData.planets[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(sectorData.planets[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(sectorData.planets[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
+                inline: true  
+            });
 
-                if (i + 1 === pageCount * 2 || i + 1 === sectorData.planets.length) {
-                    let components = [];
+            if (i + 1 === pageCount * 2 || i + 1 === sectorData.planets.length) {
+                let components = [];
 
-                    const sectorEmbed = client.extends.embed();
-                    sectorEmbed.title = title;
-                    sectorEmbed.description = description;
-                    //sectorEmbed.description += `\n\nPage \`${pageCount} of ${~~(sectorData.planets.length / 2)}\``;
-                    sectorEmbed.fields = fields;
+                const sectorEmbed = client.extends.embed();
+                sectorEmbed.title = title;
+                sectorEmbed.description = description;
+                //sectorEmbed.description += `\n\nPage \`${pageCount} of ${~~(sectorData.planets.length / 2)}\``;
+                sectorEmbed.fields = fields;
 
-                    components.push(rowPaging);
+                components.push(rowPaging);
 
-                    const page = {
-                        embeds: [sectorEmbed],
-                        components: components
-                    };
+                const page = {
+                    embeds: [sectorEmbed],
+                    components: components
+                };
 
-                    pageCount++;
-                    pages.push(page);
-                    fields = [];
-                }
-                rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[2].disabled = true;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-            };
-        } else {
-            const sectorEmbed = client.extends.embed();
-            sectorEmbed.title = title;
-            sectorEmbed.description = description;
-            const page = {
-                embeds: [sectorEmbed],
-                components: []
-            };
-            pages.push(page);
-        }
+                pageCount++;
+                pages.push(page);
+                fields = [];
+            }
+            rowPaging.components[0].disabled = currentPage === 0 ? true : false;
+            rowPaging.components[1].disabled = currentPage === 0 ? true : false;
+            rowPaging.components[2].disabled = true;
+            rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+            rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
+            rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+        };
 
         const scanMessage = await message.channel.send(pages[currentPage]);
 
@@ -252,14 +241,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         });
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Scan command",
+          "Sector command",
           err,
           message.guild.name,
           message,
           undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("scan", errorId)],
+          embeds: [client.extends.errorEmbed("sector", errorId)],
         });
     }
 };
@@ -273,9 +262,9 @@ exports.conf = {
 };
 
 exports.help = {
-    name: "scan",
+    name: "sector",
     category: "Game",
-    description: "Sector scan.",
+    description: "Sector information and details. You can also colonize and do resource gathering from here.",
     usage: "scan",
     rootCmd: false
 };

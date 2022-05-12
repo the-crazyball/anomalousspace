@@ -12,7 +12,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         }
 
         const coordEmbed = client.extends.embed();
-        coordEmbed.description = `**Current Coordinates** \`${userData.ship.position.x}\`,\`${userData.ship.position.y}\`,\`${userData.ship.position.z}\``;
+        coordEmbed.description = `**Current Position** \`${userData.ship.position.x}\`,\`${userData.ship.position.y}\`,\`${userData.ship.position.z}\``;
 
         await message.channel.send({ embeds: [coordEmbed] });
     } catch (err) {

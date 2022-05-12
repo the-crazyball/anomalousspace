@@ -11,6 +11,9 @@ module.exports = class Database {
 		this.cache.users = new Map();
     this.cache.guilds = new Map();
     this.cache.sectors = new Map();
+    this.cache.galaxies = new Map();
+    this.cache.stellarObjects = new Map();
+    this.cache.astronomicalObjects = new Map();
 
     this.userModel = require("./models/user");
     this.shipModel = require("./models/ship");
@@ -19,6 +22,7 @@ module.exports = class Database {
     this.sectorModel = require("./models/sector");
     this.stellarObjectModel = require("./models/stellarObject");
     this.astronomicalObjectModel = require("./models/astronomicalObject");
+    this.galaxyModel = require("./models/galaxy");
   }
   async deleteGuild({ id: guildID }) {
     if(this.cache.guilds.get(guildID))
@@ -50,7 +54,13 @@ module.exports = class Database {
     if(this.cache.users.get(userID)){
       return isLean ? this.cache.users.get(userID).toJSON() : this.cache.users.get(userID);
     } else {
-      let user = (isLean ? await this.userModel.findOne({ discordId: userID }).populate('ship').lean() : await this.userModel.findOne({ discordId: userID }).populate('ship'));
+      let user = (isLean ? await this.userModel.findOne({ discordId: userID }).populate({ 
+        path: 'ship', 
+        populate: [{ path: 'galaxy' }, { path: 'sector' }]
+      }).lean() : await this.userModel.findOne({ discordId: userID }).populate({ 
+        path: 'ship', 
+        populate: [{ path: 'galaxy' }, { path: 'sector' }] 
+      }));
       if(user){
         if(!isLean) this.cache.users.set(userID, user);
         return user;
@@ -62,19 +72,92 @@ module.exports = class Database {
       }
     }
   }
-  async findOrCreateSector({ x, y, z }) {
-    if(this.cache.sectors.get(`${x}${y}${z}`)){
-      return this.cache.sectors.get(`${x}${y}${z}`);
+  async findOrCreateGalaxy(data) {
+    if(this.cache.galaxies.get(`${data.x}${data.y}`)){
+      return this.cache.galaxies.get(`${data.x}${data.y}`);
     } else {
-      let sector = await this.sectorModel.findOne({ x, y, z }).populate('stellarObjects');
+      let galaxy = await this.galaxyModel.findOne({ x: data.x, y: data.y });
+      if(galaxy){
+        this.cache.galaxies.set(`${data.x}${data.y}`, galaxy);
+        return galaxy;
+      } else {
+        galaxy = new this.galaxyModel({ 
+          name: data.name,
+          sectors: data.sectors,
+          type: data.type,
+          color: data.color,
+          x: data.x,
+          y: data.y
+        });
+        await galaxy.save();
+        this.cache.galaxies.set(`${data.x}${data.y}`, galaxy);
+        return galaxy;
+      }
+    }
+  }
+  async findOrCreateSector({ galaxy: galaxy, sector: { x, y, z } }) {
+    // key is generated based on the galaxy coordinates and sector coordinates.
+    const key = `${galaxy.x}${galaxy.y}${galaxy.z}-${x}${y}${z}`;
+
+    if(this.cache.sectors.get(key)){
+      return this.cache.sectors.get(key);
+    } else {
+      let sector = await this.sectorModel.findOne({ galaxy, x, y, z }).populate(['stellarObjects', 'galaxy']);
       if(sector){
-        this.cache.sectors.set(`${x}${y}${z}`, sector);
+        this.cache.sectors.set(key, sector);
         return sector;
       } else {
         sector = new this.sectorModel({ x, y, z });
         await sector.save();
-        this.cache.sectors.set(`${x}${y}${z}`, sector);
+        this.cache.sectors.set(key, sector);
         return sector;
+      }
+    }
+  }
+  async findOrCreateStellarObject({ galaxy, sector, data }) {
+    // key is generated based on the galaxy coordinates and sector coordinates.
+    const key = `${galaxy.x}${galaxy.y}${galaxy.z}-${sector.x}${sector.y}${sector.z}`;
+
+    if(this.cache.stellarObjects.get(key)){
+      return this.cache.stellarObjects.get(key);
+    } else {
+      let stellarObject = await this.stellarObjectModel.findOne({ sector }).populate(['astronomicalObjects', 'sector']);
+      if(stellarObject){
+        this.cache.stellarObjects.set(key, stellarObject);
+        return stellarObject;
+      } else {
+        stellarObject = new this.stellarObjectModel({
+          type: data.type,
+          class: data.class,
+          diameter: data.diameter,
+          color: data.color,
+          sector
+         });
+        await stellarObject.save();
+        this.cache.stellarObjects.set(key, stellarObject);
+        return stellarObject;
+      }
+    }
+  }
+  async findOrCreateAstronomicalObject({ galaxy, sector, stellarObject, id }) {
+    // key is generated based on the galaxy coordinates and sector coordinates.
+    const key = `${galaxy.x}${galaxy.y}${galaxy.z}-${sector.x}${sector.y}${sector.z}-${id}`;
+
+    if(this.cache.astronomicalObjects.get(key)){
+      return this.cache.astronomicalObjects.get(key);
+    } else {
+      let astronomicalObject = await this.astronomicalObjectModel.findOne({ stellarObject, id }).populate('stellarObject');
+      if(astronomicalObject){
+        this.cache.astronomicalObjects.set(key, astronomicalObject);
+        return astronomicalObject;
+      } else {
+        astronomicalObject = new this.astronomicalObjectModel({
+          stellarObject,
+          id
+         });
+        await astronomicalObject.save();
+        this.cache.astronomicalObjects.set(key, astronomicalObject);
+        return astronomicalObject;
       }
     }
   }

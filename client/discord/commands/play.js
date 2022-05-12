@@ -82,9 +82,6 @@ Good luck!`;
                         })
                     }, 2000)
                 })
-
-
-                console.log(result)
             }
         });
         collector.on("end", (collectors, reason) => {

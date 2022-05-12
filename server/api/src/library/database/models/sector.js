@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const schema = mongoose.Schema({
-    galaxy: { type: String },
-    name: { type: String },
+    galaxy: { type: mongoose.Schema.ObjectId, ref: 'Galaxy' },
 
+    name: { type: String },
     x: { type: Number },
     y: { type: Number },
     z: { type: Number },

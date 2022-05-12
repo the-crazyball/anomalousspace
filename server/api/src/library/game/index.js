@@ -13,21 +13,43 @@ module.exports = class Game {
   }
   async init() {
     // create universe
-    this.createGalaxy(74, 13);
+    this.createUniverse();
+    //this.createGalaxy(74, 13);
   }
-  createGalaxy(x, y) {
+  createUniverse() {
+    seedrandom(`ANOMALOUSSPACE-01`, { global: true });
+  }
+  findRandomGalaxy() {
+    const x = rndInt(-1000000, 1000000);
+    const y = rndInt(-1000000, 1000000);
 
-    //seedrandom('ASv1.0', { global: true });
+    seedrandom(`G${x}${y}`, { global: true });
+
+    let exists = (rndInt(0, 4) == 1);
+		if (!exists) return false;
+
+    return {
+      x,
+      y
+    }
+
+  }
+  async createGalaxy(x, y) {
     seedrandom(`G${x}${y}`, { global: true });
 
     const colors = ['20941c', 'de1616', '1631de', 'dbdb1a']
     const types = ['Elliptical', 'Spiral', 'Lenticular', 'Irregular'];
     const typeNum = rndInt(0, types.length-1);
 
-    this.galaxy.sectors = 10000000; //rndInt(1000, 100000); // each sector is 20 ly.
-    this.galaxy.type = types[typeNum]
-    this.galaxy.color = colors[typeNum];
-    this.galaxy.name = `G${this.galaxy.type.charAt(0).toUpperCase()}${x}${y}`;
+    const galaxy = {};
+    galaxy.sectors = rndInt(1000, 100000); // each sector is 20 ly.
+    galaxy.type = types[typeNum]
+    galaxy.color = colors[typeNum];
+    galaxy.name = `G${galaxy.type.charAt(0).toUpperCase()}-${Math.max(rndInt(500, 9999), 0)}`;
+    galaxy.x = x;
+    galaxy.y = y;
+
+    return await this.client.database.findOrCreateGalaxy(galaxy);
 
     //const stellarDensity = rndDouble(0.001, 0.2);
     //const numberOfStars = Math.ceil(Math.pow(10, 3) * stellarDensity); 
@@ -71,10 +93,8 @@ module.exports = class Game {
     if (canJump) {
       userData.ship.position.x = blueprint.toCoord.x;
       userData.ship.position.y = blueprint.toCoord.y;
-      await userData.save();
-      await userData.ship.save();
 
-      const sector = await this.client.database.findOrCreateSector({ x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 });
+      const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 } });
 
       const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString());
    
@@ -82,6 +102,10 @@ module.exports = class Game {
         sector.visitedBy.push(userData._id);
         sector.save();
       }
+
+      userData.ship.sector = sector;
+      await userData.save();
+      await userData.ship.save();
     }
 
     result.canJump = canJump;  
@@ -96,12 +120,24 @@ module.exports = class Game {
     const y = userData.ship.position.y;
     const z = userData.ship.position.z;
 
+    if (blueprint.toGalaxy) {
+      const galaxy = await this.client.database.findOrCreateGalaxy({ x: blueprint.toGalaxy.x, y: blueprint.toGalaxy.y });
+
+      const visited = galaxy.visitedBy.find(id => id.toString() === userData._id.toString());
+      if (!visited) {
+        galaxy.visitedBy.push(userData._id);
+        galaxy.save();
+      }
+
+      userData.ship.galaxy = galaxy;
+    }
+
     userData.ship.position.x = blueprint.toCoord.x;
     userData.ship.position.y = blueprint.toCoord.y;
-    await userData.save();
-    await userData.ship.save();
 
-    const sector = await this.client.database.findOrCreateSector({ x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 });
+    const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 } });
+
+    userData.ship.sector = sector;
 
     const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString());
    
@@ -109,6 +145,9 @@ module.exports = class Game {
       sector.visitedBy.push(userData._id);
       sector.save();
     }
+
+    await userData.save();
+    await userData.ship.save();
 
     const result = {  
       cost: 'fuel cost'
@@ -135,7 +174,8 @@ module.exports = class Game {
 
             // check if player visited this sector before.
             // TODO this is an issue, adds to many records to the database, should only read not write.
-            const sector = await this.client.database.findOrCreateSector({ x: sectorX, y: sectorY, z: 0 });
+            const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x: sectorX, y: sectorY, z: 0 } });
+
 
             const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
             const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
@@ -236,74 +276,87 @@ module.exports = class Game {
     const z = blueprint.coordinates.z || userData.ship.position.z;
 
     // track scanned sectors
-    const sector = await this.client.database.findOrCreateSector({ x, y, z });
+    const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x, y, z } });
     const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString());
    
     if (!scanned) {
+      sector.galaxy = userData.ship.galaxy;
       sector.scannedBy.push(userData._id);
-      sector.save();
+      await sector.save();
     }
 
     seedrandom(`GS${x}${y}`, { global: true });
+
     let exists = (rndInt(0, 4) == 1);
-			if (!exists) return false;
+		
+    if (!exists) return false;
 
 			const types = [
 				{
+          type: 'star',
 					class: 'M',
 					diameter: rndDouble(0.1, 0.7),
 					color: 'ff6343',
 					chance: 0.15
 				},
 				{
+          type: 'star',
 					class: 'K',
 					diameter: rndDouble(0.7, 0.96),
 					color: 'ffa953',
 					chance: 0.20
 				},
 				{
+          type: 'star',
 					class: 'G',
 					diameter: rndDouble(0.96, 1.15),
 					color: 'fff663',
 					chance: 0.18
 				},
 				{
+          type: 'star',
 					class: 'F',
 					diameter: rndDouble(1.15, 1.4),
 					color: 'ffffff',
 					chance: 0.15
 				},
 				{
+          type: 'star',
 					class: 'A',
 					diameter: rndDouble(1.4, 1.8),
 					color: 'cacdff',
 					chance: 0.10
 				},
 				{
+          type: 'star',
 					class: 'B',
 					diameter: rndDouble(1.8, 2.2),
 					color: '8d95ff',
 					chance: 0.05
 				},
 				{
+          type: 'star',
 					class: 'O',
 					diameter: rndDouble(2.2, 3.0),
 					color: '646ffc',
 					chance: 0.02
 				},
 				{
+          type: 'blackhole',
 					class: 'BH', // blackhole
 					diameter: rndDouble(1.4, 1.8),
 					color: '000000',
 					chance: 0.05
 				},
 				{
+          type: 'anomaly',
 					class: 'AN', // anomaly
 					diameter: rndDouble(1, 1),
 					color: 'ff0000',
 					chance: 0.05
 				},
 				{
+          type: 'wormhole',
 					class: 'WH', // wormhole
 					diameter: rndDouble(1, 1),
 					color: 'ff00d9',
@@ -312,13 +365,19 @@ module.exports = class Game {
 			]
       const systemType = selectByChance(types);
 
+      
+      // determine how many stellar objects there are, for now only 1
       const stellarDensity = rndDouble(0.001, 0.001);
 			const stars = Math.ceil(Math.pow(10, 3) * stellarDensity); 
 
-			//const diameter = rndInt(2, scale);
-	
-			// generate system astronomical objects
+      // store stellar objects
+      //const stellarObject = await this.client.database.findOrCreateStellarObject({ 
+      //  galaxy: userData.ship.galaxy, 
+      //  sector: sector, 
+      //  data: systemType 
+      //});
 
+			// generate system astronomical objects
 			const planets = [];
 
 			let distanceFromStar = rndDouble(60.0, 200.0);
@@ -326,7 +385,6 @@ module.exports = class Game {
 
 			for (let i = 0; i < planetsCount; i++)
 			{
-
         const objectTypes = [
           {
             name: 'Rock',
@@ -418,11 +476,12 @@ module.exports = class Game {
 
         object.distance = distanceFromStar;
         object.diameter = rndDouble(4.0, 20.0) * object.sizeMult;
-        object.name = `${object.name}-` + Math.max(rndInt(500, 9999), 0);
+        const objectId = Math.max(rndInt(500, 9999), 0);
+        object.name = `${object.name}-${objectId}`;
         object.temperature = rndDouble(-200.0, 300.0);
         object.population = Math.max(rndInt(-5000000, 20000000), 0);
         object.ring = rndInt(0, 10) == 1;
-        object.satellites = [];
+        object.satellites = [];        
 
 			/*	const planet = {
 					distance: distanceFromStar,
@@ -474,6 +533,20 @@ module.exports = class Game {
 				planet.gases *= dSum;
 				planet.water *= dSum;*/
 				
+        // store astronomical objects
+        /*const astronomicalObject = await this.client.database.findOrCreateAstronomicalObject({ 
+          galaxy: userData.ship.galaxy, 
+          sector: sector,
+          stellarObject,
+          id: objectId
+        });
+
+        astronomicalObject.distance = object.distance;
+        astronomicalObject.diameter = object.diameter;
+        astronomicalObject.name = object.name;
+        astronomicalObject.temperature = object.temperature;
+        astronomicalObject.ring = object.ring;*/
+
 				// Satellites (Moons)
 				const moonsCount = Math.max(rndInt(-5, 5), 0);
 
@@ -486,9 +559,15 @@ module.exports = class Game {
 				
 				// Add planet to vector
 				planets.push(object);
+
+       // await astronomicalObject.save();
 			}	
 
-			const name = `GS${systemType.class}` + `${x}${y}`.padStart(this.galaxy.sectors.toString().length, '0');
+      // sector name
+      const name = `GS-${String.fromCharCode(65+Math.floor(Math.random() * 26))}-` + Math.max(rndInt(500, 9999), 0);
+      sector.name = name;
+      //sector.stellarObjects.push(stellarObject);
+      await sector.save();
 
       const result = {
         coordinates: { 
@@ -501,7 +580,7 @@ module.exports = class Game {
 				type: systemType,//types[rndInt(0, types.length-1)]
 				planets: planets
 			}
-    
+
     return result;
   }
   async warpStart(user) {
@@ -514,12 +593,24 @@ module.exports = class Game {
     userData.populate('ship');
     await userData.save();
 
+    // create or get an existing galaxy to warp in
+    let randomGalaxy = false
+    do {
+      randomGalaxy = this.findRandomGalaxy();
+    } while (!randomGalaxy);
+
+    const galaxy = await this.createGalaxy(randomGalaxy.x, randomGalaxy.y);
+
     // TODO check for planets and neighboring players
-    const x = rndInt(-10000, 10000);
-    const y = rndInt(-10000, 10000);
+    const x = rndInt(-Math.abs(galaxy.sectors), galaxy.sectors);
+    const y = rndInt(-Math.abs(galaxy.sectors), galaxy.sectors);
     const z = 0;
 
     await this.warpTo(user, {
+      toGalaxy: {
+        x: galaxy.x,
+        y: galaxy.y
+      },
       toCoord: {
         x: x,
         y: y,

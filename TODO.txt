@@ -1,0 +1,17 @@
+- planet colonization/ownership
+- player/enemy battles
+- resource gathering
+- building new technology, items
+- upgrading ship, technology
+- mini games, puzzles
+- alliance
+- achievements
+- stories
+- missions
+- multiple galaxies
+- event triggered anomalies
+- new command sector, view sector information, similar to scan
+- when a sector is scanned, record sector information in the database. This is important when players change the sector
+    that all changes are recorded and not pulled from the seed data that is static.
+- sector, galaxy naming?
+- delete character

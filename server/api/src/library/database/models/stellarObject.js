@@ -10,6 +10,8 @@ const schema = mongoose.Schema({
 
     userId: { type: mongoose.Schema.ObjectId, ref: 'User' },
 
+    sector: { type: mongoose.Schema.ObjectId, ref: 'Sector' },
+
     astronomicalObjects: [{ type: mongoose.Schema.ObjectId, ref: 'AstronomicalObject' }]
 
 });

@@ -6,8 +6,9 @@ const schema = mongoose.Schema({
     xp: { type: Number, default: 0 },
     level: { type: Number, default: 1 },
 
-    galaxy: { type: String, default: 'GE7413' },
-    sector: { type: String, default: 'GSG00004931' },
+    galaxy: { type: mongoose.Schema.ObjectId, ref: 'Galaxy' },
+    sector: { type: mongoose.Schema.ObjectId, ref: 'Sector' },
+
     position: { 
         x: { type: Number, default: 49 },
         y: { type: Number, default: 31 },
