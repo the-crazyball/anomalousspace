@@ -102,7 +102,7 @@ module.exports = class Database {
     if(this.cache.sectors.get(key)){
       return this.cache.sectors.get(key);
     } else {
-      let sector = await this.sectorModel.findOne({ galaxy, x, y, z }).populate(['stellarObjects', 'galaxy']);
+      let sector = await this.sectorModel.findOne({ galaxy, x, y, z }).populate(['astronomicalObjects', 'stellarObjects', 'galaxy']);
       if(sector){
         this.cache.sectors.set(key, sector);
         return sector;
@@ -114,23 +114,19 @@ module.exports = class Database {
       }
     }
   }
-  async findOrCreateStellarObject({ galaxy, sector, data }) {
+  async findOrCreateStellarObject({ galaxy, sector }) {
     // key is generated based on the galaxy coordinates and sector coordinates.
     const key = `${galaxy.x}${galaxy.y}${galaxy.z}-${sector.x}${sector.y}${sector.z}`;
 
     if(this.cache.stellarObjects.get(key)){
       return this.cache.stellarObjects.get(key);
     } else {
-      let stellarObject = await this.stellarObjectModel.findOne({ sector }).populate(['astronomicalObjects', 'sector']);
+      let stellarObject = await this.stellarObjectModel.findOne({ sector }).populate('sector');
       if(stellarObject){
         this.cache.stellarObjects.set(key, stellarObject);
         return stellarObject;
       } else {
         stellarObject = new this.stellarObjectModel({
-          type: data.type,
-          class: data.class,
-          diameter: data.diameter,
-          color: data.color,
           sector
          });
         await stellarObject.save();
@@ -139,21 +135,21 @@ module.exports = class Database {
       }
     }
   }
-  async findOrCreateAstronomicalObject({ galaxy, sector, stellarObject, id }) {
+  async findOrCreateAstronomicalObject({ galaxy, sector, objectId }) {
     // key is generated based on the galaxy coordinates and sector coordinates.
-    const key = `${galaxy.x}${galaxy.y}${galaxy.z}-${sector.x}${sector.y}${sector.z}-${id}`;
+    const key = `${galaxy.x}${galaxy.y}${galaxy.z}-${sector.x}${sector.y}${sector.z}-${objectId}`;
 
     if(this.cache.astronomicalObjects.get(key)){
       return this.cache.astronomicalObjects.get(key);
     } else {
-      let astronomicalObject = await this.astronomicalObjectModel.findOne({ stellarObject, id }).populate('stellarObject');
+      let astronomicalObject = await this.astronomicalObjectModel.findOne({ sector, objectId }).populate('sector');
       if(astronomicalObject){
         this.cache.astronomicalObjects.set(key, astronomicalObject);
         return astronomicalObject;
       } else {
         astronomicalObject = new this.astronomicalObjectModel({
-          stellarObject,
-          id
+          sector,
+          objectId
          });
         await astronomicalObject.save();
         this.cache.astronomicalObjects.set(key, astronomicalObject);

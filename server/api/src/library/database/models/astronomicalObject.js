@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 // planets, anomalies, meteors, asteroids
 const schema = mongoose.Schema({
-    id: { type: Number },
+    objectId: { type: Number },
 
     name: { type: String },
     object: { type: String },
@@ -23,10 +23,10 @@ const schema = mongoose.Schema({
     ring: { type: Number },
 
     satellites: { type: [{
-        size: { type: Number }
+        diameter: { type: Number }
     }]},
 
-    stellarObject: { type: mongoose.Schema.ObjectId, ref: 'StellarObject' },
+    sector: { type: mongoose.Schema.ObjectId, ref: 'Sector' },
 
     ownedBy: { type: mongoose.Schema.ObjectId, ref: 'User' }
 });

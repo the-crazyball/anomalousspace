@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 // usually a sun, can be a wormhole or blackhole
 const schema = mongoose.Schema({
+    objectId: { type: Number },
+    
     type: { type: String },
 
     class: { type: String },
@@ -10,10 +12,7 @@ const schema = mongoose.Schema({
 
     userId: { type: mongoose.Schema.ObjectId, ref: 'User' },
 
-    sector: { type: mongoose.Schema.ObjectId, ref: 'Sector' },
-
-    astronomicalObjects: [{ type: mongoose.Schema.ObjectId, ref: 'AstronomicalObject' }]
-
+    sector: { type: mongoose.Schema.ObjectId, ref: 'Sector' }
 });
 
 module.exports = mongoose.model("StellarObject", schema);

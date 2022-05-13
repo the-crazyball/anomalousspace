@@ -49,7 +49,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             return;
         }
 
-        if (sectorData.type.class === 'AN') {
+        const stellarObject = sectorData.stellarObjects[0]; // TODO there is only 1 stellar object at the moment, change to have more later.
+        const astronomicalObjects = sectorData.astronomicalObjects;
+
+        if (stellarObject.class === 'AN') {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
             sectorEmbed.description = `WARNING! Scan detected and anomaly in this sector. To further analyze this anomaly you will need to send a probe to get detailed information.
@@ -97,9 +100,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const rowPaging = client.extends.row().addComponents(firstButton).addComponents(previousButton).addComponents(blankButton).addComponents(nextButton).addComponents(lastButton);
 
         
-        const description = `System \`${sectorData.name}\` with a class \`${sectorData.type.class}\` star and \`${sectorData.planets.length}\` astronomical object(s).
+        const description = `System \`${sectorData.name}\` with a class \`${stellarObject.class}\` star and \`${astronomicalObjects.length}\` astronomical object(s).
 
-**Position** \`${sectorData.coordinates.x}\`,\`${sectorData.coordinates.y}\`,\`${sectorData.coordinates.z}\`
+**Position** \`${sectorData.x}\`,\`${sectorData.y}\`,\`${sectorData.z}\`
 
 **Faction** \`unknown\`
 **Anomalies** \`unknown\`
@@ -107,16 +110,16 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         let fields = [];
 
-        if (sectorData.planets.length) {
-            for (var i = 0; i < sectorData.planets.length; i++) {
+        if (astronomicalObjects.length) {
+            for (var i = 0; i < astronomicalObjects.length; i++) {
 
                 fields.push({
-                    name: `${sectorData.planets[i].name} ${emojis.get(sectorData.planets[i].type)}`,
-                    value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(sectorData.planets[i].population)}\`\n${emojis.get('bullet')} Satellites \`${sectorData.planets[i].satellites.length}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(sectorData.planets[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(sectorData.planets[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(sectorData.planets[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(sectorData.planets[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
+                    name: `${astronomicalObjects[i].name} ${emojis.get(astronomicalObjects[i].type)}`,
+                    value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(astronomicalObjects[i].population)}\`\n${emojis.get('bullet')} Satellites \`${astronomicalObjects[i].satellites.length}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(astronomicalObjects[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(astronomicalObjects[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(astronomicalObjects[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(astronomicalObjects[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
                     inline: true  
                 });
 
-                if (i + 1 === pageCount * 2 || i + 1 === sectorData.planets.length) {
+                if (i + 1 === pageCount * 2 || i + 1 === astronomicalObjects.length) {
                     let components = [];
 
                     const sectorEmbed = client.extends.embed();
