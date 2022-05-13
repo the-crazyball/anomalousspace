@@ -3,9 +3,9 @@ const { rndInt, rndDouble, selectByChance } = require('../helpers');
 
 const generateSector = ({ galaxy, sector: { x, y, z} }) => {
 
-    seedrandom(`GS${x}${y}`, { global: true });
+    seedrandom(`GS-${galaxy.x}${galaxy.y}${galaxy.z}-${x}${y}${z}`, { global: true });
 
-    let exists = (rndInt(0, 4) == 1);
+    let exists = (rndInt(0, 3) == 1);
 		
     if (!exists) return false;
 

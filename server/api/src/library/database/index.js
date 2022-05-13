@@ -107,10 +107,26 @@ module.exports = class Database {
         this.cache.sectors.set(key, sector);
         return sector;
       } else {
-        sector = new this.sectorModel({ x, y, z });
+        sector = new this.sectorModel({ x, y, z, galaxy });
         await sector.save();
         this.cache.sectors.set(key, sector);
         return sector;
+      }
+    }
+  }
+  async findSector({ galaxy: galaxy, sector: { x, y, z } }) {
+    // key is generated based on the galaxy coordinates and sector coordinates.
+    const key = `${galaxy.x}${galaxy.y}${galaxy.z}-${x}${y}${z}`;
+
+    if(this.cache.sectors.get(key)){
+      return this.cache.sectors.get(key);
+    } else {
+      let sector = await this.sectorModel.findOne({ galaxy, x, y, z }).populate(['astronomicalObjects', 'stellarObjects', 'galaxy']);
+      if(sector){
+        this.cache.sectors.set(key, sector);
+        return sector;
+      } else {
+        return false;
       }
     }
   }

@@ -43,7 +43,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
             const startPixel = pixels[0]
 
             const sectorData = mapData.hexes.find(mapHex => mapHex.q === h.q && mapHex.r === h.r);
-      
+
             if (sectorData.scanned) {
                 if (sectorData.type) {
                     if (sectorData.type.class === 'AN') {
@@ -88,7 +88,6 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 
 
             if (h.q === 0 && h.r === 0) {
-                console.log(sectorData.type.class)
                 context.beginPath()
                 context.lineWidth = 1;
                 context.arc(h.centerPixel.x, h.centerPixel.y, h.size-15, 0, 2 * Math.PI);

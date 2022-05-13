@@ -47,6 +47,14 @@ Good luck!`;
             if (i.customId === "btn_warp") {
                 let result = await client.requester.warpStart(message.member.user);
 
+                // send message to webhook
+                const readyEmbed = client.extends.embed({ color: 'success' });
+                readyEmbed.setTitle("New User");
+                readyEmbed.setDescription(`New User: \`${result.discordUsername}\`\nGalaxy: \`${result.ship.galaxy.name}\`\nLocation: \`${result.ship.galaxy.x}\`,\`${result.ship.galaxy.y}\`,\`${result.ship.galaxy.z}\`\n\nSector Location: \`${result.ship.sector.x}\`,\`${result.ship.sector.y}\`,\`${result.ship.sector.z}\``);
+                readyEmbed.setTimestamp();
+
+                await client.logHook.send({ embeds: [readyEmbed] });
+                
                 const warpEmbed1 = client.extends.embed();
                 warpEmbed1.title = `The Light`
                 warpEmbed1.description = `You enter the warp gate and suddenly feel as if you senses have intensified and see a bright light surrounding you and your ship....`

@@ -25,6 +25,7 @@ client.container = {
 };
 
 client.debugHook = new WebhookClient({ url: config.webhook });
+client.logHook = new WebhookClient({ url: config.logwebhook });
 client.canvas = canvas;
 client.config = config;
 client.settings = require("./library/settings");

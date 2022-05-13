@@ -96,12 +96,11 @@ module.exports = class Game {
       userData.ship.position.y = blueprint.toCoord.y;
 
       const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 } });
-
       const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString());
    
       if (!visited) {
         sector.visitedBy.push(userData._id);
-        sector.save();
+        await sector.save();
       }
 
       userData.ship.sector = sector;
@@ -175,85 +174,29 @@ module.exports = class Game {
 
             // check if player visited this sector before.
             // TODO this is an issue, adds to many records to the database, should only read not write.
-            const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x: sectorX, y: sectorY, z: 0 } });
+            const sector = await this.client.database.findSector({ galaxy: userData.ship.galaxy, sector: { x: sectorX, y: sectorY, z: 0 } });
 
-
-            const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
-            const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
-
-            seedrandom(`GS${sectorX}${sectorY}`, { global: true });
-
-            let exists = (rndInt(0, 4) == 1);
-
-            if(exists) {
-              const types = [
-                {
-                  class: 'M',
-                  diameter: rndDouble(0.1, 0.7),
-                  color: 'ff6343',
-                  chance: 0.15
-                },
-                {
-                  class: 'K',
-                  diameter: rndDouble(0.7, 0.96),
-                  color: 'ffa953',
-                  chance: 0.20
-                },
-                {
-                  class: 'G',
-                  diameter: rndDouble(0.96, 1.15),
-                  color: 'fff663',
-                  chance: 0.18
-                },
-                {
-                  class: 'F',
-                  diameter: rndDouble(1.15, 1.4),
-                  color: 'ffffff',
-                  chance: 0.15
-                },
-                {
-                  class: 'A',
-                  diameter: rndDouble(1.4, 1.8),
-                  color: 'cacdff',
-                  chance: 0.10
-                },
-                {
-                  class: 'B',
-                  diameter: rndDouble(1.8, 2.2),
-                  color: '8d95ff',
-                  chance: 0.05
-                },
-                {
-                  class: 'O',
-                  diameter: rndDouble(2.2, 3.0),
-                  color: '646ffc',
-                  chance: 0.02
-                },
-                {
-                  class: 'BH', // blackhole
-                  diameter: rndDouble(1.4, 1.8),
-                  color: '000000',
-                  chance: 0.05
-                },
-                {
-                  class: 'AN', // anomaly
-                  diameter: rndDouble(1, 1),
-                  color: 'ff0000',
-                  chance: 0.05
-                },
-                {
-                  class: 'WH', // wormhole
-                  diameter: rndDouble(1, 1),
-                  color: 'ff00d9',
-                  chance: 0.05
+            if(sector) {
+              const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
+              const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
+    
+              if(sector.stellarObjects.length || sector.astronomicalObjects.length) {
+                if (scanned) {
+                  const systemType = {
+                    class: sector.stellarObjects[0].class,
+                    diameter: sector.stellarObjects[0].diameter,
+                    color: sector.stellarObjects[0].color
+                  }
+                  
+                  hexes.set([q, r], { type: systemType, q: q, r: r, visited: visited, scanned: scanned });
+                } else {
+                  hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned })
                 }
-              ]
-             
-              const systemType = selectByChance(types);
-
-              hexes.set([q, r], { type: systemType, q: q, r: r, visited: visited, scanned: scanned });
+              } else {
+                hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned })
+              }
             } else {
-              hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned })
+              hexes.set([q, r], { q: q, r: r, visited: false, scanned: false })
             }
             
           }
@@ -279,7 +222,7 @@ module.exports = class Game {
     // track scanned sectors
     const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x, y, z } });
     const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString());
-   
+ 
     if (!scanned) {
       sector.scannedBy.push(userData._id);
       await sector.save();
@@ -288,63 +231,66 @@ module.exports = class Game {
     let result = false;
 
     // check if sector was discovered already, if not generate sector and store in the database
-    if (!sector.galaxy && !sector.name) {
+    if (!sector.name) {
       result = generateSector({ galaxy: userData.ship.galaxy, sector: { x, y, z } });
 
       sector.name = result.name;
       sector.stars = result.stars;
       sector.galaxy = userData.ship.galaxy;
 
-      // create stellar objects
-      await Promise.all(result.stellarObjects.map(async (o) => {
-        const stellarObject = await this.client.database.findOrCreateStellarObject({ 
-          galaxy: userData.ship.galaxy, 
-          sector: sector
-        });
+      if (result.stellarObjects) {
+        // create stellar objects
+        await Promise.all(result.stellarObjects.map(async (o) => {
+          const stellarObject = await this.client.database.findOrCreateStellarObject({ 
+            galaxy: userData.ship.galaxy, 
+            sector: sector
+          });
 
-        stellarObject.objectId = o.id;
-        stellarObject.type = o.type;
-        stellarObject.class = o.class;
-        stellarObject.diameter = o.diameter;
-        stellarObject.color = o.color;
+          stellarObject.objectId = o.id;
+          stellarObject.type = o.type;
+          stellarObject.class = o.class;
+          stellarObject.diameter = o.diameter;
+          stellarObject.color = o.color;
 
-        sector.stellarObjects.push(stellarObject._id);
+          sector.stellarObjects.push(stellarObject._id);
 
-        await stellarObject.save();
-      }));
+          await stellarObject.save();
+        }));
+      }
 
+      if (result.astronomicalObjects) {
+        // create astronomical objects
+        await Promise.all(result.astronomicalObjects.map(async (o) => {
+          const astronomicalObject = await this.client.database.findOrCreateAstronomicalObject({ 
+            galaxy: userData.ship.galaxy, 
+            sector: sector,
+            id: o.id
+          });
 
-      // create astronomical objects
-      await Promise.all(result.astronomicalObjects.map(async (o) => {
-        const astronomicalObject = await this.client.database.findOrCreateAstronomicalObject({ 
-          galaxy: userData.ship.galaxy, 
-          sector: sector,
-          id: o.id
-        });
+          astronomicalObject.distance = o.distance;
+          astronomicalObject.diameter = o.diameter;
+          astronomicalObject.name = o.name;
+          astronomicalObject.temperature = o.temperature;
+          astronomicalObject.ring = o.ring;
+          astronomicalObject.object = o.object;
+          astronomicalObject.class = o.class;
+          astronomicalObject.type = o.type;
+          astronomicalObject.population = o.population;
 
-        astronomicalObject.distance = o.distance;
-        astronomicalObject.diameter = o.diameter;
-        astronomicalObject.name = o.name;
-        astronomicalObject.temperature = o.temperature;
-        astronomicalObject.ring = o.ring;
-        astronomicalObject.object = o.object;
-        astronomicalObject.class = o.class;
-        astronomicalObject.type = o.type;
-        astronomicalObject.population = o.population;
+          astronomicalObject.resources.thorium = o.resources.thorium;
+          astronomicalObject.resources.plutonium = o.resources.plutonium;
+          astronomicalObject.resources.uranium = o.resources.uranium;
+          astronomicalObject.resources.rock = o.resources.rock;
 
-        astronomicalObject.resources.thorium = o.resources.thorium;
-        astronomicalObject.resources.plutonium = o.resources.plutonium;
-        astronomicalObject.resources.uranium = o.resources.uranium;
-        astronomicalObject.resources.rock = o.resources.rock;
+          o.satellites.forEach(d => {
+            astronomicalObject.satellites.push({ diameter: d });
+          });
 
-        o.satellites.forEach(d => {
-          astronomicalObject.satellites.push({ diameter: d });
-        });
+          sector.astronomicalObjects.push(astronomicalObject._id);
 
-        sector.astronomicalObjects.push(astronomicalObject._id);
-
-        await astronomicalObject.save();
-      }));
+          await astronomicalObject.save();
+        }));
+      }
 
       sector.populate(['stellarObjects', 'astronomicalObjects']);
 
