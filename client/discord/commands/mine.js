@@ -10,17 +10,30 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             return
         }
 
-        
+        let miningData = await client.requester.mine(message.member.user);
+
+        const title = `Mining Results`;
+
+        const resultEmbed = client.extends.embed();
+        resultEmbed.title = title;
+        resultEmbed.description = `mining result details here.... currently ${miningData.mined}`;
+
+        await message.channel.send({
+            embeds: [resultEmbed],
+            components: []
+        });
+
+
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Sector command",
+          "Mine command",
           err,
           message.guild.name,
           message,
           undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("sector", errorId)],
+          embeds: [client.extends.errorEmbed("mine", errorId)],
         });
     }
 };
@@ -34,9 +47,9 @@ exports.conf = {
 };
 
 exports.help = {
-    name: "sector",
+    name: "mine",
     category: "Game",
-    description: "Sector information and details. You can also colonize and do resource gathering from here.",
+    description: "Mining for resources.",
     usage: "scan",
     rootCmd: false
 };

@@ -7,6 +7,7 @@ const schema = mongoose.Schema({
     z: { type: Number },
 
     stars: { type: Number },
+    asteroids: { type: Number },
 
     ownerId: { type: mongoose.Schema.ObjectId, ref: 'User' },
 

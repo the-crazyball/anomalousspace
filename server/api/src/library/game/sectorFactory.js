@@ -105,7 +105,7 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
             resources: {
 
             },
-            chance: 0.18 // very common
+            chance: 0.22 // very common
           },
           {
             name: 'Ocean',
@@ -117,7 +117,7 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
             resources: {
 
             },
-            chance: 0.14 // common
+            chance: 0.16 // common
           },
           {
             name: 'Ice',
@@ -129,7 +129,7 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
             resources: {
 
             },
-            chance: 0.14 // common
+            chance: 0.16 // common
           },
           {
             name: 'Garden',
@@ -144,7 +144,7 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
             chance: 0.05 // rare
           },
           {
-            name: 'Gas Giant',
+            name: 'Gas-Giant',
             object: 'planet',
             class: 'GG',
             type: 'planet:gasgiant',
@@ -153,7 +153,7 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
             resources: {
 
             },
-            chance: 0.14 // common
+            chance: 0.19 // common
           },
           {
             name: 'Desert',
@@ -165,20 +165,8 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
             resources: {
 
             },
-            chance: 0.18 // very common
-          },
-          {
-            name: 'Asteroid',
-            object: 'asteroid',
-            class: 'A',
-            type: 'object:asteroid',
-            sizeMult: 1,
-            populationMult: 0,
-            resources: {
-
-            },
-            chance: 0.17 // very common
-          },
+            chance: 0.22 // very common
+          }
         ]
 
         const object = selectByChance(objectTypes);
@@ -188,10 +176,17 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
         const objectId = Math.max(rndInt(500, 9999), 0);
         object.name = `${object.name}-${objectId}`;
         object.temperature = rndDouble(-200.0, 300.0);
-        object.population = Math.max(rndInt(-5000000, 20000000), 0);
+
+        if (object.type === 'planet:garden') {
+          object.population = Math.max(rndInt(-5000000, 20000000), 0);
+        } else {
+          object.population = 0;
+        }
+
+        object.colonies = 0;
         object.ring = rndInt(0, 10) == 1;
         object.satellites = [];  
-        object.id = objectId;      
+        object.id = objectId;
 
 			/*	const planet = {
 					distance: distanceFromStar,
@@ -256,7 +251,9 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
 				// Add planet to vector
 				planets.push(object);
 
-	}	
+	  }	
+
+    const asteroids = Math.max(rndInt(-1000, 150000), 0);
 
     // sector name
     const name = `GS-${String.fromCharCode(65+Math.floor(Math.random() * 26))}-` + Math.max(rndInt(500, 9999), 0);
@@ -272,6 +269,7 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
 
         stars: stars,
         name: name,
+        asteroids: asteroids,
 
         stellarObjects: [{
             id: stellarObjectId,
@@ -280,7 +278,7 @@ const generateSector = ({ galaxy, sector: { x, y, z} }) => {
             diameter: systemType.diameter,
             color: systemType.color
         }],
-		astronomicalObjects: planets
+		    astronomicalObjects: planets
 	}
 
     return result;

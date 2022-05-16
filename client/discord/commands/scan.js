@@ -106,6 +106,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
 **Faction** \`unknown\`
 **Anomalies** \`unknown\`
+
+**Asteroids** \`${client.helpers.numberWithCommas(sectorData.asteroids)}\`
 \u200B`;
 
         let fields = [];
@@ -114,8 +116,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             for (var i = 0; i < astronomicalObjects.length; i++) {
 
                 fields.push({
-                    name: `${astronomicalObjects[i].name} ${emojis.get(astronomicalObjects[i].type)}`,
-                    value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(astronomicalObjects[i].population)}\`\n${emojis.get('bullet')} Satellites \`${astronomicalObjects[i].satellites.length}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(astronomicalObjects[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(astronomicalObjects[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(astronomicalObjects[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(astronomicalObjects[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
+                    name: `${astronomicalObjects[i].name}`,
+                    value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(astronomicalObjects[i].population)}\`\n${emojis.get('bullet')} Satellites \`${astronomicalObjects[i].satellites.length}\`\n${emojis.get('bullet')} Colonies \`${astronomicalObjects[i].colonies}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(astronomicalObjects[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(astronomicalObjects[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(astronomicalObjects[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(astronomicalObjects[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
                     inline: true  
                 });
 
@@ -156,6 +158,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             };
             pages.push(page);
         }
+
 
         const scanMessage = await message.channel.send(pages[currentPage]);
 

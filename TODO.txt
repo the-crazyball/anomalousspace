@@ -11,4 +11,4 @@
 - event triggered anomalies
 - new command sector, view sector information, similar to scan
 - delete character
-- when generating a sector, add galaxy in seed as well
+- fix BH when generating, adds planets, should be blank

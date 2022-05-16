@@ -15,7 +15,7 @@ const schema = mongoose.Schema({
         uranium: { type: Number },
         rock: { type: Number }
     },
-
+    colonies: { type: Number },
     distance: { type: Number },
     diameter: { type: Number },
     temperature: { type: Number },

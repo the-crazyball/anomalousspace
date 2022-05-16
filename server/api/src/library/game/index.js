@@ -211,6 +211,13 @@ module.exports = class Game {
     }
     return result;
   }
+  async mine(user, blueprint) {
+    const userData = await this.getUser(user, true);
+
+    return {
+      mined: 10
+    }
+  }
   async scan(user, blueprint) {
 
     const userData = await this.getUser(user, true);
@@ -237,6 +244,7 @@ module.exports = class Game {
       sector.name = result.name;
       sector.stars = result.stars;
       sector.galaxy = userData.ship.galaxy;
+      sector.asteroids = result.asteroids;
 
       if (result.stellarObjects) {
         // create stellar objects
@@ -266,6 +274,8 @@ module.exports = class Game {
             sector: sector,
             id: o.id
           });
+
+          astronomicalObject.colonies = o.colonies;
 
           astronomicalObject.distance = o.distance;
           astronomicalObject.diameter = o.diameter;

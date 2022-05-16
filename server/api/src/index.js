@@ -57,6 +57,7 @@ app.use('/warp', require('./routes/private/warp')(client));
 app.use('/jump', require('./routes/private/jump')(client));
 app.use('/scan', require('./routes/private/scan')(client));
 app.use('/map', require('./routes/private/map')(client));
+app.use('/mining', require('./routes/private/mining')(client));
 
 /* Listen on http */
 app.listen(client.apiSettings.api.port, () => {
