@@ -1,11 +1,7 @@
 {
-  "name": "starx",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "name": "anomalousspace",
+  "version": "0.0.1",
+  "description": "Procedurally generated universe with an emphasis on survival and story.",
   "author": "",
-  "license": "ISC"
+  "license": "GNU Affero General Public License v3.0"
 }
