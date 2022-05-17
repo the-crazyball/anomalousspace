@@ -217,6 +217,23 @@ module.exports = class Game {
     }
     return result;
   }
+  async getCooldowns(user, blueprint) {
+    const now = new Date().getTime();
+    const cdMining = (5 * 60 * 1000); // 5 min
+
+    let miningRemaining = 0;
+
+    const userData = await this.getUser(user, false);
+
+    if ((now - userData.ship.cooldowns.mining < cdMining) && userData.ship.cooldowns.mining > 0) {
+      miningRemaining = cdMining - (now - userData.ship.cooldowns.mining);
+    }
+
+    return {
+      miningRemaining
+    }
+
+  }
   async mine(user, blueprint) {
     const now = new Date().getTime();
     const cd = (5 * 60 * 1000); // 5 min
