@@ -212,10 +212,30 @@ module.exports = class Game {
     return result;
   }
   async mine(user, blueprint) {
-    const userData = await this.getUser(user, true);
+    const now = new Date().getTime();
+    const cd = (10 * 60 * 1000); // 60 min
+    let ignoreCooldown = false;
+    let amountMined = 0;
+    let message = '';
+
+    const userData = await this.getUser(user, false);
+
+    console.log(now - userData.ship.cooldowns.mining, cd)
+    if ((now - userData.ship.cooldowns.mining < cd || ignoreCooldown) && userData.ship.cooldowns.mining > 0) {
+      message = 'In cooldown mode, try again in 10 min.';
+    } else {
+      amountMined = 10;
+
+      userData.ship.cargo.push({ type: 'asteroids', amount: amountMined });
+      userData.ship.cooldowns.mining = new Date().getTime();
+
+      await userData.ship.save();
+      await userData.save();
+    }
 
     return {
-      mined: 10
+      message: message,
+      mined: amountMined
     }
   }
   async scan(user, blueprint) {

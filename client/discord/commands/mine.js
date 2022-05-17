@@ -16,7 +16,11 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         const resultEmbed = client.extends.embed();
         resultEmbed.title = title;
-        resultEmbed.description = `mining result details here.... currently ${miningData.mined}`;
+        if (miningData.message) {
+            resultEmbed.description = miningData.message;
+        } else {
+            resultEmbed.description = `You mined ${miningData.mined}`;
+        }
 
         await message.channel.send({
             embeds: [resultEmbed],

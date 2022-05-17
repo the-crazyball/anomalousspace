@@ -28,8 +28,16 @@ const schema = mongoose.Schema({
 
     armor: {},
     shields: {},
-    cargo: {},
-    fuel: { type: Number }
+    cargo: [{
+        type: { type: String },
+        amount: { type: Number }
+    }],
+    fuel: { type: Number },
+
+    /* COOLDOWN */
+	cooldowns: { 
+		mining: { type: Number }
+	}
 });
 
 module.exports = mongoose.model("Ship", schema);
