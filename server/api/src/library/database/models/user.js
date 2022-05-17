@@ -24,8 +24,18 @@ const schema = mongoose.Schema({
 
     ship: { type: mongoose.Schema.ObjectId, ref: 'Ship' },
 
-    planets: {},
-   
+    stats: {
+        jumps: { type: Number, default: 0 },
+        warps: { type: Number, default: 0 },
+        scans: { type: Number, default: 0 },
+        discoveredSectors: { type: Number, default: 0 },
+        discoveredSystems: { type: Number, default: 0 },
+        mining: { type: Number, default: 0 },
+        battlesWon: { type: Number, default: 0 },
+        battlesLost: { type: Number, default: 0 }
+    },
+    credits: { type: Number, default: 0 },
+
     /* COOLDOWN */
 	cooldowns: { type: Object, default: {
 		rep: 0

@@ -99,9 +99,12 @@ module.exports = class Game {
       const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString());
    
       if (!visited) {
+        userData.stats.discoveredSectors += 1;
         sector.visitedBy.push(userData._id);
         await sector.save();
       }
+
+      userData.stats.jumps += 1;
 
       userData.ship.sector = sector;
       await userData.save();
@@ -142,9 +145,12 @@ module.exports = class Game {
     const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString());
    
     if (!visited) {
+      userData.stats.discoveredSectors += 1;
       sector.visitedBy.push(userData._id);
       sector.save();
     }
+
+    userData.stats.warps += 1;
 
     await userData.save();
     await userData.ship.save();
@@ -238,6 +244,8 @@ module.exports = class Game {
       userData.ship.sector.asteroids -= amountMined;
       asteroidsTotal -= amountMined;
 
+      userData.stats.mining += 1;
+
       await userData.ship.save();
       await userData.ship.sector.save();
       await userData.save();
@@ -255,7 +263,7 @@ module.exports = class Game {
   }
   async scan(user, blueprint) {
 
-    const userData = await this.getUser(user, true);
+    const userData = await this.getUser(user, false);
 
     const x = blueprint.coordinates.x || userData.ship.position.x;
     const y = blueprint.coordinates.y || userData.ship.position.y;
@@ -266,6 +274,8 @@ module.exports = class Game {
     const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString());
  
     if (!scanned) {
+      userData.stats.scans += 1;
+      await userData.save();
       sector.scannedBy.push(userData._id);
       await sector.save();
     }
