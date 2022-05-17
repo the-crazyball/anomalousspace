@@ -15,17 +15,17 @@ If anything in this contributing guide is not clear, don't hesitate to contact T
 
 ### Issue Labels
 
-* ~bug
-* ~documentation
-* ~duplicate
-* ~good first issue
-* ~question
-* ~wontfix
-* ~content
-* ~feature
-* ~polish
-* ~refactor
-* ~suggestion
+* bug
+* documentation
+* duplicate
+* good first issue
+* question
+* wontfix
+* content
+* feature
+* polish
+* refactor
+* suggestion
 
 ## Project Workflow
 
