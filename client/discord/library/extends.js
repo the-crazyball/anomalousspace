@@ -55,6 +55,15 @@ module.exports = client => {
                 .setStyle(blueprint.style)
                 .setEmoji(blueprint.emoji)
         },
+        messageCollector: function(interaction, max) {
+            const filter = (m) => !m.author.bot && m.author.id === interaction.user.id;
+
+            return interaction.channel.createMessageCollector({
+                filter: filter,
+                max: max,
+                time: 120000 // in (ms) buttons timeout after this time
+            });
+        },
         collector: function(message, author) {
             // filter so make sure the button belongs to the person that initiated the command
             const filter = async i => {
