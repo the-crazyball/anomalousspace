@@ -1,6 +1,6 @@
 'use strict'
-const Chance = require('chance')
-const chance = new Chance()
+const Chance = require('chance');
+const chance = new Chance();
 const seedrandom = require('seedrandom');
 const { rndInt, rndDouble, selectByChance } = require('../helpers');
 const { generateSector } = require('./sectorFactory');
@@ -213,29 +213,44 @@ module.exports = class Game {
   }
   async mine(user, blueprint) {
     const now = new Date().getTime();
-    const cd = (10 * 60 * 1000); // 60 min
+    const cd = (5 * 60 * 1000); // 5 min
+
+    let inCooldown = false;
+    let cdRemaining = 0;
     let ignoreCooldown = false;
     let amountMined = 0;
-    let message = '';
+    let hasAsteroids = true;
 
     const userData = await this.getUser(user, false);
 
-    console.log(now - userData.ship.cooldowns.mining, cd)
-    if ((now - userData.ship.cooldowns.mining < cd || ignoreCooldown) && userData.ship.cooldowns.mining > 0) {
-      message = 'In cooldown mode, try again in 10 min.';
-    } else {
-      amountMined = 10;
+    let asteroidsTotal = userData.ship.sector.asteroids;
 
+    if ((now - userData.ship.cooldowns.mining < cd || ignoreCooldown) && userData.ship.cooldowns.mining > 0) {
+      inCooldown = true;
+      cdRemaining = cd - (now - userData.ship.cooldowns.mining);
+    } else if (asteroidsTotal) {
+      amountMined = 10;
       userData.ship.cargo.push({ type: 'asteroids', amount: amountMined });
+
+      // add cooldown
       userData.ship.cooldowns.mining = new Date().getTime();
 
+      userData.ship.sector.asteroids -= amountMined;
+      asteroidsTotal -= amountMined;
+
       await userData.ship.save();
+      await userData.ship.sector.save();
       await userData.save();
+    } else {
+      hasAsteroids = false;
     }
 
     return {
-      message: message,
-      mined: amountMined
+      inCooldown,
+      cdRemaining,
+      amountMined,
+      hasAsteroids,
+      asteroidsTotal
     }
   }
   async scan(user, blueprint) {

@@ -1,3 +1,5 @@
+const humanizeDuration = require('humanize-duration');
+
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
     const { customEmojis: emojis } = client;
@@ -16,10 +18,13 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         const resultEmbed = client.extends.embed();
         resultEmbed.title = title;
-        if (miningData.message) {
-            resultEmbed.description = miningData.message;
+
+        if (miningData.inCooldown) {
+            resultEmbed.description = `You are unable to mine at this time, please try again when the cooldown has completed.\n\n**Available in** \`${humanizeDuration(miningData.cdRemaining, { maxDecimalPoints: 0 })}\``
+        } else if (miningData.hasAsteroids) {
+            resultEmbed.description = `Congrats, you mined \`${client.helpers.numberWithCommas(miningData.amountMined)}\` the sector has \`${client.helpers.numberWithCommas(miningData.asteroidsTotal)}\` asteroids left.`;
         } else {
-            resultEmbed.description = `You mined ${miningData.mined}`;
+            resultEmbed.description = `The sector has \`0\` asteroids left to mine.`;
         }
 
         await message.channel.send({
