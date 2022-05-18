@@ -2,6 +2,9 @@
   "name": "anomalousspace",
   "version": "0.0.1",
   "description": "Procedurally generated universe with an emphasis on survival and story.",
+  "scripts": {
+    "test": "npm --prefix ./client/discord/ test"
+  },
   "author": "",
   "license": "GNU Affero General Public License v3.0"
 }

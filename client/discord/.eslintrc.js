@@ -9,6 +9,7 @@ module.exports = {
     "parserOptions": {
         "ecmaVersion": "latest"
     },
+    "ignorePatterns": ["package-lock.json", "package.json", "/data/*", "config.dev.js"],
     "rules": {
         "no-mixed-spaces-and-tabs": "error",
         "semi": ["error", "always", { "omitLastInOneLineBlock": true}],
