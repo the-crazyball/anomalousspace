@@ -1,6 +1,4 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-    const settings = message.settings;
-
     try {
         // leaderboard
 
@@ -8,11 +6,11 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
-            return
+            return;
         }
 
         const lbEmbed = client.extends.embed();
-        lbEmbed.title = 'The Leaderboard'
+        lbEmbed.title = 'The Leaderboard';
         lbEmbed.description = `place holeder for now. To be added, player, credits, alliances, mining, battles...`;
 
         lbEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
@@ -21,14 +19,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         await message.channel.send({ embeds: [lbEmbed] });
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Leaderboard command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "Leaderboard command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("leaderboard", errorId)],
+            embeds: [client.extends.errorEmbed("leaderboard", errorId)],
         });
     }
 

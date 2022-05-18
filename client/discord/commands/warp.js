@@ -1,5 +1,3 @@
-const Grid = require('../library/map/grid');
-
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
 
@@ -8,7 +6,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
-            return
+            return;
         }
 
         const errorMsg = async () => {
@@ -19,7 +17,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             await message.channel.send({
                 embeds: [embedMsg], components: [], files: [], attachments: []
             });
-        }
+        };
 
         // using args from the command entered for coordinates to warp to
         // example: 23 56 0 (x, y, z)
@@ -35,7 +33,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const y = args[1] || null;
         const z = 0;
 
-        let returnData = await client.requester.warpTo(message.member.user, {
+        await client.requester.warpTo(message.member.user, {
             toCoord: {
                 x: x,
                 y: y,
@@ -44,14 +42,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         });
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Warp command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "Warp command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("warp", errorId)],
+            embeds: [client.extends.errorEmbed("warp", errorId)],
         });
     }
 

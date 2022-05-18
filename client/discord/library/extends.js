@@ -4,7 +4,8 @@ const {
     MessageEmbed,
     MessageSelectMenu,
     MessageAttachment,
-    Modal
+    Modal,
+    TextInputComponent
 } = require('discord.js');
 
 module.exports = client => {
@@ -17,6 +18,13 @@ module.exports = client => {
         },
         attachment: function(img, name) {
             return new MessageAttachment(img, name);
+        },
+        textInput: function(blueprint) {
+            return new TextInputComponent()
+                .setCustomId(blueprint.id)
+                .setLabel(blueprint.label)
+                .setRequired(blueprint.required ? true : false)
+                .setStyle(blueprint.style); //IMPORTANT: Text Input Component Style can be 'SHORT' or 'LONG'
         },
         embedPages: function() {
 

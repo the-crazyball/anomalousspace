@@ -2,7 +2,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     const { customEmojis: emojis } = client;
 
     try {
-        // about          
+        // about
         const aboutEmbed = client.extends.embed();
         aboutEmbed.title = `About Anomalous Space`;
         aboutEmbed.description = `> Explore a vast procedurally generated universe with millions of planets, stars and resources to conquer while avoiding or finding what these unknown anomalies are all about!`;
@@ -31,8 +31,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             embeds: [client.extends.errorEmbed("about", errorId)],
         });
     }
-    
-
 };
 
 exports.conf = {

@@ -1,5 +1,3 @@
-const { MessageActionRow, TextInputComponent } = require('discord.js');
-
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
     //const { customEmojis: emojis } = client;
@@ -59,8 +57,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     });
 
                     client.settings.user.set(message.member.user.id, { prefix: prefixInput });
-
-                    console.log({ prefixInput });
                 };
                 i.message.modalSubmitCb = modalSubmitCb;
 
@@ -68,49 +64,21 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 modal.setTitle('Set Prefix');
                 modal.setCustomId('modal_userPrefix');
 
-                const favoriteColorInput = new TextInputComponent()
-                    .setCustomId('prefixInput')
-                    .setLabel("Enter a new prefix")
-                    .setMinLength(1)
-                    .setRequired(true)
-                    .setValue(settings.prefix)
-                    .setStyle('SHORT'); //IMPORTANT: Text Input Component Style can be 'SHORT' or 'LONG'
+                const prefixInput = client.extends.textInput({
+                    id: 'prefixInput',
+                    label: 'Enter a new prefix',
+                    required: true,
+                    style: 'SHORT'
+                });
 
-                const firstActionRow = new MessageActionRow().addComponents(favoriteColorInput);
+                prefixInput.setMinLength(1);
+                prefixInput.setValue(settings.prefix);
+
+                const firstActionRow = client.extends.row().addComponents(prefixInput);
 
                 modal.addComponents(firstActionRow);
 
                 await i.showModal(modal);
-
-                /*const prefixEmbed = client.extends.embed();
-                prefixEmbed.setDescription(`Enter a desired prefix.\n\n*Please type in your answer.*`);
-
-                await message.channel.send({
-                    embeds: [prefixEmbed]
-                });
-
-                const msgCollector = client.extends.messageCollector(i, 1);
-
-                msgCollector.on("end", async (collected, reason) => {
-                    if (reason === 'limit') {
-                          const prefixSuccessEmbed = client.extends.embed({ color: 'success' });
-                          prefixSuccessEmbed.setDescription(`Success! Your new prefix is now \`${collected.first().content}\`.`);
-
-                          await message.channel.send({
-                              embeds: [prefixSuccessEmbed]
-                          });
-
-                          client.settings.user.set(message.member.user.id, { prefix: collected.first().content });
-                    }
-                    if (reason === 'time') {
-                        const prefixFailureEmbed = client.extends.embed({ color: 'error' });
-                        prefixFailureEmbed.setDescription(`Failure! No answer was received. Please try again.`);
-
-                        await message.channel.send({
-                            embeds: [prefixFailureEmbed]
-                        });
-                    }
-                });*/
             }
         });
 

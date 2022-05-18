@@ -1,3 +1,3 @@
 module.exports = (client, modal) => { // eslint-disable-line no-unused-vars
-    console.log(modal);
+    // this doesn't appear to work
 };

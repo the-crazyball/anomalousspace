@@ -24,31 +24,31 @@ module.exports = client => {
 
             if (message) {
                 errorEmbed.addField(
-                  "Message Content:",
-                  client.helpers.substring(message.content, 1000)
+                    "Message Content:",
+                    client.helpers.substring(message.content, 1000)
                 );
             }
 
             if (interaction) {
                 errorEmbed.addField(
-                  "Interaction Details",
-                  client.helpers.substring(
-                    `${interaction.commandName} ${
-                      interaction.isCommand()
-                        ? interaction.options.getSubcommand() || ""
-                        : ""
-                    }`,
-                    1000
-                  )
+                    "Interaction Details",
+                    client.helpers.substring(
+                        `${interaction.commandName} ${
+                            interaction.isCommand()
+                                ? interaction.options.getSubcommand() || ""
+                                : ""
+                        }`,
+                        1000
+                    )
                 );
                 errorEmbed.addField(
-                  "Interaction Options",
-                  client.helpers.substring(
-                    interaction.options.data[0].options
-                      ?.map((o) => `\`${o.name}\`: ${o.value}`)
-                      .join(", ") || "no options",
-                    1000
-                  )
+                    "Interaction Options",
+                    client.helpers.substring(
+                        interaction.options.data[0].options
+                            ?.map((o) => `\`${o.name}\`: ${o.value}`)
+                            .join(", ") || "no options",
+                        1000
+                    )
                 );
             }
 
@@ -56,5 +56,5 @@ module.exports = client => {
 
             return errorId;
         }
-    }
-}
+    };
+};

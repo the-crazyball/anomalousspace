@@ -1,26 +1,21 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-    const settings = message.settings;
-    const { customEmojis: emojis } = client;
-
     try {
         let userData = await client.requester.getUser(message.member.user);
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
-            return
+            return;
         }
-
-        
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Sector command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "Sector command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("sector", errorId)],
+            embeds: [client.extends.errorEmbed("sector", errorId)],
         });
     }
 };
