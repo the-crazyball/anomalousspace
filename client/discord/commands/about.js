@@ -1,10 +1,8 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-    const settings = message.settings;
     const { customEmojis: emojis } = client;
 
     try {
-        // about
-
+        // about          
         const aboutEmbed = client.extends.embed();
         aboutEmbed.title = `About Anomalous Space`;
         aboutEmbed.description = `> Explore a vast procedurally generated universe with millions of planets, stars and resources to conquer while avoiding or finding what these unknown anomalies are all about!`;
@@ -23,14 +21,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "About command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "About command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("about", errorId)],
+            embeds: [client.extends.errorEmbed("about", errorId)],
         });
     }
     

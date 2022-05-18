@@ -1,5 +1,4 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-    const settings = message.settings;
     const { customEmojis: emojis } = client;
 
     try {
@@ -7,7 +6,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
-            return
+            return;
         }
 
         const title = `Quick Information`;
@@ -18,7 +17,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         sectorEmbed.addField('Galaxy', `${emojis.get('bullet')} Name: \`${userData.ship.galaxy.name}\`\n${emojis.get('bullet')} Sectors: \`${userData.ship.galaxy.sectors * 4}\`\n${emojis.get('bullet')} Type: \`${userData.ship.galaxy.type}\`\n${emojis.get('bullet')} Position: \`${userData.ship.galaxy.x}\`,\`${userData.ship.galaxy.y}\`,\`0\`\n${emojis.get('bullet')} Ships Visited: \`${userData.ship.galaxy.visitedBy.length}\``, true);
         sectorEmbed.addField('Sector', `${emojis.get('bullet')} Name: \`${userData.ship.sector.name}\`\n${emojis.get('bullet')} Position: \`${userData.ship.sector.x}\`,\`${userData.ship.sector.y}\`,\`0\`\n${emojis.get('bullet')} Ships Visited: \`${userData.ship.sector.visitedBy.length}\`\n${emojis.get('bullet')} Ships Scanned: \`${userData.ship.sector.scannedBy.length}\``, true);
 
-
         await message.channel.send({
             embeds: [sectorEmbed],
             components: []
@@ -26,14 +24,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Info command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "Info command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("info", errorId)],
+            embeds: [client.extends.errorEmbed("info", errorId)],
         });
     }
 };

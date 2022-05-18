@@ -20,5 +20,8 @@
     "humanize-duration": "^3.27.1",
     "systeminformation": "^5.11.9",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0"
   }
 }

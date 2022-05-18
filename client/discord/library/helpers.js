@@ -46,12 +46,12 @@ module.exports = client => {
             return /^-?\d+$/.test(value);
         },
         pointyHexPixel: function(center, size, i)  {
-            const angleDeg = 60 * i - 30
-            const angleRad = Math.PI / 180 * angleDeg
-            return { x: center.x + size * Math.cos(angleRad), y: center.y + size * Math.sin(angleRad)}
+            const angleDeg = 60 * i - 30;
+            const angleRad = Math.PI / 180 * angleDeg;
+            return { x: center.x + size * Math.cos(angleRad), y: center.y + size * Math.sin(angleRad) };
         },
         createMapCanvas: async function(width, height) {
-            client.canvas.registerFont('../shared/fonts/unispace/unispace rg.ttf', { family: 'Unispace Regular' })
+            client.canvas.registerFont('../shared/fonts/unispace/unispace rg.ttf', { family: 'Unispace Regular' });
             const canvas = client.canvas.createCanvas(width, height);
             const context = canvas.getContext('2d');
             const background = await client.canvas.loadImage('../shared/images/back.jpg');
@@ -64,15 +64,15 @@ module.exports = client => {
             return {
                 canvas,
                 context
-            }
+            };
         },
         substring: function(str, len) {
             return str.length > len ? str.substring(0, len - 3) + "..." : str;
         },
-        // toProperCase(String) returns a proper-cased string such as: 
+        // toProperCase(String) returns a proper-cased string such as:
         // toProperCase("Mary had a little lamb") returns "Mary Had A Little Lamb"
         toProperCase: function(string) {
             return string.replace(/([^\W_]+[^\s-]*) */g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
         }
-    }
-}
+    };
+};

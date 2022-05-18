@@ -1,6 +1,4 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-    const settings = message.settings;
-
     try {
         // coordinates
 
@@ -8,7 +6,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
-            return
+            return;
         }
 
         const coordEmbed = client.extends.embed();
@@ -17,17 +15,16 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         await message.channel.send({ embeds: [coordEmbed] });
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Coordinates command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "Coordinates command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("coordinates", errorId)],
+            embeds: [client.extends.errorEmbed("coordinates", errorId)],
         });
     }
-
 };
 
 exports.conf = {

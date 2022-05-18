@@ -1,7 +1,6 @@
 const humanizeDuration = require('humanize-duration');
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-    const settings = message.settings;
     const { customEmojis: emojis } = client;
 
     try {
@@ -9,7 +8,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
-            return
+            return;
         }
 
         const cooldowns = await client.requester.getCooldowns(message.member.user);
@@ -24,7 +23,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         sectorEmbed.addField('Ship', `${emojis.get('bullet')} Name: \`${userData.ship.name}\`\n${emojis.get('bullet')} Class: \`${userData.ship.class}\`\n${emojis.get('bullet')} Level: \`${userData.ship.level}\``, true);
         sectorEmbed.addField('Cooldowns', `${emojis.get('bullet')} Mining: \`${cooldowns.miningRemaining ? humanizeDuration(cooldowns.miningRemaining, { maxDecimalPoints: 0 }) : 'Available'}\``, true);
-        
+
         sectorEmbed.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() });
         sectorEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
         sectorEmbed.setFooter({ text: `${client.config.copyright}` });
@@ -36,14 +35,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "User command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "User command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("user", errorId)],
+            embeds: [client.extends.errorEmbed("user", errorId)],
         });
     }
 };

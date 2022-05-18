@@ -15,7 +15,7 @@ New to Anomalous Space type \`${message.settings.prefix} play\``;
             helpEmbed.addField('Gameplay', `\`scan\`, \`jump\`, \`warp\`, \`map\`, \`coordinates\`, \`leaderboard\`, \`about\``, false);
             helpEmbed.addField('Links', `${emojis.get('bullet')} [Website](${client.config.website})\n${emojis.get('bullet')} [Play & Support Server](${client.config.supportServer})`, false);
 
-            helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
+            helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() });
             helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
             helpEmbed.setFooter({ text: `${client.config.copyright}` });
 
@@ -27,7 +27,7 @@ New to Anomalous Space type \`${message.settings.prefix} play\``;
                 command = container.commands.get(command) ?? container.commands.get(container.aliases.get(command));
 
                 if (level < container.levelCache[command.conf.permLevel]) return;
-                
+
                 const helpEmbed = client.extends.embed();
                 helpEmbed.title = `${client.helpers.toProperCase(command.help.name)} Help`;
                 helpEmbed.description = `> ${command.help.description}
@@ -36,7 +36,7 @@ New to Anomalous Space type \`${message.settings.prefix} play\``;
 
 **Aliases** ${command.conf.aliases.length ? command.conf.aliases.map(alias => `\`${alias}\``).join(', ') : 'none'}`;
 
-                helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() })
+                helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() });
                 helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
                 helpEmbed.setFooter({ text: `${client.config.copyright}` });
                 await message.channel.send({ embeds: [helpEmbed] });
@@ -44,14 +44,14 @@ New to Anomalous Space type \`${message.settings.prefix} play\``;
         }
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Help command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "Help command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("help", errorId)],
+            embeds: [client.extends.errorEmbed("help", errorId)],
         });
     }
 

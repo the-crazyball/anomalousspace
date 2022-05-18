@@ -3,7 +3,8 @@ const {
     MessageButton,
     MessageEmbed,
     MessageSelectMenu,
-    MessageAttachment
+    MessageAttachment,
+    Modal
 } = require('discord.js');
 
 module.exports = client => {
@@ -15,10 +16,10 @@ module.exports = client => {
                 .addOptions(blueprint.options);
         },
         attachment: function(img, name) {
-            return new MessageAttachment(img, name)
+            return new MessageAttachment(img, name);
         },
         embedPages: function() {
-            
+
         },
         errorEmbed: function(commandName, errorId) {
             const errorEmbed = this.embed({ color: 'error' });
@@ -30,8 +31,11 @@ module.exports = client => {
             errorEmbed.addField('Error ID:', `\`${errorId}\``);
             errorEmbed.setTimestamp();
             errorEmbed.setFooter({ text: `${client.config.copyright}` });
-           
+
             return errorEmbed;
+        },
+        modal: function() {
+            return new Modal();
         },
         embed: function(blueprint = {}) {
             const colors = {
@@ -43,17 +47,17 @@ module.exports = client => {
             };
 
             return new MessageEmbed()
-                .setColor(blueprint.color ? colors[blueprint.color] : colors['default'])
+                .setColor(blueprint.color ? colors[blueprint.color] : colors['default']);
         },
         row: function() {
-            return new MessageActionRow()
+            return new MessageActionRow();
         },
         button: function(blueprint) {
             return new MessageButton()
                 .setCustomId(blueprint.id)
                 .setLabel(blueprint.label)
                 .setStyle(blueprint.style)
-                .setEmoji(blueprint.emoji)
+                .setEmoji(blueprint.emoji);
         },
         messageCollector: function(interaction, max) {
             const filter = (m) => !m.author.bot && m.author.id === interaction.user.id;
@@ -76,5 +80,5 @@ module.exports = client => {
                 time: 1200000 // in (ms) buttons timeout after this time
             });
         }
-    }
-}
+    };
+};

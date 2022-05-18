@@ -1,6 +1,8 @@
+const { MessageActionRow, TextInputComponent } = require('discord.js');
+
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
-    const { customEmojis: emojis } = client;
+    //const { customEmojis: emojis } = client;
 
     try {
         // settings
@@ -18,19 +20,18 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         msgEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
         msgEmbed.setFooter({ text: `${client.config.copyright}` });
 
-
         const btnPrefix = client.extends.button({
             id: 'btn_prefix',
             label: 'Set Prefix',
             style: 'PRIMARY'
-        })
+        });
 
         const buttons = client.extends.row()
             .addComponents(btnPrefix);
 
         components.push(buttons);
 
-        const settingsMessage = await message.channel.send({ 
+        const settingsMessage = await message.channel.send({
             embeds: [msgEmbed],
             components: components
         });
@@ -38,8 +39,50 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const collector = client.extends.collector(settingsMessage, message.author);
 
         collector.on('collect', async (i) => {
+            if (i.customId === "myModal") {
+                console.log('test');
+            }
             if (i.customId === "btn_prefix") {
-                const prefixEmbed = client.extends.embed();
+
+                // this is where the response will come from the modal submit
+                // called from the interactionCreate event, until there is a
+                // better of doing this, this is the best option
+                const modalSubmitCb = async (fields) => {
+                    const prefixInput = fields.getTextInputValue('prefixInput');
+
+                    const prefixSuccessEmbed = client.extends.embed({ color: 'success' });
+                    prefixSuccessEmbed.setDescription(`Success! Your new prefix is now \`${prefixInput}\`.`);
+
+                    await settingsMessage.edit({
+                        embeds: [prefixSuccessEmbed],
+                        components: []
+                    });
+
+                    client.settings.user.set(message.member.user.id, { prefix: prefixInput });
+
+                    console.log({ prefixInput });
+                };
+                i.message.modalSubmitCb = modalSubmitCb;
+
+                const modal = client.extends.modal();
+                modal.setTitle('Set Prefix');
+                modal.setCustomId('modal_userPrefix');
+
+                const favoriteColorInput = new TextInputComponent()
+                    .setCustomId('prefixInput')
+                    .setLabel("Enter a new prefix")
+                    .setMinLength(1)
+                    .setRequired(true)
+                    .setValue(settings.prefix)
+                    .setStyle('SHORT'); //IMPORTANT: Text Input Component Style can be 'SHORT' or 'LONG'
+
+                const firstActionRow = new MessageActionRow().addComponents(favoriteColorInput);
+
+                modal.addComponents(firstActionRow);
+
+                await i.showModal(modal);
+
+                /*const prefixEmbed = client.extends.embed();
                 prefixEmbed.setDescription(`Enter a desired prefix.\n\n*Please type in your answer.*`);
 
                 await message.channel.send({
@@ -52,7 +95,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     if (reason === 'limit') {
                           const prefixSuccessEmbed = client.extends.embed({ color: 'success' });
                           prefixSuccessEmbed.setDescription(`Success! Your new prefix is now \`${collected.first().content}\`.`);
-  
+
                           await message.channel.send({
                               embeds: [prefixSuccessEmbed]
                           });
@@ -62,29 +105,27 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     if (reason === 'time') {
                         const prefixFailureEmbed = client.extends.embed({ color: 'error' });
                         prefixFailureEmbed.setDescription(`Failure! No answer was received. Please try again.`);
-  
+
                         await message.channel.send({
                             embeds: [prefixFailureEmbed]
                         });
                     }
-                });
+                });*/
             }
         });
 
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Settings command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "Settings command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("settings", errorId)],
+            embeds: [client.extends.errorEmbed("settings", errorId)],
         });
     }
-    
-
 };
 
 exports.conf = {
