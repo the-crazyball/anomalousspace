@@ -10,7 +10,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
-            return
+            return;
         }
 
         let mapData = null;
@@ -27,7 +27,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             await message.channel.send({
                 embeds: [embedMsg], components: [], files: [], attachments: []
             });
-        }
+        };
 
         const jumpFail = async ({ x, y, reason }) => {
             const embedMsg = client.extends.embed();
@@ -37,13 +37,13 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             await message.channel.send({
                 embeds: [embedMsg], components: [], files: [], attachments: []
             });
-        }
+        };
 
         const generateJumpMap = async ({ jumpTo = null }) => {
 
             const { canvas, context } = await client.helpers.createMapCanvas(650, 635);
 
-            const d = Math.abs(depth)
+            const d = Math.abs(depth);
             const gameWidth = canvas.width;
 
             const hexagonWidth = gameWidth / ((d * 2) + 1);
@@ -53,15 +53,13 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
             hexGrid.allToList().map(async h => {
 
-                let exists = true;
-                
                 context.strokeStyle = "#38abc9";
-        
-                const pixels = [0, 1, 2, 3, 4, 5].map(v => client.helpers.pointyHexPixel(h.centerPixel, h.size, v))
-                const startPixel = pixels[0]
-        
+
+                const pixels = [0, 1, 2, 3, 4, 5].map(v => client.helpers.pointyHexPixel(h.centerPixel, h.size, v));
+                const startPixel = pixels[0];
+
                 const sectorData = mapData.hexes.find(mapHex => mapHex.q === h.q && mapHex.r === h.r);
-        
+
                 if (sectorData.scanned) {
                     if (sectorData.type) {
                         if (sectorData.type.class === 'AN') {
@@ -76,14 +74,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     const imgSize = 100;
                     context.drawImage(client.images.get('unknown'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
                 }
-        
-                context.beginPath()
-                context.moveTo(startPixel.x, startPixel.y)
+
+                context.beginPath();
+                context.moveTo(startPixel.x, startPixel.y);
                 for (let i = 1; i <= 5; i++) {
-                    context.lineTo(pixels[i].x, pixels[i].y)
+                    context.lineTo(pixels[i].x, pixels[i].y);
                 }
-                context.lineTo(startPixel.x, startPixel.y)
-        
+                context.lineTo(startPixel.x, startPixel.y);
+
                 if (sectorData.visited) {
                     context.fillStyle = 'rgba(56, 171, 201, 0.1)';
                 } else {
@@ -95,34 +93,32 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 } else {
                     context.lineWidth = 1;
                 }
-                context.stroke()
-                
-                context.closePath()
-        
+                context.stroke();
+
+                context.closePath();
+
                 context.font = "25px Unispace Regular";
                 context.fillStyle = "#ffffff";
                 const x = userData.ship.position.x - h.q;
                 const y = userData.ship.position.y - h.r;
-                const textWidth = context.measureText(`${x},${y}`).width
+                const textWidth = context.measureText(`${x},${y}`).width;
                 context.fillText(`${x},${y}`, h.centerPixel.x - textWidth / 2, h.centerPixel.y + h.height / 2 - 40);
-        
-        
+
                 if (h.q === 0 && h.r === 0) {
-                    context.beginPath()
+                    context.beginPath();
                     context.lineWidth = 1;
                     context.arc(h.centerPixel.x, h.centerPixel.y, h.size-15, 0, 2 * Math.PI);
                     context.strokeStyle = "#ffffff";
-                    context.stroke()
-                    context.closePath()
-                } 
+                    context.stroke();
+                    context.closePath();
+                }
 
-                
             });
 
             if(jumpTo) {
                 const toSector = jumpTo.split(',');
                 const sectorData = hexGrid.allToList().find(hex => hex.q === parseInt(toSector[0]) && hex.r === parseInt(toSector[1]));
-                
+
                 // create line and arrow
                 const x1 = 0;
                 const y1 = 0;
@@ -137,13 +133,13 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 const middleX = dx * arrow + x1;
                 const middleY = dy * arrow + y1;
 
-                context.beginPath()
+                context.beginPath();
                 context.lineWidth = 1;
-                context.moveTo(0, 0)
-                context.lineTo(middleX, middleY)
+                context.moveTo(0, 0);
+                context.lineTo(middleX, middleY);
                 context.strokeStyle = 'rgba(19, 165, 28, 1.0)';
-                context.stroke()
-                context.closePath()
+                context.stroke();
+                context.closePath();
 
                 // draw arrow head
                 dx = x2 - middleX;
@@ -154,30 +150,29 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 context.lineTo(middleX - 0.5 * dy, middleY + 0.5 * dx);
                 context.lineTo(x2, y2);
                 context.closePath();
-                context.fill()
+                context.fill();
 
                 // highlight hex
                 const pixels = [0, 1, 2, 3, 4, 5].map(v => client.helpers.pointyHexPixel(sectorData.centerPixel, sectorData.size, v));
                 const startPixel = pixels[0];
 
-                context.beginPath()
-                context.moveTo(startPixel.x, startPixel.y)
+                context.beginPath();
+                context.moveTo(startPixel.x, startPixel.y);
                 for (let i = 1; i <= 5; i++) {
-                    context.lineTo(pixels[i].x, pixels[i].y)
+                    context.lineTo(pixels[i].x, pixels[i].y);
                 }
-                context.lineTo(startPixel.x, startPixel.y)
+                context.lineTo(startPixel.x, startPixel.y);
                 context.fillStyle = 'rgba(19, 165, 28, 1.0)';
                 context.lineWidth = 4;
-                context.stroke()
-                context.closePath()
+                context.stroke();
+                context.closePath();
             }
-    
 
             const attachment = client.extends.attachment(canvas.toBuffer(), `image${imageCounter}.png`);
             imageCounter++;
 
-            return attachment
-        }
+            return attachment;
+        };
 
         // using args from the command entered for coordinates to warp to
         // example: 23 56 0 (x, y, z)
@@ -186,19 +181,19 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         // if no coordinates entered show jump map with surrounding sectors that the ship can jump to
         // with the current jump engine level/class.
         if (!args[0]) {
-            
+
             mapData = await client.requester.getMap(message.member.user, { depth: depth });
 
             embedMsg = client.extends.embed();
             embedMsg.image = {
                 url: `attachment://image${imageCounter}.png`
-            }
+            };
 
             const sectorImage = await generateJumpMap({});
-        
+
             mapData.hexes.forEach(h => {
                 if (h.q === 0 && h.r === 0) {
-                    
+                    // empty
                 } else {
                     const x = userData.ship.position.x - h.q;
                     const y = userData.ship.position.y - h.r;
@@ -206,9 +201,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         label: `${x}, ${y}`,
                         description: `Jumping to this sector will cost 0 fuel.`,
                         value: `${h.q},${h.r}`
-                    })
+                    });
                 }
-            })
+            });
 
             const sectorSelect = client.extends.select({
                 id: 'select_sector',
@@ -216,10 +211,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 options: sectors
             });
 
-            const row = client.extends.row().addComponents(sectorSelect)
+            const row = client.extends.row().addComponents(sectorSelect);
 
             embedMsg.title = `Jump`;
-        
+
             const jumpMsg = await message.channel.send({
                 embeds: [embedMsg], components: [row], files: [sectorImage], attachments: []
             });
@@ -244,9 +239,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     });
 
                     if (returnData.canJump) {
-                        embedMsg.title = 'Jump Completed'
+                        embedMsg.title = 'Jump Completed';
                         embedMsg.description = `You successfully jumped to sector \`${x}\`,\`${y}\`.`;
-                
+
                         await jumpMsg.edit({
                             embeds: [embedMsg], components: [], files: [], attachments: []
                         });
@@ -264,7 +259,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
                     embedMsg.image = {
                         url: `attachment://image${imageCounter}.png`
-                    }
+                    };
 
                     const sectorImage = await generateJumpMap({ jumpTo: i.values[0] });
 
@@ -272,9 +267,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         id: 'btn_jump',
                         label: 'Activate Jump',
                         style: 'PRIMARY'
-                    })
+                    });
 
-                    const row2 = client.extends.row().addComponents(btnJump)
+                    const row2 = client.extends.row().addComponents(btnJump);
 
                     await jumpMsg.edit({
                         embeds: [embedMsg], components: [row, row2], files: [sectorImage], attachments: []
@@ -282,7 +277,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 }
             });
 
-            return
+            return;
         }
 
         // if coordinates entered then attempt to jump there.
@@ -307,7 +302,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         if (returnData.canJump) {
             embedMsg = client.extends.embed();
-            embedMsg.title = 'Jump Completed'
+            embedMsg.title = 'Jump Completed';
             embedMsg.description = `You successfully jumped to sector \`${x}\`,\`${y}\`.`;
 
             await message.channel.send({
@@ -318,14 +313,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         }
     } catch (err) {
         const errorId = await client.errorHandler.send(
-          "Jump command",
-          err,
-          message.guild.name,
-          message,
-          undefined
+            "Jump command",
+            err,
+            message.guild.name,
+            message,
+            undefined
         );
         await message.channel.send({
-          embeds: [client.extends.errorEmbed("jump", errorId)],
+            embeds: [client.extends.errorEmbed("jump", errorId)],
         });
     }
 };
