@@ -54,7 +54,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         if (stellarObject.class === 'AN') {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
-            sectorEmbed.description = `WARNING! Scan detected and anomaly in this sector. To further analyze this anomaly you will need to send a probe to get detailed information.
+            sectorEmbed.description = `WARNING! Scan detected and anomaly in this sector. To further analyze this anomaly you will need to send a drone to get detailed information.
 
 **Position** \`${userData.ship.position.x}\`,\`${userData.ship.position.y}\`,\`${userData.ship.position.z}\``;
 
