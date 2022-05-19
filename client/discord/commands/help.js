@@ -12,7 +12,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
 New to Anomalous Space type \`${message.settings.prefix} play\``;
 
-            helpEmbed.addField('Gameplay', `\`scan\`, \`jump\`, \`warp\`, \`map\`, \`coordinates\`, \`leaderboard\`, \`about\``, false);
+            helpEmbed.addField('Gameplay', `\`scan\`, \`jump\`, \`warp\`, \`map\`, \`coordinates\`, \`leaderboard\`, \`mine\`, \`settings\`, \`user\`, \`about\``, false);
             helpEmbed.addField('Links', `${emojis.get('bullet')} [Website](${client.config.website})\n${emojis.get('bullet')} [Play & Support Server](${client.config.supportServer})`, false);
 
             helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() });
