@@ -135,9 +135,6 @@ module.exports = class Game {
       userData.ship.galaxy = galaxy;
     }
 
-    userData.ship.position.x = blueprint.toCoord.x;
-    userData.ship.position.y = blueprint.toCoord.y;
-
     let outsideBounds = false;
 
     // check if outside of galaxy bounds
@@ -156,6 +153,9 @@ module.exports = class Game {
     }
 
     if (!outsideBounds) {
+      userData.ship.position.x = blueprint.toCoord.x;
+      userData.ship.position.y = blueprint.toCoord.y;
+
       const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 } });
 
       userData.ship.sector = sector;
