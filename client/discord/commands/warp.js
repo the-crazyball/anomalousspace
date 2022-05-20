@@ -33,12 +33,30 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const y = args[1] || null;
         const z = 0;
 
-        await client.requester.warpTo(message.member.user, {
+        const warpResult = await client.requester.warpTo(message.member.user, {
             toCoord: {
                 x: x,
                 y: y,
                 z: z
             }
+        });
+
+        let resultEmbed = {};
+
+        if (warpResult.outsideBounds) {
+            resultEmbed = client.extends.embed({ color: 'error' });
+            resultEmbed.title = `Oops...`;
+            resultEmbed.description = `> You are trying to warp outside this galaxy, we wouldn't want you to get lost in the void!\n
+**Galaxy Boundary** \`${userData.ship.galaxy.sectors}\` in either \`x\` or \`y\` axis from positive to negative.`;
+        } else {
+            resultEmbed = client.extends.embed();
+            resultEmbed.description = `Warp successful!\n
+**Current Position** \`${x}\`,\`${y}\`,\`${z}\``;
+        }
+
+        await message.channel.send({
+            embeds: [resultEmbed],
+            components: []
         });
     } catch (err) {
         const errorId = await client.errorHandler.send(
