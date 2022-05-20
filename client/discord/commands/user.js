@@ -28,9 +28,25 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         sectorEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
         sectorEmbed.setFooter({ text: `${client.config.copyright}` });
 
-        await message.channel.send({
+        const btnShip = client.extends.button({
+            id: 'btn_ship',
+            label: 'Ship',
+            style: 'PRIMARY'
+        });
+
+        const row = client.extends.row().addComponents(btnShip);
+
+        const userMsg = await message.channel.send({
             embeds: [sectorEmbed],
-            components: []
+            components: [row]
+        });
+
+        const collector = client.extends.collector(userMsg, message.author);
+
+        collector.on('collect', async (i) => {
+            if (i.customId === "btn_ship") {
+                await client.container.commands.get('ship').run(client, message, args, level);
+            }
         });
 
     } catch (err) {

@@ -15,19 +15,28 @@ const schema = mongoose.Schema({
         z: { type: Number, default: 0 }
     },
 
-    warpEngine: {
+    warpDrive: {
         fuel: { type: Number, default: 0 },
         fuelMax: { type: Number, default: 100 },
-        class: { type: Number, default: 1 }
+        class: { type: Number, default: 1 },
+        level: { type: Number, default: 1 },
+        levelMax: { type: Number, default: 3 }
     },
-    jumpEngine: {
+    jumpDrive: {
         fuel: { type: Number, default: 10 },
         fuelMax: { type: Number, default: 10 },
-        class: { type: Number, default: 1 }
+        class: { type: Number, default: 1 },
+        level: { type: Number, default: 1 },
+        levelMax: { type: Number, default: 1 }
     },
-
-    armor: {},
-    shields: {},
+    shields: {
+        level: { type: Number, default: 1 },
+        levelMax: { type: Number, default: 1 }
+    },
+    sensors: {
+        level: { type: Number, default: 1 },
+        levelMax: { type: Number, default: 5 }
+    },
     cargo: [{
         type: { type: String },
         amount: { type: Number }

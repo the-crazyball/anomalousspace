@@ -46,6 +46,9 @@ const init = async () => {
     emojis.set('resource:plutonium', '<:resource_plutonium:962030124037963867>');
     emojis.set('resource:uranium', '<:resource_uranium:962030123824083044>');
     emojis.set('resource:rock', '<:resource_rock2:962029930466668595>');
+    emojis.set('bar:on', '<:bar_on:976936352279052308>');
+    emojis.set('bar:off', '<:bar_off:976936352111263784>');
+    emojis.set('bar:disabled', '<:bar_disabled:976940680347779102>');
 
     client.customEmojis = emojis;
 
