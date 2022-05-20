@@ -138,26 +138,46 @@ module.exports = class Game {
     userData.ship.position.x = blueprint.toCoord.x;
     userData.ship.position.y = blueprint.toCoord.y;
 
-    const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 } });
+    let outsideBounds = false;
 
-    userData.ship.sector = sector;
-
-    const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString());
-   
-    if (!visited) {
-      userData.stats.discoveredSectors += 1;
-      sector.visitedBy.push(userData._id);
-      sector.save();
+    // check if outside of galaxy bounds
+    if (blueprint.toCoord.x > userData.ship.galaxy.sectors && blueprint.toCoord.x >= 0) {
+      outsideBounds = true;
+    }
+    if (blueprint.toCoord.x < -userData.ship.galaxy.sectors && blueprint.toCoord.x <= 0) {
+      outsideBounds = true;
     }
 
-    userData.stats.warps += 1;
-
-    await userData.save();
-    await userData.ship.save();
-
-    const result = {  
-      cost: 'fuel cost'
+    if (blueprint.toCoord.y > userData.ship.galaxy.sectors && blueprint.toCoord.y >= 0) {
+      outsideBounds = true;
     }
+    if (blueprint.toCoord.y < -userData.ship.galaxy.sectors && blueprint.toCoord.y <= 0) {
+      outsideBounds = true;
+    }
+
+    if (!outsideBounds) {
+      const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x: blueprint.toCoord.x, y: blueprint.toCoord.y, z: 0 } });
+
+      userData.ship.sector = sector;
+
+      const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString());
+    
+      if (!visited) {
+        userData.stats.discoveredSectors += 1;
+        sector.visitedBy.push(userData._id);
+        sector.save();
+      }
+
+      userData.stats.warps += 1;
+
+      await userData.save();
+      await userData.ship.save();
+    }
+
+    const result = {
+      outsideBounds
+    }
+
     return result;
   }
   async getMap(user, blueprint) {
