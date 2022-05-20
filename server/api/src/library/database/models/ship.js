@@ -38,9 +38,16 @@ const schema = mongoose.Schema({
         levelMax: { type: Number, default: 5 }
     },
     cargo: [{
+        name: { type: String },
+        quantity: { type: Number },
         type: { type: String },
         amount: { type: Number }
     }],
+    miningLaser: {
+        class: { type: Number, default: 1 },
+        level: { type: Number, default: 1 },
+        levelMax: { type: Number, default: 1 }
+    },
     fuel: { type: Number },
 
     /* COOLDOWN */

@@ -18,7 +18,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         ship.cargo.forEach(item => {
             // TODO change cargo amount to quantity and add name
-            items += `\`${item.amount}\` x \`${item.type}\`\n`;
+            items += `\`${item.quantity}\` x \`${item.name}\`\n`;
         });
 
         msgEmbed.description += items;

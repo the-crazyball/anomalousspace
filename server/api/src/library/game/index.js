@@ -74,7 +74,7 @@ module.exports = class Game {
     const y = userData.ship.position.y;
     const z = userData.ship.position.z;
 
-    const d = Math.abs(userData.ship.jumpEngine.class);
+    const d = Math.abs(userData.ship.jumpDrive.class);
 
     // this is a check to make sure we aren't jumping to a sector outside our jump range
     let canJump = false;
@@ -245,26 +245,37 @@ module.exports = class Game {
     let hasAsteroids = true;
 
     const userData = await this.getUser(user, false);
+    const ship = userData.ship;
 
-    let asteroidsTotal = userData.ship.sector.asteroids;
+    let asteroidsTotal = ship.sector.asteroids;
 
-    if ((now - userData.ship.cooldowns.mining < cd || ignoreCooldown) && userData.ship.cooldowns.mining > 0) {
+    if ((now - ship.cooldowns.mining < cd || ignoreCooldown) && ship.cooldowns.mining > 0) {
       inCooldown = true;
-      cdRemaining = cd - (now - userData.ship.cooldowns.mining);
+      cdRemaining = cd - (now - ship.cooldowns.mining);
     } else if (asteroidsTotal) {
-      amountMined = 10;
-      userData.ship.cargo.push({ type: 'asteroids', amount: amountMined });
+      // determine the amount based on the mining laser level.
+      // randomly generated
+      amountMined = rndInt(5,15) * ship.miningLaser.level;
+
+      // check if the item exists
+      const cargoItem = ship.cargo.find(item => item.name === 'Asteroid Chunk' && item.type === 'asteroids');
+
+      if (cargoItem) {
+        cargoItem.quantity += amountMined;
+      } else {
+        ship.cargo.push({ name: 'Asteroid Chunk', type: 'asteroids', quantity: amountMined });
+      }
 
       // add cooldown
-      userData.ship.cooldowns.mining = new Date().getTime();
+      ship.cooldowns.mining = new Date().getTime();
 
-      userData.ship.sector.asteroids -= amountMined;
+      ship.sector.asteroids -= amountMined;
       asteroidsTotal -= amountMined;
 
       userData.stats.mining += 1;
 
-      await userData.ship.save();
-      await userData.ship.sector.save();
+      await ship.save();
+      await ship.sector.save();
       await userData.save();
     } else {
       hasAsteroids = false;
