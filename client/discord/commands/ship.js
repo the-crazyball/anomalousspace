@@ -26,6 +26,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         msgEmbed.addField('Jump Drive', `**»** Level: \`${ship.jumpDrive.level}\`/\`${ship.jumpDrive.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}`, false);
         msgEmbed.addField('Warp Drive', `**»** Level: \`${ship.warpDrive.level}\`/\`${ship.warpDrive.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:off')}${emojis.get('bar:off')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}
 **»** Fuel: \`${ship.warpDrive.fuel}\`/\`${ship.warpDrive.fuelMax}\``, false);
+        msgEmbed.addField('Mining Lasers', `**»** Level: \`${ship.miningLaser.level}\`/\`${ship.miningLaser.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}`, false);
 
         msgEmbed.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() });
         msgEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
