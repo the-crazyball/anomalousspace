@@ -187,6 +187,8 @@ module.exports = class Game {
     const y = userData.ship.position.y;
     const z = userData.ship.position.z;
 
+    const sectorsMax = userData.ship.galaxy.sectors;
+
     const d = Math.abs(blueprint.depth);
 
     const hexes = new Map();
@@ -198,8 +200,24 @@ module.exports = class Game {
             const sectorX = x - q;
             const sectorY = y - r;
 
+            let outsideBounds = false;
+
+            // check of out of galaxy boundary sectors, should not be displayed.
+            if (sectorX > sectorsMax && sectorsMax >= 0) {
+              outsideBounds = true;
+            }
+            if (sectorX < -sectorsMax && sectorsMax <= 0) {
+              outsideBounds = true;
+            }
+        
+            if (sectorY > sectorsMax && sectorY >= 0) {
+              outsideBounds = true;
+            }
+            if (sectorY < -sectorsMax && sectorY <= 0) {
+              outsideBounds = true;
+            }
+
             // check if player visited this sector before.
-            // TODO this is an issue, adds to many records to the database, should only read not write.
             const sector = await this.client.database.findSector({ galaxy: userData.ship.galaxy, sector: { x: sectorX, y: sectorY, z: 0 } });
 
             if(sector) {
@@ -214,15 +232,15 @@ module.exports = class Game {
                     color: sector.stellarObjects[0].color
                   }
                   
-                  hexes.set([q, r], { type: systemType, q: q, r: r, visited: visited, scanned: scanned });
+                  hexes.set([q, r], { type: systemType, q: q, r: r, visited: visited, scanned: scanned, outsideBounds });
                 } else {
-                  hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned })
+                  hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned, outsideBounds })
                 }
               } else {
-                hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned })
+                hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned, outsideBounds })
               }
             } else {
-              hexes.set([q, r], { q: q, r: r, visited: false, scanned: false })
+              hexes.set([q, r], { q: q, r: r, visited: false, scanned: false, outsideBounds })
             }
             
           }

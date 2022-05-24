@@ -60,65 +60,66 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
                 const sectorData = mapData.hexes.find(mapHex => mapHex.q === h.q && mapHex.r === h.r);
 
-                if (sectorData.scanned) {
-                    if (sectorData.type) {
-                        if (sectorData.type.class === 'AN') {
-                            const imgSize = 100;
-                            context.drawImage(client.images.get('ofinterest'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
-                        } else if (sectorData.type.class === 'BH') {
-                            const imgSize = 100;
-                            context.drawImage(client.images.get('ofinterest'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
-                        } else if (sectorData.type.class === 'WH') {
-                            const imgSize = 100;
-                            context.drawImage(client.images.get('ofinterest'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
-                        } else {
-                            const imgSize = 70 * sectorData.type.diameter;
-                            context.drawImage(client.images.get(sectorData.type.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
+                if (!sectorData.outsideBounds) {
+                    if (sectorData.scanned) {
+                        if (sectorData.type) {
+                            if (sectorData.type.class === 'AN') {
+                                const imgSize = 100;
+                                context.drawImage(client.images.get('ofinterest'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
+                            } else if (sectorData.type.class === 'BH') {
+                                const imgSize = 100;
+                                context.drawImage(client.images.get('ofinterest'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
+                            } else if (sectorData.type.class === 'WH') {
+                                const imgSize = 100;
+                                context.drawImage(client.images.get('ofinterest'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
+                            } else {
+                                const imgSize = 70 * sectorData.type.diameter;
+                                context.drawImage(client.images.get(sectorData.type.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
+                            }
                         }
+                    } else {
+                        const imgSize = 100;
+                        context.drawImage(client.images.get('unknown'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
                     }
-                } else {
-                    const imgSize = 100;
-                    context.drawImage(client.images.get('unknown'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
-                }
 
-                context.beginPath();
-                context.moveTo(startPixel.x, startPixel.y);
-                for (let i = 1; i <= 5; i++) {
-                    context.lineTo(pixels[i].x, pixels[i].y);
-                }
-                context.lineTo(startPixel.x, startPixel.y);
-
-                if (sectorData.visited) {
-                    context.fillStyle = 'rgba(56, 171, 201, 0.1)';
-                } else {
-                    context.fillStyle = 'rgba(0, 0, 0, 0.2)';
-                }
-                context.fill();
-                if (h.q === 0 && h.r === 0) {
-                    context.lineWidth = 4;
-                } else {
-                    context.lineWidth = 1;
-                }
-                context.stroke();
-
-                context.closePath();
-
-                context.font = "25px Unispace Regular";
-                context.fillStyle = "#ffffff";
-                const x = userData.ship.position.x - h.q;
-                const y = userData.ship.position.y - h.r;
-                const textWidth = context.measureText(`${x},${y}`).width;
-                context.fillText(`${x},${y}`, h.centerPixel.x - textWidth / 2, h.centerPixel.y + h.height / 2 - 40);
-
-                if (h.q === 0 && h.r === 0) {
                     context.beginPath();
-                    context.lineWidth = 1;
-                    context.arc(h.centerPixel.x, h.centerPixel.y, h.size-15, 0, 2 * Math.PI);
-                    context.strokeStyle = "#ffffff";
-                    context.stroke();
-                    context.closePath();
-                }
+                    context.moveTo(startPixel.x, startPixel.y);
+                    for (let i = 1; i <= 5; i++) {
+                        context.lineTo(pixels[i].x, pixels[i].y);
+                    }
+                    context.lineTo(startPixel.x, startPixel.y);
 
+                    if (sectorData.visited) {
+                        context.fillStyle = 'rgba(56, 171, 201, 0.1)';
+                    } else {
+                        context.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                    }
+                    context.fill();
+                    if (h.q === 0 && h.r === 0) {
+                        context.lineWidth = 4;
+                    } else {
+                        context.lineWidth = 1;
+                    }
+                    context.stroke();
+
+                    context.closePath();
+
+                    context.font = "25px Unispace Regular";
+                    context.fillStyle = "#ffffff";
+                    const x = userData.ship.position.x - h.q;
+                    const y = userData.ship.position.y - h.r;
+                    const textWidth = context.measureText(`${x},${y}`).width;
+                    context.fillText(`${x},${y}`, h.centerPixel.x - textWidth / 2, h.centerPixel.y + h.height / 2 - 40);
+
+                    if (h.q === 0 && h.r === 0) {
+                        context.beginPath();
+                        context.lineWidth = 1;
+                        context.arc(h.centerPixel.x, h.centerPixel.y, h.size-15, 0, 2 * Math.PI);
+                        context.strokeStyle = "#ffffff";
+                        context.stroke();
+                        context.closePath();
+                    }
+                }
             });
 
             if(jumpTo) {
@@ -198,16 +199,18 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             const sectorImage = await generateJumpMap({});
 
             mapData.hexes.forEach(h => {
-                if (h.q === 0 && h.r === 0) {
-                    // empty
-                } else {
-                    const x = userData.ship.position.x - h.q;
-                    const y = userData.ship.position.y - h.r;
-                    sectors.push({
-                        label: `${x}, ${y}`,
-                        description: `Jumping to this sector will cost 0 fuel.`,
-                        value: `${h.q},${h.r}`
-                    });
+                if (!h.outsideBounds) {
+                    if (h.q === 0 && h.r === 0) {
+                        // empty
+                    } else {
+                        const x = userData.ship.position.x - h.q;
+                        const y = userData.ship.position.y - h.r;
+                        sectors.push({
+                            label: `${x}, ${y}`,
+                            description: `Jumping to this sector will cost 0 fuel.`,
+                            value: `${h.q},${h.r}`
+                        });
+                    }
                 }
             });
 
