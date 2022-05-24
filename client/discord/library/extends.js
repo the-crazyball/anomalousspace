@@ -61,11 +61,20 @@ module.exports = client => {
             return new MessageActionRow();
         },
         button: function(blueprint) {
-            return new MessageButton()
-                .setCustomId(blueprint.id)
-                .setLabel(blueprint.label)
-                .setStyle(blueprint.style)
-                .setEmoji(blueprint.emoji);
+            const button = new MessageButton();
+            if (blueprint.style !== 'LINK') {
+                button.setCustomId(blueprint.id);
+            }
+            if (blueprint.style === 'LINK') {
+                button.setURL(blueprint.url);
+            }
+            button.setLabel(blueprint.label);
+            button.setStyle(blueprint.style);
+            if (blueprint.emoji) {
+                button.setEmoji(blueprint.emoji);
+            }
+
+            return button;
         },
         messageCollector: function(interaction, max) {
             const filter = (m) => !m.author.bot && m.author.id === interaction.user.id;
