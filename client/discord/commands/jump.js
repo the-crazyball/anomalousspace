@@ -17,7 +17,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         let sectors = [];
         let embedMsg = null;
         let selectedJumpToSector = null;
-        const depth = userData.ship.jumpEngine.class; // this is the jump engines level/class, determines max jump distance
+        const depth = userData.ship.jumpDrive.class; // this is the jump engines level/class, determines max jump distance
 
         const errorMsg = async () => {
             const embedMsg = client.extends.embed();

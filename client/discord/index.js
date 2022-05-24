@@ -49,6 +49,7 @@ const init = async () => {
     emojis.set('bar:on', '<:bar_on:976936352279052308>');
     emojis.set('bar:off', '<:bar_off:976936352111263784>');
     emojis.set('bar:disabled', '<:bar_disabled:976940680347779102>');
+    emojis.set('icon:github', '<:github:977315434216964106>');
 
     client.customEmojis = emojis;
 

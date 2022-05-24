@@ -17,7 +17,16 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         aboutEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
         aboutEmbed.setFooter({ text: `${client.config.copyright}` });
 
-        await message.channel.send({ embeds: [aboutEmbed] });
+        const btnGitHub = client.extends.button({
+            label: 'Source Code',
+            style: 'LINK',
+            emoji: emojis.get('icon:github'),
+            url: 'https://github.com/the-crazyball/anomalousspace'
+        });
+
+        const row = client.extends.row().addComponents(btnGitHub);
+
+        await message.channel.send({ embeds: [aboutEmbed], components: [row] });
 
     } catch (err) {
         const errorId = await client.errorHandler.send(
