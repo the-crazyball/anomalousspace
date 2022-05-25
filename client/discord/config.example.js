@@ -10,12 +10,18 @@ const config = {
         "stat_post_ms": 3600000
     },
 
+    "copyright": "© Anomalous Games, Inc.",
+
+    "webhook": 'https://discord.com/api/webhooks/XXX',
+    "logwebhook": "https://discord.com/api/webhooks/XXX",
+
     "embed_color" : '99aab5',
 
     "token" : "token",
     "bot_description" : "",
-    "inviteURL" : "https://discord.com/api/oauth2/authorize?client_id=958863877355999272&permissions=0&scope=bot",
+    "inviteURL" : "https://discord.com/api/oauth2/authorize?client_id=XXX&permissions=0&scope=bot",
     "supportServer" : "https://discord.gg/xxxxxxxxxxx",
+    "website": "https://www.AnomalousSpace.io",
     "developers": ["your discord id here"],
     "owner": '745685458952126474',
 

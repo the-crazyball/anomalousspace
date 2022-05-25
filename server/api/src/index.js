@@ -26,7 +26,7 @@ Sentry.init({
 
 /* Configure our rest client */
 const client = {
-  apiSettings: process.env.NODE_ENV === 'prod' ? require('./settings/prod.json') : require('./settings/dev.json'),
+  apiSettings: process.env.NODE_ENV === 'prod' ? require('./settings/config.prod.json') : require('./settings/config.dev.json'),
   appid: process.env.APPID || 1,
   game: {},
   database: {}

@@ -123,3 +123,5 @@ client/discord/config.dev.js
 server/api/src/settings/dev.json
 *.code-workspace
 starx.code-workspace
+config.dev.json
+config.prod.json
