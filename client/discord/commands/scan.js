@@ -34,7 +34,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         const title = `System Scan Results`;
 
-        if (!sectorData.stellarObjects.length || !sectorData.astronomicalObjects.length) {
+        if (!sectorData.stellarObjects.length) {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
             sectorEmbed.description = `Scan results detected... nothing of interest in this sector.
