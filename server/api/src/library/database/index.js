@@ -56,10 +56,10 @@ module.exports = class Database {
     } else {
       let user = (isLean ? await this.userModel.findOne({ discordId: userID }).populate({ 
         path: 'ship', 
-        populate: [{ path: 'galaxy' }, { path: 'sector' }]
+        populate: [{ path: 'galaxy' }, { path: 'sector', populate: [{path: 'stellarObjects'}, {path: 'astronomicalObjects'}] }]
       }).lean() : await this.userModel.findOne({ discordId: userID }).populate({ 
         path: 'ship', 
-        populate: [{ path: 'galaxy' }, { path: 'sector' }] 
+        populate: [{ path: 'galaxy' }, { path: 'sector', populate: [{path: 'stellarObjects'}, {path: 'astronomicalObjects'}] }] 
       }));
       if(user){
         if(!isLean) this.cache.users.set(userID, user);
@@ -102,7 +102,7 @@ module.exports = class Database {
     if(this.cache.sectors.get(key)){
       return this.cache.sectors.get(key);
     } else {
-      let sector = await this.sectorModel.findOne({ galaxy, x, y, z }).populate(['astronomicalObjects', 'stellarObjects', 'galaxy']);
+      let sector = await this.sectorModel.findOne({ galaxy, x, y, z }).populate([{path: 'astronomicalObjects', populate: [{ path: 'ownedBy', select: 'discordUsername rank' }] }, 'stellarObjects', 'galaxy']);
       if(sector){
         this.cache.sectors.set(key, sector);
         return sector;

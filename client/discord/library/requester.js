@@ -12,6 +12,27 @@ module.exports = client => {
     });
 
     return {
+        /**
+         * Sends requests to the API server
+         * @param {Object} msg
+         * @returns {Object} Returns `result` | Promise.
+         */
+        send: function (msg) {
+            return new Promise((resolve, reject) => {
+                instance.post(`/api`, msg)
+                    .then(res => {
+                        if (res.data && res.data.status === 'success') {
+                            resolve(res.data.result);
+                        } else if (res.data && res.data.status === 'error') {
+                            client.logger.log(`API request\n'${res.data.reason}'`, "error");
+                        } else reject(new Error('Unexpected Response from api.'));
+                    })
+                    .catch(e => {
+                        client.logger.log(`API request error: '${e.response.data.status}', URL: '${e.config.url}'`, "error");
+                        reject(e);
+                    });
+            });
+        },
         healthCheck: function() {
             return new Promise((resolve, reject) => {
                 instance.get('/healthCheck')
@@ -181,20 +202,6 @@ module.exports = client => {
                         reject(e);
                     });
             });
-        }/*,
-        statPoster: setInterval(() => {
-            if (process.argv.includes('-d')) return // Dont post stats if we are in dev mode
-
-            instance.post('/stats/bot', {
-              guilds: client.guilds.cache.size,
-              users: client.users.cache.size,
-              shards: parseInt(client.options.shards) + 1
-            })
-              .then(res => {
-                if (res.data.status === 'success') console.log('Successfully posted stats to api.')
-                else console.log('Unexpected Response from api.')
-              })
-              .catch(e => console.log(`Error sending post request to api: ${e}`))
-        }, client.config.api.stat_post_ms)*/
+        }
     };
 };

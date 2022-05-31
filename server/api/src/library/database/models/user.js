@@ -32,7 +32,8 @@ const schema = mongoose.Schema({
         discoveredSystems: { type: Number, default: 0 },
         mining: { type: Number, default: 0 },
         battlesWon: { type: Number, default: 0 },
-        battlesLost: { type: Number, default: 0 }
+        battlesLost: { type: Number, default: 0 },
+        colonies: { type: Number, default: 0 },
     },
     credits: { type: Number, default: 0 },
 

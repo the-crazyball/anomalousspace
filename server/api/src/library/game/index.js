@@ -272,6 +272,34 @@ module.exports = class Game {
     }
 
   }
+  async colonizeGetObjects(msg) {
+    const userData = await this.getUser(msg.user, false);
+    const objects = userData.ship.sector.astronomicalObjects.filter(o => !o.ownedBy);
+
+    return objects;
+  }
+  async colonize(msg) {
+    
+    const userData = await this.getUser(msg.user, false);
+    const sector = userData.ship.sector;
+    const object = sector.astronomicalObjects.find(o => o.name === msg.data.selectedObject);
+    let colonized = false;
+
+    if (object) {
+      if (!object.ownedBy) {
+        userData.stats.colonies += 1;
+        await userData.save();
+        object.ownedBy = userData._id;
+        object.populate({ path: 'ownedBy', select: 'discordUsername rank' });
+        await object.save();
+        colonized = true;
+      }
+    }
+
+    return {
+      colonized
+    }
+  }
   async mine(user, blueprint) {
     const now = new Date().getTime();
     const cd = (5 * 60 * 1000); // 5 min

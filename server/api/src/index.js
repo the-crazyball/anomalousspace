@@ -50,6 +50,7 @@ app.use('/', (req, res, next) => {
 })
 
 // Private endpoints
+app.use('/api', require('./routes/private/api')(client));
 app.use('/stats', require('./routes/private/stats')(client));
 app.use('/guild', require('./routes/private/guild')(client));
 app.use('/user', require('./routes/private/user')(client));
