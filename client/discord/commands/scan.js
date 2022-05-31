@@ -113,9 +113,11 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         if (astronomicalObjects.length) {
             for (var i = 0; i < astronomicalObjects.length; i++) {
 
+                let ownedBy = astronomicalObjects[i].ownedBy ? `${astronomicalObjects[i].ownedBy.discordUsername} the ${astronomicalObjects[i].ownedBy.rank}` : 'Nobody';
+
                 fields.push({
                     name: `${astronomicalObjects[i].name}`,
-                    value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(astronomicalObjects[i].population)}\`\n${emojis.get('bullet')} Satellites \`${astronomicalObjects[i].satellites.length}\`\n${emojis.get('bullet')} Colonies \`${astronomicalObjects[i].colonies}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(astronomicalObjects[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(astronomicalObjects[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(astronomicalObjects[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(astronomicalObjects[i].resources.rock * 200)}\`\n\n**Owner(s)**\n\`None\``,
+                    value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(astronomicalObjects[i].population)}\`\n${emojis.get('bullet')} Satellites \`${astronomicalObjects[i].satellites.length}\`\n${emojis.get('bullet')} Colonies \`${astronomicalObjects[i].colonies}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(astronomicalObjects[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(astronomicalObjects[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(astronomicalObjects[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(astronomicalObjects[i].resources.rock * 200)}\`\n\n**Owner**\n\`${ownedBy}\``,
                     inline: true
                 });
 
