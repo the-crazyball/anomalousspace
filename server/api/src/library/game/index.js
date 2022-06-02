@@ -272,6 +272,13 @@ module.exports = class Game {
     }
 
   }
+  async getColonies(msg) {
+    const userData = await this.getUser(msg.user, false);
+
+    const colonies = await this.client.database.getColonies(userData);
+
+    return colonies;
+  }
   async colonizeGetObjects(msg) {
     const userData = await this.getUser(msg.user, false);
     const objects = userData.ship.sector.astronomicalObjects.filter(o => !o.ownedBy);
@@ -288,10 +295,10 @@ module.exports = class Game {
     if (object) {
       if (!object.ownedBy) {
         userData.stats.colonies += 1;
-        await userData.save();
         object.ownedBy = userData._id;
         object.populate({ path: 'ownedBy', select: 'discordUsername rank' });
         await object.save();
+        await userData.save();
         colonized = true;
       }
     }
@@ -366,7 +373,7 @@ module.exports = class Game {
     // track scanned sectors
     const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x, y, z } });
     const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString());
- 
+
     if (!scanned) {
       userData.stats.scans += 1;
       await userData.save();
@@ -411,7 +418,7 @@ module.exports = class Game {
           const astronomicalObject = await this.client.database.findOrCreateAstronomicalObject({ 
             galaxy: userData.ship.galaxy, 
             sector: sector,
-            id: o.id
+            objectId: o.id
           });
 
           astronomicalObject.colonies = o.colonies;

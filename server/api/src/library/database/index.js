@@ -173,6 +173,20 @@ module.exports = class Database {
       }
     }
   }
+  async getColonies(user) {
+    let astronomicalObjects = await this.astronomicalObjectModel.find({ ownedBy: user._id }).populate([{ path: 'sector', populate: { path: 'galaxy' } }, 'ownedBy']);
+
+    // check if the astronomical objects are part of the database cache
+    astronomicalObjects.forEach(o => {
+      const key = `${o.sector.galaxy.x}${o.sector.galaxy.y}${o.sector.galaxy.z}-${o.sector.x}${o.sector.y}${o.sector.z}-${o.objectId}`;
+      
+      if(!this.cache.astronomicalObjects.get(key)){
+        this.cache.astronomicalObjects.set(key, o);
+      }
+    })  
+
+    return astronomicalObjects;
+  }
   connect() {
     return new Promise((resolve, reject) => {
       const { host } = this.client.apiSettings.mongodb

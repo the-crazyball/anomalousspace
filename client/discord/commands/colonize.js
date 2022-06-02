@@ -4,15 +4,15 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     try {
         let userData = await client.requester.getUser(message.member.user);
 
-        const astronomicalObjects = await client.requester.send({
-            method: 'colonizeGetObjects',
-            user: message.member.user
-        });
-
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
             return;
         }
+
+        const astronomicalObjects = await client.requester.send({
+            method: 'colonizeGetObjects',
+            user: message.member.user
+        });
 
         const title = `Colonize`;
         if (!astronomicalObjects.length) {
