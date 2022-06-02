@@ -12,14 +12,59 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
 New to Anomalous Space type \`${message.settings.prefix} play\``;
 
-            helpEmbed.addField('Gameplay', `\`colonize\`, \`scan\`, \`jump\`, \`warp\`, \`map\`, \`coordinates\`, \`leaderboard\`, \`mine\`, \`settings\`, \`user\`, \`ship\`, \`about\``, false);
-            helpEmbed.addField('Links', `${emojis.get('bullet')} [Website](${client.config.website})\n${emojis.get('bullet')} [Play & Support Server](${client.config.supportServer})`, false);
+            helpEmbed.addField('Your Information', `\`user\``, false);
+            helpEmbed.addField('Ship', `\`ship\`, \`cargo\``, false);
+            helpEmbed.addField('Movement and Exploration', `\`jump\`, \`warp\`, \`scan\`, \`map\``, false);
+            helpEmbed.addField('Mining', `\`mine\``, false);
+            helpEmbed.addField('Colonies', `\`colonies\`, \`colonize\``, false);
+            helpEmbed.addField('Extra Information', `\`coordinates\`, \`leaderboard\``, false);
+
+            //helpEmbed.addField('Links', `${emojis.get('bullet')} [Website](${client.config.website})\n${emojis.get('bullet')} [Play & Support Server](${client.config.supportServer})`, false);
 
             helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() });
             helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
             helpEmbed.setFooter({ text: `${client.config.copyright}` });
 
-            await message.channel.send({ embeds: [helpEmbed] });
+            const btnWebsite = client.extends.button({
+                label: 'Website',
+                style: 'LINK',
+                //emoji: emojis.get('icon:github'),
+                url: client.config.website
+            });
+
+            const btnSupport = client.extends.button({
+                label: 'Play & Support Server',
+                style: 'LINK',
+                //emoji: emojis.get('icon:github'),
+                url: client.config.supportServer
+            });
+
+            const btnAbout = client.extends.button({
+                id: 'btn_about',
+                label: 'About',
+                style: 'PRIMARY'
+            });
+
+            const btnSettings = client.extends.button({
+                id: 'btn_settings',
+                label: 'Settings',
+                style: 'PRIMARY'
+            });
+
+            const row = client.extends.row().addComponents(btnSettings).addComponents(btnAbout).addComponents(btnSupport).addComponents(btnWebsite);
+
+            const helpMessage =await message.channel.send({ embeds: [helpEmbed], components: [row] });
+
+            const collector = client.extends.collector(helpMessage, message.author);
+
+            collector.on('collect', async (i) => {
+                if (i.customId === "btn_about") {
+                    await client.container.commands.get('about').run(client, message, args, level);
+                }
+                if (i.customId === "btn_settings") {
+                    await client.container.commands.get('settings').run(client, message, args, level);
+                }
+            });
         } else {
             // Show individual command's help.
             let command = args[0];

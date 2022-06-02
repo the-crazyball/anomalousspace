@@ -158,7 +158,7 @@ module.exports = class Database {
     if(this.cache.astronomicalObjects.get(key)){
       return this.cache.astronomicalObjects.get(key);
     } else {
-      let astronomicalObject = await this.astronomicalObjectModel.findOne({ sector, objectId }).populate('sector');
+      let astronomicalObject = await this.astronomicalObjectModel.findOne({ sector, objectId }).populate(['sector', 'ownedBy']);
       if(astronomicalObject){
         this.cache.astronomicalObjects.set(key, astronomicalObject);
         return astronomicalObject;
