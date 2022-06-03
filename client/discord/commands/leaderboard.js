@@ -9,9 +9,12 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             return;
         }
 
+        const title = 'Leaderboards';
+        const desc = `> Get to see where you stand with the other lost space travellers scattered throughout the universe.\n\nSelect a \`filter\` below to compare your standings.`;
+
         const lbEmbed = client.extends.embed();
-        lbEmbed.title = 'Leaderboards';
-        lbEmbed.description = `> Get to see where you stand with the other lost space travellers scattered throughout the universe.\n\nSelect a \`filter\` below to compare your standings.`;
+        lbEmbed.title = title;
+        lbEmbed.description = desc;
 
         lbEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
         lbEmbed.setFooter({ text: `${client.config.copyright}` });
@@ -23,6 +26,26 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 {
                     label: `Top Miners`,
                     value: `mining`
+                },
+                {
+                    label: `Top Scanners`,
+                    value: `scans`
+                },
+                {
+                    label: `Top Jumpers`,
+                    value: `jumps`
+                },
+                {
+                    label: `Top System Discoverers`,
+                    value: `discoveredSystems`
+                },
+                {
+                    label: `Top Sector Discoverers`,
+                    value: `discoveredSectors`
+                },
+                {
+                    label: `Top Colonizers`,
+                    value: `colonies`
                 }
             ]
         });
@@ -48,6 +71,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     }
                 });
 
+                lbEmbed.title = title;
+                lbEmbed.description = desc;
+
                 let counter = 1;
 
                 if (i.values[0] === 'mining') {
@@ -55,6 +81,46 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
                     returnData.forEach(u => {
                         lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - mined \`${u.value}\` times.\n`;
+                        counter++;
+                    });
+                }
+                if (i.values[0] === 'scans') {
+                    lbEmbed.description += `\n\n**Top Scanners**\n`;
+
+                    returnData.forEach(u => {
+                        lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - scanned \`${u.value}\` times.\n`;
+                        counter++;
+                    });
+                }
+                if (i.values[0] === 'jumps') {
+                    lbEmbed.description += `\n\n**Top Jumpers**\n`;
+
+                    returnData.forEach(u => {
+                        lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - jumped \`${u.value}\` times.\n`;
+                        counter++;
+                    });
+                }
+                if (i.values[0] === 'discoveredSystems') {
+                    lbEmbed.description += `\n\n**Top System Discoverers**\n`;
+
+                    returnData.forEach(u => {
+                        lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - discovered \`${u.value}\` systems.\n`;
+                        counter++;
+                    });
+                }
+                if (i.values[0] === 'discoveredSectors') {
+                    lbEmbed.description += `\n\n**Top Sector Discoverers**\n`;
+
+                    returnData.forEach(u => {
+                        lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - discovered \`${u.value}\` sectors.\n`;
+                        counter++;
+                    });
+                }
+                if (i.values[0] === 'colonies') {
+                    lbEmbed.description += `\n\n**Top Colonizers**\n`;
+
+                    returnData.forEach(u => {
+                        lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - colonized \`${u.value}\` planets.\n`;
                         counter++;
                     });
                 }
