@@ -173,6 +173,10 @@ module.exports = class Database {
       }
     }
   }
+  async getUsers() {
+    let users = await this.userModel.find({}).select('stats discordId discordUsername credits rank');
+    return users;
+  }
   async getColonies(user) {
     let astronomicalObjects = await this.astronomicalObjectModel.find({ ownedBy: user._id }).populate([{ path: 'sector', populate: { path: 'galaxy' } }, 'ownedBy']);
 

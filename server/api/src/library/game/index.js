@@ -272,6 +272,26 @@ module.exports = class Game {
     }
 
   }
+  async getLeaderboard(msg) {
+    const userData = await this.getUser(msg.user, false);
+
+    const filter = msg.data.filter;
+
+    const allUsers = await this.client.database.getUsers();
+
+    allUsers.sort((a, b) => b.stats[filter] - a.stats[filter]);
+
+    const lb = [];
+
+    allUsers.forEach(u => {
+      lb.push({
+        name: u.discordUsername,
+        value: u.stats[filter],
+        me: u.discordId === userData.discordId ? true : false
+      })
+    })
+    return lb;
+  }
   async getColonies(msg) {
     const userData = await this.getUser(msg.user, false);
 
