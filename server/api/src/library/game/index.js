@@ -40,15 +40,21 @@ module.exports = class Game {
 
     const colors = ['20941c', 'de1616', '1631de', 'dbdb1a']
     const types = ['Elliptical', 'Spiral', 'Lenticular', 'Irregular'];
+    const size = rndInt(1, 100);
     const typeNum = rndInt(0, types.length-1);
 
     const galaxy = {};
-    galaxy.sectors = rndInt(1000, 100000); // each sector is 20 ly.
+    galaxy.sectors = size * 1000; // each sector is 20 ly.
     galaxy.type = types[typeNum]
     galaxy.color = colors[typeNum];
     galaxy.name = `G${galaxy.type.charAt(0).toUpperCase()}-${Math.max(rndInt(500, 9999), 0)}`;
     galaxy.x = x;
     galaxy.y = y;
+
+    // determine how many ancient cities, and ancient teleports a galaxy has.
+    // also determine how many links the teleports has - to other galaxies/sectors with ancient teleports
+    galaxy.ancientCities = size * 16;
+    
 
     return await this.client.database.findOrCreateGalaxy(galaxy);
 
