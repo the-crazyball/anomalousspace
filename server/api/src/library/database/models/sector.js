@@ -9,6 +9,8 @@ const schema = mongoose.Schema({
     stars: { type: Number },
     asteroids: { type: Number },
 
+    isHub: { type: Boolean, default: false },
+
     ownerId: { type: mongoose.Schema.ObjectId, ref: 'User' },
 
     visitedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],

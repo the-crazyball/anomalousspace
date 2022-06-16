@@ -6,6 +6,9 @@ const schema = mongoose.Schema({
     type: { type: String },
     color: { type: String },
 
+    hubs: [],
+    size: { type: Number },
+
     x: { type: Number },
     y: { type: Number },
     z: { type: Number, default: 0 },

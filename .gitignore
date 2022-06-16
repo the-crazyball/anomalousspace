@@ -125,3 +125,4 @@ server/api/src/settings/dev.json
 starx.code-workspace
 config.dev.json
 config.prod.json
+client/discord/commands/update.js

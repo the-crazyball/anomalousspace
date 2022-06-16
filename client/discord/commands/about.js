@@ -15,7 +15,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         aboutEmbed.addField('Links', `${emojis.get('bullet')} [Website](${client.config.website})\n${emojis.get('bullet')} [Play & Support Server](${client.config.supportServer})`, false);
 
         aboutEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
-        aboutEmbed.setFooter({ text: `${client.config.copyright}` });
 
         const btnGitHub = client.extends.button({
             label: 'Source Code',

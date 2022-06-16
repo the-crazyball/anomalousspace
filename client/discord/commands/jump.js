@@ -1,6 +1,8 @@
 const Grid = require('../library/map/grid');
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
+    const { customEmojis: emojis } = client;
+
     try {
         const settings = message.settings;
 
@@ -76,6 +78,11 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                                 const imgSize = 70 * sectorData.type.diameter;
                                 context.drawImage(client.images.get(sectorData.type.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
                             }
+                        }
+                        if (sectorData.isHub) {
+                            // draw an icon
+                            const imgSize = 40;
+                            context.drawImage(client.images.get('icon:hub'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2) - (imgSize + (imgSize / 2)), imgSize, imgSize);
                         }
                     } else {
                         const imgSize = 100;
@@ -223,6 +230,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             const row = client.extends.row().addComponents(sectorSelect);
 
             embedMsg.title = `Jump`;
+            embedMsg.description = `${emojis.get('icon:hub')} This is a hub sector.`;
 
             const jumpMsg = await message.channel.send({
                 embeds: [embedMsg], components: [row], files: [sectorImage], attachments: []

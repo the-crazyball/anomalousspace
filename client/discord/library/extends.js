@@ -54,8 +54,19 @@ module.exports = client => {
                 error: 0x992d22
             };
 
+            const status = [
+                'Created by an awesome team!',
+                'Did you know the game is open source?',
+                'The Anomalous Space universe has ≈ 1,000,000 galaxies.',
+                'A galaxy can have up to 800 ancient hub cities.',
+                'An anomaly will have an anomalous behavior...',
+                'Made with ♥'
+            ];
+            const random = status[Math.floor(Math.random()*status.length)];
+
             return new MessageEmbed()
-                .setColor(blueprint.color ? colors[blueprint.color] : colors['default']);
+                .setColor(blueprint.color ? colors[blueprint.color] : colors['default'])
+                .setFooter({ text: `"!s play" to start or "!s help" for help\n${random}` });
         },
         row: function() {
             return new MessageActionRow();

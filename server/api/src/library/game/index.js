@@ -18,7 +18,7 @@ module.exports = class Game {
     //this.createGalaxy(74, 13);
   }
   createUniverse() {
-    seedrandom(`ANOMALOUSSPACE-01`, { global: true });
+    seedrandom(`ANOMALOUSSPACE-02`, { global: true });
   }
   findRandomGalaxy() {
     const x = rndInt(-1000000, 1000000);
@@ -44,7 +44,7 @@ module.exports = class Game {
     const typeNum = rndInt(0, types.length-1);
 
     const galaxy = {};
-    galaxy.sectors = size * 1000; // each sector is 20 ly.
+    galaxy.sectors = rndInt((size * 1000)-200, (size * 1000)+200); // each sector is 20 ly.
     galaxy.type = types[typeNum]
     galaxy.color = colors[typeNum];
     galaxy.name = `G${galaxy.type.charAt(0).toUpperCase()}-${Math.max(rndInt(500, 9999), 0)}`;
@@ -53,8 +53,17 @@ module.exports = class Game {
 
     // determine how many ancient cities, and ancient teleports a galaxy has.
     // also determine how many links the teleports has - to other galaxies/sectors with ancient teleports
-    galaxy.ancientCities = size * 16;
-    
+    const hubCount = size * 8;
+    let points = [];
+
+    for (let i = 0; i < hubCount; i ++){
+      const x = rndInt(-Math.abs(galaxy.sectors), galaxy.sectors);
+      const y = rndInt(-Math.abs(galaxy.sectors), galaxy.sectors);
+      points.push({ x, y });
+    }
+
+    galaxy.size = size;
+    galaxy.hubs = points;
 
     return await this.client.database.findOrCreateGalaxy(galaxy);
 
@@ -229,7 +238,7 @@ module.exports = class Game {
             if(sector) {
               const visited = sector.visitedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
               const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString()) ? true : false;
-    
+
               if(sector.stellarObjects.length || sector.astronomicalObjects.length) {
                 if (scanned) {
                   const systemType = {
@@ -238,12 +247,12 @@ module.exports = class Game {
                     color: sector.stellarObjects[0].color
                   }
                   
-                  hexes.set([q, r], { type: systemType, q: q, r: r, visited: visited, scanned: scanned, outsideBounds });
+                  hexes.set([q, r], { type: systemType, q: q, r: r, visited: visited, scanned: scanned, outsideBounds, isHub: sector.isHub });
                 } else {
-                  hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned, outsideBounds })
+                  hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned, outsideBounds, isHub: sector.isHub })
                 }
               } else {
-                hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned, outsideBounds })
+                hexes.set([q, r], { q: q, r: r, visited: visited, scanned: scanned, outsideBounds, isHub: sector.isHub })
               }
             } else {
               hexes.set([q, r], { q: q, r: r, visited: false, scanned: false, outsideBounds })
@@ -404,6 +413,13 @@ module.exports = class Game {
       userData.stats.scans += 1;
       await userData.save();
       sector.scannedBy.push(userData._id);
+
+      // check if this sector is a hub
+      const hub = userData.ship.galaxy.hubs.find(h => h.x === x && h.y === y);
+      if (hub) {
+        sector.isHub = true;
+      }
+
       await sector.save();
     }
 
@@ -411,7 +427,7 @@ module.exports = class Game {
 
     // check if sector was discovered already, if not generate sector and store in the database
     if (!sector.name) {
-      result = generateSector({ galaxy: userData.ship.galaxy, sector: { x, y, z } });
+      result = generateSector({ galaxy: userData.ship.galaxy, sector: { x, y, z, isHub: sector.isHub } });
 
       sector.name = result.name;
       sector.stars = result.stars;
@@ -500,8 +516,10 @@ module.exports = class Game {
     const galaxy = await this.createGalaxy(randomGalaxy.x, randomGalaxy.y);
 
     // TODO check for planets and neighboring players
-    const x = rndInt(-Math.abs(galaxy.sectors), galaxy.sectors);
-    const y = rndInt(-Math.abs(galaxy.sectors), galaxy.sectors);
+    // Randomly pick a location where from the hub locations
+    const hub = galaxy.hubs[Math.floor(Math.random()*galaxy.hubs.length)];
+    const x = hub.x;//rndInt(-Math.abs(galaxy.sectors), galaxy.sectors);
+    const y = hub.y;//rndInt(-Math.abs(galaxy.sectors), galaxy.sectors);
     const z = 0;
 
     await this.warpTo(user, {

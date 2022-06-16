@@ -87,7 +87,9 @@ module.exports = class Database {
           type: data.type,
           color: data.color,
           x: data.x,
-          y: data.y
+          y: data.y,
+          hubs: data.hubs,
+          size: data.size
         });
         await galaxy.save();
         this.cache.galaxies.set(`${data.x}${data.y}`, galaxy);

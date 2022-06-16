@@ -1,6 +1,6 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const settings = message.settings;
-    const { customEmojis: emojis, container } = client;
+    const { container } = client;
 
     try {
         // help
@@ -23,7 +23,6 @@ New to Anomalous Space type \`${message.settings.prefix} play\``;
 
             helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() });
             helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
-            helpEmbed.setFooter({ text: `${client.config.copyright}` });
 
             const btnWebsite = client.extends.button({
                 label: 'Website',
@@ -83,7 +82,6 @@ New to Anomalous Space type \`${message.settings.prefix} play\``;
 
                 helpEmbed.setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL() });
                 helpEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
-                helpEmbed.setFooter({ text: `${client.config.copyright}` });
                 await message.channel.send({ embeds: [helpEmbed] });
             }
         }

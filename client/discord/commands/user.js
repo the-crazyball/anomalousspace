@@ -26,7 +26,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         sectorEmbed.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() });
         sectorEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
-        sectorEmbed.setFooter({ text: `${client.config.copyright}` });
 
         const btnShip = client.extends.button({
             id: 'btn_ship',

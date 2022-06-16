@@ -30,7 +30,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         msgEmbed.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() });
         msgEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
-        msgEmbed.setFooter({ text: `${client.config.copyright}` });
 
         const btnCargo = client.extends.button({
             id: 'btn_cargo',

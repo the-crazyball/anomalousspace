@@ -14,7 +14,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         sectorEmbed.title = title;
         sectorEmbed.description = `> Quick information about the galaxy and sector.`;
 
-        sectorEmbed.addField('Galaxy', `${emojis.get('bullet')} Name: \`${userData.ship.galaxy.name}\`\n${emojis.get('bullet')} Sectors: \`${userData.ship.galaxy.sectors * 4}\`\n${emojis.get('bullet')} Type: \`${userData.ship.galaxy.type}\`\n${emojis.get('bullet')} Position: \`${userData.ship.galaxy.x}\`,\`${userData.ship.galaxy.y}\`,\`0\`\n${emojis.get('bullet')} Ships Visited: \`${userData.ship.galaxy.visitedBy.length}\``, true);
+        sectorEmbed.addField('Galaxy', `${emojis.get('bullet')} Name: \`${userData.ship.galaxy.name}\`\n${emojis.get('bullet')} Sectors: \`${userData.ship.galaxy.sectors * 4}\`\n${emojis.get('bullet')} Type: \`${userData.ship.galaxy.type}\`\n${emojis.get('bullet')} Position: \`${userData.ship.galaxy.x}\`,\`${userData.ship.galaxy.y}\`,\`0\`\n${emojis.get('bullet')} Ships Visited: \`${userData.ship.galaxy.visitedBy.length}\`\n${emojis.get('bullet')} Hub Cities: \`${userData.ship.galaxy.hubs.length}\``, true);
         sectorEmbed.addField('Sector', `${emojis.get('bullet')} Name: \`${userData.ship.sector.name}\`\n${emojis.get('bullet')} Position: \`${userData.ship.sector.x}\`,\`${userData.ship.sector.y}\`,\`0\`\n${emojis.get('bullet')} Ships Visited: \`${userData.ship.sector.visitedBy.length}\`\n${emojis.get('bullet')} Ships Scanned: \`${userData.ship.sector.scannedBy.length}\``, true);
 
         await message.channel.send({

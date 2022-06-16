@@ -51,6 +51,7 @@ const init = async () => {
     emojis.set('bar:off', '<:bar_off:976936352111263784>');
     emojis.set('bar:disabled', '<:bar_disabled:976940680347779102>');
     emojis.set('icon:github', '<:github:977315434216964106>');
+    emojis.set('icon:hub', '<:icon_hub:984909417206141048>');
 
     client.customEmojis = emojis;
 
@@ -65,6 +66,7 @@ const init = async () => {
     starImages.set('O', await client.canvas.loadImage('../shared/images/stars/star_blue_giant01.png'));
     starImages.set('unknown', await client.canvas.loadImage('../shared/images/question-mark.png'));
     starImages.set('ofinterest', await client.canvas.loadImage('../shared/images/exclamation-mark.png'));
+    starImages.set('icon:hub', await client.canvas.loadImage('../shared/images/hub.png'));
 
     // BH (blackhole)
     // AN (anomaly)

@@ -17,7 +17,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         lbEmbed.description = desc;
 
         lbEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
-        lbEmbed.setFooter({ text: `${client.config.copyright}` });
 
         const filterSelect = client.extends.select({
             id: 'select_filter',

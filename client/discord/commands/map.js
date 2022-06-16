@@ -1,6 +1,8 @@
 const Grid = require('../library/map/grid');
 
 exports.run = async (client, message, [action, key, ...value], level) => { // eslint-disable-line no-unused-vars
+    const { customEmojis: emojis } = client;
+
     try {
         const depth = 2;
 
@@ -53,6 +55,11 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
                             context.drawImage(client.images.get(sectorData.type.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
                         }
                     }
+                    if (sectorData.isHub) {
+                        // draw an icon
+                        context.drawImage(client.images.get('icon:hub'), 0, 0, 512, 512, h.centerPixel.x - (25 / 2), h.centerPixel.y - (25 / 2) - (25 + (25 / 2)), 25, 25);
+                    }
+
                 } else {
                     context.drawImage(client.images.get('unknown'), 0, 0, 512, 512, h.centerPixel.x - (50 / 2), h.centerPixel.y - (50 / 2), 50, 50);
                 }
@@ -101,8 +108,9 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         imageCounter++;
 
         embedMsg.title = `Map`;
-        embedMsg.description = `> View of the surrounding explored and unexplored sectors, each sector is 10 ly in distance.`;
-        embedMsg.setFooter({ text: `${client.config.copyright}` });
+        embedMsg.description = `> View of the surrounding explored and unexplored sectors, each sector is 10 ly in distance.
+        
+${emojis.get('icon:hub')} This is a hub sector.`;
 
         await message.channel.send({
             embeds: [embedMsg], components: [], files: [attachment], attachments: []
