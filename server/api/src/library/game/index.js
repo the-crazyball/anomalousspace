@@ -287,6 +287,23 @@ module.exports = class Game {
     }
 
   }
+  async getSector(msg) {
+    const userData = await this.getUser(msg.user, false);
+
+    const x = userData.ship.position.x;
+    const y = userData.ship.position.y;
+    const z = userData.ship.position.z;
+
+    // track scanned sectors
+    const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x, y, z } });
+    const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString());
+
+    return {
+      sector,
+      scanned: scanned ? true : false
+    }
+
+  }
   async getLeaderboard(msg) {
     const userData = await this.getUser(msg.user, false);
 
