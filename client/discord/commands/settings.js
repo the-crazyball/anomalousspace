@@ -47,15 +47,25 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 const modalSubmitCb = async (fields) => {
                     const prefixInput = fields.getTextInputValue('prefixInput');
 
-                    const prefixSuccessEmbed = client.extends.embed({ color: 'success' });
-                    prefixSuccessEmbed.setDescription(`Success! Your new prefix is now \`${prefixInput}\`.`);
+                    if (/^\s/.test(prefixInput)) { // check for space
+                        const prefixErrorEmbed = client.extends.embed({ color: 'error' });
+                        prefixErrorEmbed.setDescription(`Error, you cannot have a prefix start with a space, please try again.`);
 
-                    await settingsMessage.edit({
-                        embeds: [prefixSuccessEmbed],
-                        components: []
-                    });
+                        await settingsMessage.edit({
+                            embeds: [prefixErrorEmbed],
+                            components: []
+                        });
+                    } else {
+                        const prefixSuccessEmbed = client.extends.embed({ color: 'success' });
+                        prefixSuccessEmbed.setDescription(`Success! Your new prefix is now \`${prefixInput}\`.`);
 
-                    client.settings.user.set(message.member.user.id, { prefix: prefixInput });
+                        await settingsMessage.edit({
+                            embeds: [prefixSuccessEmbed],
+                            components: []
+                        });
+
+                        client.settings.user.set(message.member.user.id, { prefix: prefixInput });
+                    }
                 };
                 i.message.modalSubmitCb = modalSubmitCb;
 
