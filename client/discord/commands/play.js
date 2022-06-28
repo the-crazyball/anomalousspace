@@ -1,10 +1,26 @@
-exports.run = async (client, message, [action, key, ...value], level) => { // eslint-disable-line no-unused-vars
+exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     try {
         let userData = await client.requester.getUser(message.member.user);
 
         const startEmbed = client.extends.embed();
 
         let components = [];
+
+        const btnScan = client.extends.button({
+            id: 'btn_scan',
+            label: 'Scan Sector',
+            style: 'PRIMARY'
+        });
+        const btnMap = client.extends.button({
+            id: 'btn_map',
+            label: 'Map',
+            style: 'PRIMARY'
+        });
+        const btnJump = client.extends.button({
+            id: 'btn_jump',
+            label: 'Jump',
+            style: 'PRIMARY'
+        });
 
         if (!userData.ship) {
             startEmbed.title = `Message from Star Command`;
@@ -68,15 +84,33 @@ Good luck!`;
                             embeds: [warpEmbed2],
                             components: []
                         }).then(() => {
-                            setTimeout(() => {
+                            setTimeout(async () => {
                                 const warpEmbed3 = client.extends.embed();
                                 warpEmbed3.title = `Did I die?`;
-                                warpEmbed3.description = `You have a feeling that this is it, you are going to die!\n\nBut as soon as your thought of dying ends, the bright light disappears, the ship stops turning and starts difting in space.\n\nYou look around to get your bearings to see where you are...`;
-                                //warpEmbed3.addField('Current Location', `\`Unknown\` Sector \`Unknown\``, true)
+                                warpEmbed3.description = `You have a feeling that this is it, you are going to die!\n\nBut as soon as your thought of dying ends, the bright light disappears, the ship stops turning and starts difting in space.\n\nYou look around to get your bearings to see where you are...\n\n You notice a few commands below you can use, let's see what they do?`;
 
-                                message.channel.send({
+                                const buttons = client.extends.row()
+                                    .addComponents(btnScan)
+                                    .addComponents(btnMap)
+                                    .addComponents(btnJump);
+
+                                const lastMessage = await message.channel.send({
                                     embeds: [warpEmbed3],
-                                    components: []
+                                    components: [buttons]
+                                });
+
+                                const collector = client.extends.collector(lastMessage, message.author);
+
+                                collector.on('collect', async (i) => {
+                                    if (i.customId === "btn_scan") {
+                                        await client.container.commands.get('scan').run(client, message, args, level);
+                                    }
+                                    if (i.customId === "btn_map") {
+                                        await client.container.commands.get('map').run(client, message, args, level);
+                                    }
+                                    if (i.customId === "btn_jump") {
+                                        await client.container.commands.get('jump').run(client, message, args, level);
+                                    }
                                 });
 
                             }, 2000);
