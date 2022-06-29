@@ -44,6 +44,7 @@ const init = async () => {
     emojis.set('planet:ocean', '<:planet_ocean:962048027953090660>');
     emojis.set('planet:gasgiant', '<:planet_gasgiant:981973058287980616>');
     emojis.set('planet:garden', '<:planet_garden:991700507787804722>');
+    emojis.set('planet:ice', '<:planet_ice:991767011522777118>');
     emojis.set('resource:thorium', '<:resource_thorium:962030123752759399>');
     emojis.set('resource:plutonium', '<:resource_plutonium:962030124037963867>');
     emojis.set('resource:uranium', '<:resource_uranium:962030123824083044>');
