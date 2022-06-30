@@ -19,6 +19,8 @@ module.exports = async (client, message) => {
     const settings = message.settings = client.helpers.getGuildSettings(message.guild);
     const userSettings = client.helpers.getUserSettings(message.member.user);
 
+    const defaultPrefix = settings.prefix;
+
     if (userSettings.prefix)
         settings.prefix = message.settings.prefix = userSettings.prefix;
 
@@ -36,7 +38,8 @@ module.exports = async (client, message) => {
 
     // TODO make sure this regex is working properly for prefix check....
     // ^\\
-    const prefix = new RegExp(`^<@!?${client.user.id}> |^${settings.prefix}`).exec(message.content);
+
+    const prefix = new RegExp(`^(${defaultPrefix}|${settings.prefix}|<@!?${client.user.id}>)`).exec(message.content);
 
     // This will return and stop the code from continuing if it's missing
     // our prefix (be it mention or from the settings).
