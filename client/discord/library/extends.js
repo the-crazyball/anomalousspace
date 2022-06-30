@@ -79,6 +79,9 @@ module.exports = client => {
             if (blueprint.style === 'LINK') {
                 button.setURL(blueprint.url);
             }
+            if (blueprint.disabled) {
+                button.setDisabled(blueprint.disabled);
+            }
             button.setLabel(blueprint.label);
             button.setStyle(blueprint.style);
             if (blueprint.emoji) {

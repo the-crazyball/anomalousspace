@@ -14,10 +14,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             user: message.member.user
         });
 
-        let currentPage = 0;
-        let pages = [];
-        let pageCount = 1;
-
         const btnScan = client.extends.button({
             id: 'btn_scan',
             label: 'Scan Sector',
@@ -111,185 +107,106 @@ You can \`jump\` to another sector or \`scan\` the sector again.`;
             return;
         }
 
-        const previousButton = client.extends.button({
-            id: 'btn_prev',
-            label: '<',
-            style: 'SECONDARY'
-        });
+        const description = `> System \`${sectorData.name}\` with a class \`${stellarObject.class}\` star and \`${astronomicalObjects.length}\` astronomical object(s).
 
-        const firstButton = client.extends.button({
-            id: 'btn_first',
-            label: '<<',
-            style: 'SECONDARY'
-        });
+${emojis.get('bullet')} **Position** \`${sectorData.x}\`,\`${sectorData.y}\`,\`${sectorData.z}\`
+${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(sectorData.asteroids)}\`
 
-        const nextButton = client.extends.button({
-            id: 'btn_next',
-            label: '>',
-            style: 'SECONDARY'
-        });
+**Astronomical object(s)**
+`;
 
-        const lastButton = client.extends.button({
-            id: 'btn_last',
-            label: '>>',
-            style: 'SECONDARY'
-        });
-
-        const blankButton = client.extends.button({
-            id: 'btn_blank',
-            label: 'Page 1 of 4',
-            style: 'PRIMARY',
-            disabled: true
-        });
-
-        const rowPaging = client.extends.row().addComponents(firstButton).addComponents(previousButton).addComponents(blankButton).addComponents(nextButton).addComponents(lastButton);
-
-        const description = `System \`${sectorData.name}\` with a class \`${stellarObject.class}\` star and \`${astronomicalObjects.length}\` astronomical object(s).
-
-**Position** \`${sectorData.x}\`,\`${sectorData.y}\`,\`${sectorData.z}\`
-
-**Faction** \`unknown\`
-**Anomalies** \`unknown\`
-
-**Asteroids** \`${client.helpers.numberWithCommas(sectorData.asteroids)}\`
-\u200B`;
-
-        let fields = [];
+        let objects = [];
+        let selectedObject = null;
+        let tmpDescription = '';
+        let components = [];
+        let objectSelect = null;
+        let rowOrbitSelect = null;
 
         if (astronomicalObjects.length) {
             for (var i = 0; i < astronomicalObjects.length; i++) {
 
-                let ownedBy = astronomicalObjects[i].ownedBy ? `${astronomicalObjects[i].ownedBy.discordUsername} the ${astronomicalObjects[i].ownedBy.rank}` : 'Nobody';
+                let ownedBy = astronomicalObjects[i].ownedBy ? `[O] \`${astronomicalObjects[i].ownedBy.discordUsername}\`` : '';
+                let isHub = sectorData.isHub && astronomicalObjects[i].type === 'planet:garden' ? `[H] ${emojis.get('icon:hub')}` : '';
 
-                fields.push({
-                    name: `${astronomicalObjects[i].name}`,
-                    value: `${emojis.get('bullet')} Population \`${client.helpers.numberWithCommas(astronomicalObjects[i].population)}\`\n${emojis.get('bullet')} Satellites \`${astronomicalObjects[i].satellites.length}\`\n${emojis.get('bullet')} Colonies \`${astronomicalObjects[i].colonies}\`\n\n**Resources**\n${emojis.get('resource:thorium')} Torsium \`${Math.round(astronomicalObjects[i].resources.thorium * 200)}\`\n${emojis.get('resource:plutonium')} Plutonium \`${Math.round(astronomicalObjects[i].resources.plutonium * 200)}\`\n${emojis.get('resource:uranium')} Uranium \`${Math.round(astronomicalObjects[i].resources.uranium * 200)}\`\n${emojis.get('resource:rock')} Rock \`${Math.round(astronomicalObjects[i].resources.rock * 200)}\`\n\n**Owner**\n\`${ownedBy}\``,
-                    inline: true
+                tmpDescription += `${emojis.get(astronomicalObjects[i].type)} \`${astronomicalObjects[i].name}\` ${isHub} [R] ${emojis.get('resource:thorium')} ${emojis.get('resource:plutonium')} ${emojis.get('resource:uranium')} ${emojis.get('resource:rock')} ${ownedBy}\n`;
+
+                objects.push({
+                    label: `${astronomicalObjects[i].name}`,
+                    description: `Population: ${astronomicalObjects[i].population}`,
+                    value: `${astronomicalObjects[i].name}`,
+                    emoji: emojis.get(astronomicalObjects[i].type)
                 });
-
-                if (i + 1 === pageCount * 2 || i + 1 === astronomicalObjects.length) {
-                    let components = [];
-
-                    const sectorEmbed = client.extends.embed();
-                    sectorEmbed.title = title;
-                    sectorEmbed.description = description;
-                    //sectorEmbed.description += `\n\nPage \`${pageCount} of ${~~(sectorData.planets.length / 2)}\``;
-                    sectorEmbed.fields = fields;
-
-                    components.push(rowPaging);
-
-                    const page = {
-                        embeds: [sectorEmbed],
-                        components: components
-                    };
-
-                    pageCount++;
-                    pages.push(page);
-                    fields = [];
-                }
-                rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[2].disabled = true;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
             }
+
+            objectSelect = client.extends.select({
+                id: 'select_object',
+                placeHolder: 'Select an astronomical object...',
+                options: objects
+            });
+
+            rowOrbitSelect = client.extends.row().addComponents(objectSelect);
+
+            components.push(rowOrbitSelect);
         } else {
-            const sectorEmbed = client.extends.embed();
-            sectorEmbed.title = title;
-            sectorEmbed.description = description;
-            const page = {
-                embeds: [sectorEmbed],
-                components: []
-            };
-            pages.push(page);
+            tmpDescription += `Nothing`;
         }
 
-        const scanMessage = await message.channel.send(pages[currentPage]);
+        const sectorEmbed = client.extends.embed();
+        sectorEmbed.title = title;
+        sectorEmbed.description = description;
+        sectorEmbed.description += tmpDescription;
+        sectorEmbed.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() });
+        sectorEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
 
-        const collector = client.extends.collector(scanMessage, message.author);
+        const sectorMessage = await message.channel.send({
+            embeds: [sectorEmbed],
+            components: components
+        });
+
+        const collector = client.extends.collector(sectorMessage, message.author);
 
         collector.on('collect', async (i) => {
-            if (i.customId === "btn_first") {
-                currentPage = 0;
+            if (i.customId === "select_object") {
+                objectSelect.options.forEach(r => {
+                    if (r.value === i.values[0]) r.default = true;
+                    else r.default = false;
+                });
 
-                rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+                selectedObject = i.values[0];
 
-                await scanMessage.edit(pages[currentPage]);
-            }
-            if (i.customId === "btn_last") {
+                const object = astronomicalObjects.find(o => o.name === selectedObject);
 
-                currentPage = pages.length - 1;
+                const btnColonize = client.extends.button({
+                    id: 'btn_colonize',
+                    label: 'Colonize',
+                    style: 'PRIMARY',
+                    disabled: !object.ownedBy ? false : true
+                });
+                const btnTrade = client.extends.button({
+                    id: 'btn_trade',
+                    label: 'Trade',
+                    style: 'PRIMARY',
+                    disabled: object.type === 'planet:garden' ? false : true
+                });
+                const btnAttack = client.extends.button({
+                    id: 'btn_attack',
+                    label: 'Attack',
+                    style: 'DANGER'
+                });
+                const btnOrbit = client.extends.button({
+                    id: 'btn_orbit',
+                    label: 'Enter Orbit',
+                    style: 'PRIMARY'
+                });
 
-                rowPaging.components[0].disabled = false;
-                rowPaging.components[1].disabled = false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+                const row3 = client.extends.row()
+                    .addComponents(btnOrbit)
+                    .addComponents(btnColonize)
+                    .addComponents(btnTrade)
+                    .addComponents(btnAttack);
 
-                await scanMessage.edit(pages[currentPage]);
-            }
-            if (i.customId === "btn_next") {
-                currentPage++;
-
-                rowPaging.components[0].disabled = false;
-                rowPaging.components[1].disabled = false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-                await scanMessage.edit(pages[currentPage]);
-            }
-            if (i.customId === "btn_prev")  {
-                currentPage--;
-
-                rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-                await scanMessage.edit(pages[currentPage]);
-
-            }
-            if (i.customId === "btn_warp") {
-                await client.requester.warpStart(message.member.user);
-
-                const warpEmbed1 = client.extends.embed();
-                warpEmbed1.title = `The Light`;
-                warpEmbed1.description = `You enter the warp gate and suddenly feel as if you senses have intensified and see a bright light surrounding you and your ship....`;
-
-                scanMessage.edit({
-                    embeds: [warpEmbed1],
-                    components: []
-                }).then(() => { // Wait until the first message is sent
-                    setTimeout(() => {
-                        const warpEmbed2 = client.extends.embed();
-                        warpEmbed2.title = `An Unexpected Event`;
-                        warpEmbed2.description = `Everything is going so fast... You hear something, a noise that you can't identify, you suddenly feel the ship turning out of control...`;
-
-                        message.channel.send({
-                            embeds: [warpEmbed2],
-                            components: []
-                        }).then(() => {
-                            setTimeout(() => {
-                                const warpEmbed3 = client.extends.embed();
-                                warpEmbed3.title = `Did I die?`;
-                                warpEmbed3.description = `You have a feeling that this is it, you are going to die!\n\nBut as soon as your thought of dying ends, the bright light disappears, the ship stops turning and starts difting in space.\n\nYou look around to get your bearings to see where you are...`;
-                                //warpEmbed3.addField('Current Location', `\`Unknown\` Sector \`Unknown\``, true)
-
-                                message.channel.send({
-                                    embeds: [warpEmbed3],
-                                    components: []
-                                });
-
-                            }, 2000);
-                        });
-                    }, 2000);
+                await sectorMessage.edit({
+                    components: [rowOrbitSelect, row3]
                 });
             }
         });
