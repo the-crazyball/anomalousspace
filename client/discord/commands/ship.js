@@ -80,11 +80,15 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 								components: []
 							});
 							
-							// Can the ship variable be used here without refetching it? If so, remove the two lines below.
-							let userData = await client.requester.getUser(message.member.user);
-							const ship = userData.ship;
-							ship.name = nameInput
+							ship.name = nameInput;
 							await ship.save();
+							const returnData = await client.requester.send({
+								method: 'setShipName',
+								user: message.member.user,
+								data: {
+									ship.name
+								}
+							});
 						}
 					};
 					i.message.modalSubmitCb = modalSubmitCb;
@@ -101,8 +105,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 					});
 
 					nameInput.setMinLength(1);
-					nameInput.setValue(""); // Can the ship variable be used here without refetching it? If so, use commented code below
-					// nameInput.setValue(ship.name); 
+					nameInput.setValue(ship.name); 
 					
 					const firstActionRow = client.extends.row().addComponents(nameInput);
 
