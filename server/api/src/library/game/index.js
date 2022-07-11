@@ -567,4 +567,15 @@ module.exports = class Game {
         .catch(e => reject('Error writing guild to the database.'))
     })
   }
+  
+  setShipName(user, blueprint) {
+    const userData = await this.client.database.findOrCreateUser(user);
+    if (!userData.ship) {
+      const shipData = new this.client.database.shipModel();
+      await shipData.save();
+      userData.ship = shipData;
+    }
+	userData.ship.name = blueprint.shipName;
+	userData.ship.save()
+  }
 }
