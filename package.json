@@ -4,11 +4,23 @@
   "description": "Procedurally generated universe with an emphasis on survival and story.",
   "scripts": {
     "test": "npm --prefix ./client/discord/ test",
-	"client": "npm --prefix ./client/discord/ run prod",
-	"server": "npm --prefix ./server/api/ run prod",
-	"cdev": "npm --prefix ./client/discord/ run dev",
-	"sdev": "npm --prefix ./server/api/ run dev"
+    "client": "npm --prefix ./client/discord/ run prod",
+    "server": "npm --prefix ./server/api/ run prod",
+    "cdev": "npm --prefix ./client/discord/ run dev",
+    "sdev": "npm --prefix ./server/api/ run dev"
   },
   "author": "",
-  "license": "GNU Affero General Public License v3.0"
+  "license": "GNU Affero General Public License v3.0",
+  "devDependencies": {
+    "node": "^16.16.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/the-crazyball/anomalousspace.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/the-crazyball/anomalousspace/issues"
+  },
+  "homepage": "http://www.anomalousspace.io"
 }
