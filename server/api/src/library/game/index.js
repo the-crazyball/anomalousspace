@@ -340,17 +340,26 @@ module.exports = class Game {
   async colonize(msg) {
     
     const userData = await this.getUser(msg.user, false);
-    const sector = userData.ship.sector;
+
+    const x = userData.ship.position.x;
+    const y = userData.ship.position.y;
+    const z = userData.ship.position.z;
+
+    // note to self, call cached sector and not the userData sector when edits are needed. doh!
+    const sector = await this.client.database.findOrCreateSector({ galaxy: userData.ship.galaxy, sector: { x, y, z } });
     const object = sector.astronomicalObjects.find(o => o.name === msg.data.selectedObject);
+    
     let colonized = false;
 
     if (object) {
       if (!object.ownedBy) {
         userData.stats.colonies += 1;
         object.ownedBy = userData._id;
-        object.populate({ path: 'ownedBy', select: 'discordUsername rank' });
+
         await object.save();
         await userData.save();
+        await object.populate({ path: 'ownedBy', select: 'discordUsername rank' });
+
         colonized = true;
       }
     }
