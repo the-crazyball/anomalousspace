@@ -77,8 +77,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                             embeds: [renameSuccessEmbed],
                             components: []
                         });
-                        ship.name = shipName;
-                        await ship.save();
+                        //ship.name = shipName;
+                        //await ship.save();
                         const returnData = await client.requester.send({
                             method: 'setShipName',
                             user: message.member.user,

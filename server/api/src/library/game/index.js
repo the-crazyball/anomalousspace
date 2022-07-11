@@ -568,14 +568,11 @@ module.exports = class Game {
     })
   }
   
-  async setShipName(user, blueprint) {
-    const userData = await this.client.database.findOrCreateUser(user);
-    if (!userData.ship) {
-      const shipData = new this.client.database.shipModel();
-      await shipData.save();
-      userData.ship = shipData;
-    }
-	userData.ship.name = blueprint.shipName;
-	userData.ship.save()
+  async setShipName(msg) {
+    const userData = await this.getUser(msg.user, false);
+    const ship = userData.ship;
+
+    ship.name = msg.data.shipName;
+	  ship.save()
   }
 }
