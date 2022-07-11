@@ -86,6 +86,16 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                                 shipName
                             }
                         });
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        msgEmbed.description = `> Everything you need to know about your ship.
+                        **»** Name: \`${shipName}\`
+                        **»** Class: \`${ship.class}\`
+                        **»** Level: \`${ship.level}\`
+                        `;
+                        await shipMsg.edit({
+                            embeds: [msgEmbed],
+                            components: [row]
+                        });
                     }
                 };
                 i.message.modalSubmitCb = modalSubmitCb;
