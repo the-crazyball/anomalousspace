@@ -55,64 +55,55 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         collector.on('collect', async (i) => {
             switch(i.customId) {
-                case "btn_cargo":
-                    await client.container.commands.get('cargo').run(client, message, args, level);
-                    break;
-                    
-                case "btn_rename":
-                    const modalSubmitCb = async (fields) => {
-                        const shipName = fields.getTextInputValue('ShipNameInput');
+            case "btn_cargo":
+                await client.container.commands.get('cargo').run(client, message, args, level);
+                break;
+            case "btn_rename":
+                const modalSubmitCb = async (fields) => {
+                    const shipName = fields.getTextInputValue('ShipNameInput');
 
-                        if (/^\s/.test(shipName)) { // check for space at start
-                            const nameErrorEmbed = client.extends.embed({ color: 'error' });
-                            nameErrorEmbed.setDescription(`Error, you cannot have your ship's name start with a space, please try again.`);
+                    if (/^\s/.test(shipName)) { // check for space at start
+                        const nameErrorEmbed = client.extends.embed({ color: 'error' });
+                        nameErrorEmbed.setDescription(`Error, you cannot have your ship's name start with a space, please try again.`);
 
-                            await shipMsg.edit({
-                                embeds: [nameErrorEmbed],
-                                components: []
-                            });
-                        } else {
-                            const renameSuccessEmbed = client.extends.embed({ color: 'success' });
-                            renameSuccessEmbed.setDescription(`Success! Your ship is now named \`${shipName}\`.`);
-                            
-                            await shipMsg.edit({
-                                embeds: [renameSuccessEmbed],
-                                components: []
-                            });
-                            
-                            ship.name = shipName;
-                            await ship.save();
-                            const returnData = await client.requester.send({
-                                method: 'setShipName',
-                                user: message.member.user,
-                                data: {
-                                    shipName
-                                }
-                            });
-                        }
-                    };
-                    i.message.modalSubmitCb = modalSubmitCb;
-
-                    const modal = client.extends.modal();
-                    modal.setTitle('Rename ship');
-                    modal.setCustomId('modal_shipName');
-
-                    const nameInput = client.extends.textInput({
-                        id: 'ShipNameInput',
-                        label: 'Enter a new name for your ship',
-                        required: true,
-                        style: 'SHORT'
-                    });
-
-                    nameInput.setMinLength(1);
-                    nameInput.setValue(ship.name); 
-                    
-                    const firstActionRow = client.extends.row().addComponents(nameInput);
-
-                    modal.addComponents(firstActionRow);
-
-                    await i.showModal(modal);
-                    break;
+                        await shipMsg.edit({
+                            embeds: [nameErrorEmbed],
+                            components: []
+                        });
+                    } else {
+                        const renameSuccessEmbed = client.extends.embed({ color: 'success' });
+                        renameSuccessEmbed.setDescription(`Success! Your ship is now named \`${shipName}\`.`); 
+                        await shipMsg.edit({
+                            embeds: [renameSuccessEmbed],
+                            components: []
+                        });
+                        ship.name = shipName;
+                        await ship.save();
+                        const returnData = await client.requester.send({
+                            method: 'setShipName',
+                            user: message.member.user,
+                            data: {
+                                shipName
+                            }
+                        });
+                    }
+                };
+                i.message.modalSubmitCb = modalSubmitCb;
+                const modal = client.extends.modal();
+                modal.setTitle('Rename ship');
+                modal.setCustomId('modal_shipName');
+                const nameInput = client.extends.textInput({
+                    id: 'ShipNameInput',
+                    label: 'Enter a new name for your ship',
+                    required: true,
+                    style: 'SHORT'
+                });
+                nameInput.setMinLength(1);
+                nameInput.setValue(ship.name); 
+                const firstActionRow = client.extends.row().addComponents(nameInput);
+                modal.addComponents(firstActionRow);
+                await i.showModal(modal);
+                break;
             }
         });
 
