@@ -79,6 +79,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 								embeds: [renameSuccessEmbed],
 								components: []
 							});
+							
+							// Can the ship variable be used here without refetching it? If so, remove the two lines below.
 							let userData = await client.requester.getUser(message.member.user);
 							const ship = userData.ship;
 							ship.name = nameInput
@@ -99,8 +101,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 					});
 
 					nameInput.setMinLength(1);
-					nameInput.setValue(settings.prefix);
-
+					nameInput.setValue(""); // Can the ship variable be used here without refetching it? If so, use commented code below
+					// nameInput.setValue(ship.name); 
+					
 					const firstActionRow = client.extends.row().addComponents(nameInput);
 
 					modal.addComponents(firstActionRow);
