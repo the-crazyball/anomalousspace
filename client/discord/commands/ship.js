@@ -61,9 +61,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 					
 				case "btn_rename":
 					const modalSubmitCb = async (fields) => {
-						const nameInput = fields.getTextInputValue('ShipNameInput');
+						const shipName = fields.getTextInputValue('ShipNameInput');
 
-						if (/^\s/.test(nameInput)) { // check for space at start
+						if (/^\s/.test(shipName)) { // check for space at start
 							const nameErrorEmbed = client.extends.embed({ color: 'error' });
 							nameErrorEmbed.setDescription(`Error, you cannot have your ship's name start with a space, please try again.`);
 
@@ -73,20 +73,20 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 							});
 						} else {
 							const renameSuccessEmbed = client.extends.embed({ color: 'success' });
-							renameSuccessEmbed.setDescription(`Success! Your ship is now named \`${nameInput}\`.`);
+							renameSuccessEmbed.setDescription(`Success! Your ship is now named \`${shipName}\`.`);
 							
 							await shipMsg.edit({
 								embeds: [renameSuccessEmbed],
 								components: []
 							});
 							
-							ship.name = nameInput;
+							ship.name = shipName;
 							await ship.save();
 							const returnData = await client.requester.send({
 								method: 'setShipName',
 								user: message.member.user,
 								data: {
-									ship.name
+									shipName
 								}
 							});
 						}
