@@ -8,14 +8,12 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             await client.container.commands.get('play').run(client, message, args, level);
             return;
         }
-		let playerSector = userData.ship.sector;
+        let playerSector = userData.ship.sector;
         let miningData = await client.requester.mine(message.member.user);
-	
         const title = `Mining Results`;
 
         const resultEmbed = client.extends.embed();
         resultEmbed.title = title;
-		
         if (miningData.inCooldown) {
             resultEmbed.description = `You are unable to mine at this time, please try again when the cooldown has completed.\n\n**Available in** \`${humanizeDuration(miningData.cdRemaining, { maxDecimalPoints: 0 })}\``;
         } else if (miningData.hasAsteroids) {

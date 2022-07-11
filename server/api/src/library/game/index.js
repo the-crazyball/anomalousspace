@@ -568,7 +568,7 @@ module.exports = class Game {
     })
   }
   
-  setShipName(user, blueprint) {
+  async setShipName(user, blueprint) {
     const userData = await this.client.database.findOrCreateUser(user);
     if (!userData.ship) {
       const shipData = new this.client.database.shipModel();
