@@ -73,6 +73,15 @@ module.exports = client => {
         // toProperCase("Mary had a little lamb") returns "Mary Had A Little Lamb"
         toProperCase: function(string) {
             return string.replace(/([^\W_]+[^\s-]*) */g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+        },
+        sortByDistance: function(coordinates, point) {
+            const sorter = (a, b) => this.distance(a, point) - this.distance(b, point);
+            coordinates.sort(sorter);
+        },
+        distance: function(coor1, coor2) {
+            const x = coor2.x - coor1.x;
+            const y = coor2.y - coor1.y;
+            return Math.sqrt((x*x) + (y*y));
         }
     };
 };
