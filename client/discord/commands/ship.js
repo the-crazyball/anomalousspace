@@ -37,7 +37,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             style: 'PRIMARY'
         });
         const btnRename = client.extends.button({
-            id: 'btn_rename',
+            id: 'btn_rename@noDefer',
             label: 'Rename',
             style: 'PRIMARY'
         });
@@ -57,7 +57,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 case "btn_cargo":
                     await client.container.commands.get('cargo').run(client, message, args, level);
                     break;
-                case "btn_rename": {
+                case btnRename.customId: {
                     const modalSubmitCb = async (fields) => {
                         const shipName = fields.getTextInputValue('ShipNameInput');
 
