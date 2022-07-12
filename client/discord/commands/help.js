@@ -57,11 +57,13 @@ New to Anomalous Space type \`${message.settings.prefix} play\``;
             const collector = client.extends.collector(helpMessage, message.author);
 
             collector.on('collect', async (i) => {
-                if (i.customId === "btn_about") {
-                    await client.container.commands.get('about').run(client, message, args, level);
-                }
-                if (i.customId === "btn_settings") {
-                    await client.container.commands.get('settings').run(client, message, args, level);
+                switch(i.customId) {
+                    case "btn_about":
+                        await client.container.commands.get('about').run(client, message, args, level);
+                        break;
+                    case "btn_settings":
+                        await client.container.commands.get('settings').run(client, message, args, level);
+                        break;
                 }
             });
         } else {

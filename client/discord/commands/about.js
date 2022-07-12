@@ -10,7 +10,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         aboutEmbed.addField('Contributors', `\`Surfside\`, \`Vraboros\`, \`Elemperor\``, true);
         aboutEmbed.addField('Testers', `\`Surfside\`, \`Vraboros\`, \`Elemperor\``, true);
 
-        aboutEmbed.addField('Developers', `\`Torsin\``, false);
+        aboutEmbed.addField('Developers', `\`Torsin\`, \`Quadrum\``, false);
 
         aboutEmbed.addField('Links', `${emojis.get('bullet')} [Website](${client.config.website})\n${emojis.get('bullet')} [Play & Support Server](${client.config.supportServer})`, false);
 

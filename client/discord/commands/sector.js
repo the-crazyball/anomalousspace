@@ -50,8 +50,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             const collector = client.extends.collector(sectorMessage, message.author);
 
             collector.on('collect', async (i) => {
-                if (i.customId === "btn_scan") {
-                    await client.container.commands.get('scan').run(client, message, args, level);
+                switch(i.customId) {
+                    case "btn_scan":
+                        await client.container.commands.get('scan').run(client, message, args, level);
+                        break;
                 }
             });
             return;
@@ -77,14 +79,16 @@ You can \`jump\` to another sector or \`scan\` the sector again.`;
             const collector = client.extends.collector(sectorMessage, message.author);
 
             collector.on('collect', async (i) => {
-                if (i.customId === "btn_scan") {
-                    await client.container.commands.get('scan').run(client, message, args, level);
-                }
-                if (i.customId === "btn_jump") {
-                    await client.container.commands.get('jump').run(client, message, args, level);
-                }
-                if (i.customId === "btn_map") {
-                    await client.container.commands.get('map').run(client, message, args, level);
+                switch(i.customId) {
+                    case "btn_scan":
+                        await client.container.commands.get('scan').run(client, message, args, level);
+                        break;
+                    case "btn_jump":
+                        await client.container.commands.get('jump').run(client, message, args, level);
+                        break;
+                    case "btn_map":
+                        await client.container.commands.get('map').run(client, message, args, level);
+                        break;
                 }
             });
             return;
@@ -166,74 +170,79 @@ ${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(sector
         const collector = client.extends.collector(sectorMessage, message.author);
 
         collector.on('collect', async (i) => {
-            if (i.customId === "select_object") {
-                objectSelect.options.forEach(r => {
-                    if (r.value === i.values[0]) r.default = true;
-                    else r.default = false;
-                });
+            switch(i.customId) {
+                case "select_object": {
+                    objectSelect.options.forEach(r => {
+                        if (r.value === i.values[0]) r.default = true;
+                        else r.default = false;
+                    });
 
-                selectedObject = i.values[0];
+                    selectedObject = i.values[0];
 
-                const object = astronomicalObjects.find(o => o.name === selectedObject);
+                    const object = astronomicalObjects.find(o => o.name === selectedObject);
 
-                const btnColonize = client.extends.button({
-                    id: 'btn_colonize',
-                    label: 'Colonize',
-                    style: 'PRIMARY',
-                    disabled: !object.ownedBy ? false : true
-                });
-                const btnTrade = client.extends.button({
-                    id: 'btn_trade',
-                    label: 'Trade',
-                    style: 'PRIMARY',
-                    disabled: object.type === 'planet:garden' ? false : true
-                });
-                const btnAttack = client.extends.button({
-                    id: 'btn_attack',
-                    label: 'Attack',
-                    style: 'DANGER',
-                    disabled: true
-                });
-                const btnVisit = client.extends.button({
-                    id: 'btn_visit',
-                    label: 'Visit',
-                    style: 'PRIMARY'
-                });
+                    const btnColonize = client.extends.button({
+                        id: 'btn_colonize',
+                        label: 'Colonize',
+                        style: 'PRIMARY',
+                        disabled: !object.ownedBy ? false : true
+                    });
+                    const btnTrade = client.extends.button({
+                        id: 'btn_trade',
+                        label: 'Trade',
+                        style: 'PRIMARY',
+                        disabled: object.type === 'planet:garden' ? false : true
+                    });
+                    const btnAttack = client.extends.button({
+                        id: 'btn_attack',
+                        label: 'Attack',
+                        style: 'DANGER',
+                        disabled: true
+                    });
+                    const btnVisit = client.extends.button({
+                        id: 'btn_visit',
+                        label: 'Visit',
+                        style: 'PRIMARY'
+                    });
 
-                const row3 = client.extends.row()
-                    .addComponents(btnVisit)
-                    .addComponents(btnColonize)
-                    .addComponents(btnTrade)
-                    .addComponents(btnAttack);
+                    const row3 = client.extends.row()
+                        .addComponents(btnVisit)
+                        .addComponents(btnColonize)
+                        .addComponents(btnTrade)
+                        .addComponents(btnAttack);
 
-                await sectorMessage.edit({
-                    components: [rowOrbitSelect, row3]
-                });
-            }
-            if (i.customId === "btn_visit") {
-                const msgEmbed = client.extends.embed();
-                msgEmbed.description = `You are currently visiting \`${selectedObject}\` what shall we do now?`;
-
-                await sectorMessage.edit({
-                    embeds: [msgEmbed], components: []
-                });
-            }
-            if (i.customId === "btn_colonize") {
-                const returnData = await client.requester.send({
-                    method: 'colonize',
-                    user: message.member.user,
-                    data: {
-                        selectedObject
-                    }
-                });
-
-                if (returnData.colonized) {
-                    const msgEmbed = client.extends.embed({ color: 'success' });
-                    msgEmbed.description = `You successfully colonized \`${selectedObject}\`.`;
+                    await sectorMessage.edit({
+                        components: [rowOrbitSelect, row3]
+                    });
+                    break;
+                } 
+                case "btn_visit": {
+                    const msgEmbed = client.extends.embed();
+                    msgEmbed.description = `You are currently visiting \`${selectedObject}\` what shall we do now?`;
 
                     await sectorMessage.edit({
                         embeds: [msgEmbed], components: []
                     });
+                    break;
+                }
+                case "btn_colonize": {
+                    const returnData = await client.requester.send({
+                        method: 'colonize',
+                        user: message.member.user,
+                        data: {
+                            selectedObject
+                        }
+                    });
+
+                    if (returnData.colonized) {
+                        const msgEmbed = client.extends.embed({ color: 'success' });
+                        msgEmbed.description = `You successfully colonized \`${selectedObject}\`.`;
+
+                        await sectorMessage.edit({
+                            embeds: [msgEmbed], components: []
+                        });
+                    }
+                    break;
                 }
             }
         });

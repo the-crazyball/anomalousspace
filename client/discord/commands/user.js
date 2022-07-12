@@ -43,7 +43,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const collector = client.extends.collector(userMsg, message.author);
 
         collector.on('collect', async (i) => {
-            if (i.customId === "btn_ship") {
+            if (i.customId === "btn_ship") { // Turn to switch when more conditions are added
                 await client.container.commands.get('ship').run(client, message, args, level);
             }
         });

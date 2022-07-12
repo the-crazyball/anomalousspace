@@ -239,58 +239,62 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             const collector = client.extends.collector(jumpMsg, message.author);
 
             collector.on('collect', async (i) => {
-                if (i.customId === "btn_jump") {
-                    const toSector = selectedJumpToSector.split(',');
+                switch(i.customId) {
+                    case "btn_jump": {
+                        const toSector = selectedJumpToSector.split(',');
 
-                    const x = userData.ship.position.x - parseInt(toSector[0]);
-                    const y = userData.ship.position.y - parseInt(toSector[1]);
-                    const z = 0;
+                        const x = userData.ship.position.x - parseInt(toSector[0]);
+                        const y = userData.ship.position.y - parseInt(toSector[1]);
+                        const z = 0;
 
-                    // TODO change to jumpTo engine
-                    let returnData = await client.requester.jumpTo(message.member.user, {
-                        toCoord: {
-                            x: x,
-                            y: y,
-                            z: z
+                        // TODO change to jumpTo engine
+                        let returnData = await client.requester.jumpTo(message.member.user, {
+                            toCoord: {
+                                x: x,
+                                y: y,
+                                z: z
+                            }
+                        });
+
+                        if (returnData.canJump) {
+                            embedMsg.title = 'Jump Completed';
+                            embedMsg.description = `You successfully jumped to sector \`${x}\`,\`${y}\`.`;
+
+                            await jumpMsg.edit({
+                                embeds: [embedMsg], components: [], files: [], attachments: []
+                            });
+                        } else {
+                            jumpFail({ x, y, reason: 'Jump drive level to low to jump that far away.' });
                         }
-                    });
+                        break;
+                    }
+                    case "select_sector": {
+                        sectorSelect.options.forEach(r => {
+                            if (r.value === i.values[0]) r.default = true;
+                            else r.default = false;
+                        });
 
-                    if (returnData.canJump) {
-                        embedMsg.title = 'Jump Completed';
-                        embedMsg.description = `You successfully jumped to sector \`${x}\`,\`${y}\`.`;
+                        selectedJumpToSector = i.values[0];
+
+                        embedMsg.image = {
+                            url: `attachment://image${imageCounter}.png`
+                        };
+
+                        const sectorImage = await generateJumpMap({ jumpTo: i.values[0] });
+
+                        const btnJump = client.extends.button({
+                            id: 'btn_jump',
+                            label: 'Activate Jump',
+                            style: 'PRIMARY'
+                        });
+
+                        const row2 = client.extends.row().addComponents(btnJump);
 
                         await jumpMsg.edit({
-                            embeds: [embedMsg], components: [], files: [], attachments: []
+                            embeds: [embedMsg], components: [row, row2], files: [sectorImage], attachments: []
                         });
-                    } else {
-                        jumpFail({ x, y, reason: 'Jump drive level to low to jump that far away.' });
+                        break;
                     }
-                }
-                if (i.customId === "select_sector") {
-                    sectorSelect.options.forEach(r => {
-                        if (r.value === i.values[0]) r.default = true;
-                        else r.default = false;
-                    });
-
-                    selectedJumpToSector = i.values[0];
-
-                    embedMsg.image = {
-                        url: `attachment://image${imageCounter}.png`
-                    };
-
-                    const sectorImage = await generateJumpMap({ jumpTo: i.values[0] });
-
-                    const btnJump = client.extends.button({
-                        id: 'btn_jump',
-                        label: 'Activate Jump',
-                        style: 'PRIMARY'
-                    });
-
-                    const row2 = client.extends.row().addComponents(btnJump);
-
-                    await jumpMsg.edit({
-                        embeds: [embedMsg], components: [row, row2], files: [sectorImage], attachments: []
-                    });
                 }
             });
 

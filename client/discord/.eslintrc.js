@@ -13,7 +13,7 @@ module.exports = {
     "rules": {
         "no-mixed-spaces-and-tabs": "error",
         "semi": ["error", "always", { "omitLastInOneLineBlock": true}],
-        "indent": ["error", 4],
+        "indent": ["error", 4, {"SwitchCase": 1}],
         "no-irregular-whitespace": "error",
         "no-multiple-empty-lines": ["error" ,{"max":1}],
         "no-empty": ["error", { "allowEmptyCatch": true }],

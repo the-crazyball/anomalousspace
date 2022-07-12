@@ -33,7 +33,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         const collector = client.extends.collector(cargoMsg, message.author);
 
-        collector.on('collect', async (i) => {
+        collector.on('collect', async (_) => {
             // collector
         });
 

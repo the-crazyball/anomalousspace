@@ -63,7 +63,12 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             disabled: true
         });
 
-        const rowPaging = client.extends.row().addComponents(firstButton).addComponents(previousButton).addComponents(blankButton).addComponents(nextButton).addComponents(lastButton);
+        const rowPaging = client.extends.row()
+            .addComponents(firstButton)
+            .addComponents(previousButton)
+            .addComponents(blankButton)
+            .addComponents(nextButton)
+            .addComponents(lastButton);
 
         const description = `> You currently have \`${colonies.length}\` colonies.\n\n`;
 
@@ -112,51 +117,51 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const collector = client.extends.collector(coloniesMessage, message.author);
 
         collector.on('collect', async (i) => {
-            if (i.customId === "btn_first") {
-                currentPage = 0;
+            switch(i.customId) {
+                case "btn_first":
+                    currentPage = 0;
 
-                rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[0].disabled = currentPage === 0 ? true : false;
+                    rowPaging.components[1].disabled = currentPage === 0 ? true : false;
+                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
 
-                await coloniesMessage.edit(pages[currentPage]);
-            }
-            if (i.customId === "btn_last") {
+                    await coloniesMessage.edit(pages[currentPage]);
+                    break;
+                case "btn_last":
+                    currentPage = pages.length - 1;
 
-                currentPage = pages.length - 1;
+                    rowPaging.components[0].disabled = false;
+                    rowPaging.components[1].disabled = false;
+                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
 
-                rowPaging.components[0].disabled = false;
-                rowPaging.components[1].disabled = false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+                    await coloniesMessage.edit(pages[currentPage]);
+                    break;
+                case "btn_next":
+                    currentPage++;
 
-                await coloniesMessage.edit(pages[currentPage]);
-            }
-            if (i.customId === "btn_next") {
-                currentPage++;
+                    rowPaging.components[0].disabled = false;
+                    rowPaging.components[1].disabled = false;
+                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
 
-                rowPaging.components[0].disabled = false;
-                rowPaging.components[1].disabled = false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+                    await coloniesMessage.edit(pages[currentPage]);
+                    break;
+                case "btn_prev":
+                    currentPage--;
 
-                await coloniesMessage.edit(pages[currentPage]);
-            }
-            if (i.customId === "btn_prev")  {
-                currentPage--;
+                    rowPaging.components[0].disabled = currentPage === 0 ? true : false;
+                    rowPaging.components[1].disabled = currentPage === 0 ? true : false;
+                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
 
-                rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-                await coloniesMessage.edit(pages[currentPage]);
-
+                    await coloniesMessage.edit(pages[currentPage]);
+                    break;
             }
         });
     } catch (err) {

@@ -164,87 +164,93 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const collector = client.extends.collector(scanMessage, message.author);
 
         collector.on('collect', async (i) => {
-            if (i.customId === "btn_first") {
-                currentPage = 0;
+            switch(i.customId) {
+                case "btn_first":
+                    currentPage = 0;
 
-                rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[0].disabled = currentPage === 0 ? true : false;
+                    rowPaging.components[1].disabled = currentPage === 0 ? true : false;
+                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
 
-                await scanMessage.edit(pages[currentPage]);
-            }
-            if (i.customId === "btn_last") {
+                    await scanMessage.edit(pages[currentPage]);
+                    break;
 
-                currentPage = pages.length - 1;
+                case "btn_last":
 
-                rowPaging.components[0].disabled = false;
-                rowPaging.components[1].disabled = false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+                    currentPage = pages.length - 1;
 
-                await scanMessage.edit(pages[currentPage]);
-            }
-            if (i.customId === "btn_next") {
-                currentPage++;
+                    rowPaging.components[0].disabled = false;
+                    rowPaging.components[1].disabled = false;
+                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
 
-                rowPaging.components[0].disabled = false;
-                rowPaging.components[1].disabled = false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+                    await scanMessage.edit(pages[currentPage]);
+                    break;
 
-                await scanMessage.edit(pages[currentPage]);
-            }
-            if (i.customId === "btn_prev")  {
-                currentPage--;
+                case "btn_next":
+                    currentPage++;
 
-                rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[0].disabled = false;
+                    rowPaging.components[1].disabled = false;
+                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
 
-                await scanMessage.edit(pages[currentPage]);
+                    await scanMessage.edit(pages[currentPage]);
+                    break;
 
-            }
-            if (i.customId === "btn_warp") {
-                await client.requester.warpStart(message.member.user);
+                case "btn_prev":
+                    currentPage--;
 
-                const warpEmbed1 = client.extends.embed();
-                warpEmbed1.title = `The Light`;
-                warpEmbed1.description = `You enter the warp gate and suddenly feel as if you senses have intensified and see a bright light surrounding you and your ship....`;
+                    rowPaging.components[0].disabled = currentPage === 0 ? true : false;
+                    rowPaging.components[1].disabled = currentPage === 0 ? true : false;
+                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
+                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
 
-                scanMessage.edit({
-                    embeds: [warpEmbed1],
-                    components: []
-                }).then(() => { // Wait until the first message is sent
-                    setTimeout(() => {
-                        const warpEmbed2 = client.extends.embed();
-                        warpEmbed2.title = `An Unexpected Event`;
-                        warpEmbed2.description = `Everything is going so fast... You hear something, a noise that you can't identify, you suddenly feel the ship turning out of control...`;
+                    await scanMessage.edit(pages[currentPage]);
+                    break;
 
-                        message.channel.send({
-                            embeds: [warpEmbed2],
-                            components: []
-                        }).then(() => {
-                            setTimeout(() => {
-                                const warpEmbed3 = client.extends.embed();
-                                warpEmbed3.title = `Did I die?`;
-                                warpEmbed3.description = `You have a feeling that this is it, you are going to die!\n\nBut as soon as your thought of dying ends, the bright light disappears, the ship stops turning and starts difting in space.\n\nYou look around to get your bearings to see where you are...`;
-                                //warpEmbed3.addField('Current Location', `\`Unknown\` Sector \`Unknown\``, true)
+                case "btn_warp": {
+                    await client.requester.warpStart(message.member.user);
 
-                                message.channel.send({
-                                    embeds: [warpEmbed3],
-                                    components: []
-                                });
+                    const warpEmbed1 = client.extends.embed();
+                    warpEmbed1.title = `The Light`;
+                    warpEmbed1.description = `You enter the warp gate and suddenly feel as if you senses have intensified and see a bright light surrounding you and your ship....`;
 
-                            }, 2000);
-                        });
-                    }, 2000);
-                });
+                    scanMessage.edit({
+                        embeds: [warpEmbed1],
+                        components: []
+                    }).then(() => { // Wait until the first message is sent
+                        setTimeout(() => {
+                            const warpEmbed2 = client.extends.embed();
+                            warpEmbed2.title = `An Unexpected Event`;
+                            warpEmbed2.description = `Everything is going so fast... You hear something, a noise that you can't identify, you suddenly feel the ship turning out of control...`;
+
+                            message.channel.send({
+                                embeds: [warpEmbed2],
+                                components: []
+                            }).then(() => {
+                                setTimeout(() => {
+                                    const warpEmbed3 = client.extends.embed();
+                                    warpEmbed3.title = `Did I die?`;
+                                    warpEmbed3.description = `You have a feeling that this is it, you are going to die!\n\nBut as soon as your thought of dying ends, the bright light disappears, the ship stops turning and starts difting in space.\n\nYou look around to get your bearings to see where you are...`;
+                                    //warpEmbed3.addField('Current Location', `\`Unknown\` Sector \`Unknown\``, true)
+
+                                    message.channel.send({
+                                        embeds: [warpEmbed3],
+                                        components: []
+                                    });
+
+                                }, 2000);
+                            });
+                        }, 2000);
+                    });
+                    break;
+                }
             }
         });
     } catch (err) {

@@ -36,58 +36,61 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const collector = client.extends.collector(settingsMessage, message.author);
 
         collector.on('collect', async (i) => {
-            if (i.customId === "myModal") {
-                console.log('test');
-            }
-            if (i.customId === "btn_prefix") {
+            switch(i.customId) {
+                case "myModal":
+                    console.log('test');
+                    break;
+                case "btn_prefix": {
 
-                // this is where the response will come from the modal submit
-                // called from the interactionCreate event, until there is a
-                // better of doing this, this is the best option
-                const modalSubmitCb = async (fields) => {
-                    const prefixInput = fields.getTextInputValue('prefixInput');
+                    // this is where the response will come from the modal submit
+                    // called from the interactionCreate event, until there is a
+                    // better of doing this, this is the best option
+                    const modalSubmitCb = async (fields) => {
+                        const prefixInput = fields.getTextInputValue('prefixInput');
 
-                    if (/^\s/.test(prefixInput)) { // check for space
-                        const prefixErrorEmbed = client.extends.embed({ color: 'error' });
-                        prefixErrorEmbed.setDescription(`Error, you cannot have a prefix start with a space, please try again.`);
+                        if (/^\s/.test(prefixInput)) { // check for space
+                            const prefixErrorEmbed = client.extends.embed({ color: 'error' });
+                            prefixErrorEmbed.setDescription(`Error, you cannot have a prefix start with a space, please try again.`);
 
-                        await settingsMessage.edit({
-                            embeds: [prefixErrorEmbed],
-                            components: []
-                        });
-                    } else {
-                        const prefixSuccessEmbed = client.extends.embed({ color: 'success' });
-                        prefixSuccessEmbed.setDescription(`Success! Your new prefix is now \`${prefixInput}\`.`);
+                            await settingsMessage.edit({
+                                embeds: [prefixErrorEmbed],
+                                components: []
+                            });
+                        } else {
+                            const prefixSuccessEmbed = client.extends.embed({ color: 'success' });
+                            prefixSuccessEmbed.setDescription(`Success! Your new prefix is now \`${prefixInput}\`.`);
 
-                        await settingsMessage.edit({
-                            embeds: [prefixSuccessEmbed],
-                            components: []
-                        });
+                            await settingsMessage.edit({
+                                embeds: [prefixSuccessEmbed],
+                                components: []
+                            });
 
-                        client.settings.user.set(message.member.user.id, { prefix: prefixInput });
-                    }
-                };
-                i.message.modalSubmitCb = modalSubmitCb;
+                            client.settings.user.set(message.member.user.id, { prefix: prefixInput });
+                        }
+                    };
+                    i.message.modalSubmitCb = modalSubmitCb;
 
-                const modal = client.extends.modal();
-                modal.setTitle('Set Prefix');
-                modal.setCustomId('modal_userPrefix');
+                    const modal = client.extends.modal();
+                    modal.setTitle('Set Prefix');
+                    modal.setCustomId('modal_userPrefix');
 
-                const prefixInput = client.extends.textInput({
-                    id: 'prefixInput',
-                    label: 'Enter a new prefix',
-                    required: true,
-                    style: 'SHORT'
-                });
+                    const prefixInput = client.extends.textInput({
+                        id: 'prefixInput',
+                        label: 'Enter a new prefix',
+                        required: true,
+                        style: 'SHORT'
+                    });
 
-                prefixInput.setMinLength(1);
-                prefixInput.setValue(settings.prefix);
+                    prefixInput.setMinLength(1);
+                    prefixInput.setValue(settings.prefix);
 
-                const firstActionRow = client.extends.row().addComponents(prefixInput);
+                    const firstActionRow = client.extends.row().addComponents(prefixInput);
 
-                modal.addComponents(firstActionRow);
+                    modal.addComponents(firstActionRow);
 
-                await i.showModal(modal);
+                    await i.showModal(modal);
+                    break;
+                }
             }
         });
 
