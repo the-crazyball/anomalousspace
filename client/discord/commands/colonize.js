@@ -62,50 +62,54 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const collector = client.extends.collector(colonizeMsg, message.author);
 
         collector.on('collect', async (i) => {
-            if (i.customId === "btn_colonize") {
-                const returnData = await client.requester.send({
-                    method: 'colonize',
-                    user: message.member.user,
-                    data: {
-                        selectedObject
+            switch(i.customId) {
+                case "btn_colonize": {
+                    const returnData = await client.requester.send({
+                        method: 'colonize',
+                        user: message.member.user,
+                        data: {
+                            selectedObject
+                        }
+                    });
+
+                    if (returnData.colonized) {
+                        const msgEmbed = client.extends.embed({ color: 'success' });
+                        msgEmbed.description = `You successfully colonized \`${selectedObject}\`.`;
+
+                        await colonizeMsg.edit({
+                            embeds: [msgEmbed], components: []
+                        });
+                    } else {
+                        const msgEmbed = client.extends.embed({ color: 'error' });
+                        msgEmbed.description = `It appears that \`${selectedObject}\` is already colonized.\n\nTry finding another planet that hasn't been colonized.`;
+
+                        await colonizeMsg.edit({
+                            embeds: [msgEmbed], components: []
+                        });
                     }
-                });
-
-                if (returnData.colonized) {
-                    const msgEmbed = client.extends.embed({ color: 'success' });
-                    msgEmbed.description = `You successfully colonized \`${selectedObject}\`.`;
-
-                    await colonizeMsg.edit({
-                        embeds: [msgEmbed], components: []
-                    });
-                } else {
-                    const msgEmbed = client.extends.embed({ color: 'error' });
-                    msgEmbed.description = `It appears that \`${selectedObject}\` is already colonized.\n\nTry finding another planet that hasn't been colonized.`;
-
-                    await colonizeMsg.edit({
-                        embeds: [msgEmbed], components: []
-                    });
+                    break;
                 }
-            }
-            if (i.customId === "select_object") {
-                objectSelect.options.forEach(r => {
-                    if (r.value === i.values[0]) r.default = true;
-                    else r.default = false;
-                });
+                case "select_object": {
+                    objectSelect.options.forEach(r => {
+                        if (r.value === i.values[0]) r.default = true;
+                        else r.default = false;
+                    });
 
-                selectedObject = i.values[0];
+                    selectedObject = i.values[0];
 
-                const btnColonize = client.extends.button({
-                    id: 'btn_colonize',
-                    label: 'Colonize',
-                    style: 'PRIMARY'
-                });
+                    const btnColonize = client.extends.button({
+                        id: 'btn_colonize',
+                        label: 'Colonize',
+                        style: 'PRIMARY'
+                    });
 
-                const row2 = client.extends.row().addComponents(btnColonize);
+                    const row2 = client.extends.row().addComponents(btnColonize);
 
-                await colonizeMsg.edit({
-                    components: [row, row2]
-                });
+                    await colonizeMsg.edit({
+                        components: [row, row2]
+                    });
+                    break;
+                }
             }
         });
 
