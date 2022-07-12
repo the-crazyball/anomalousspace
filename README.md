@@ -23,7 +23,7 @@ It's possible to run on [Replit](https://replit.com/) with the steps below.
 ### Server
 * Copy the config.example.json to config.dev.json
 * Change the secretKey to something else, this will be used on the client side as well
-* Change the MongoDb host to the MongoDb URL example: mongodb+srv://as_dev:xxxxx@cluster0.fhlbn.mongodb.net/as_dev?retryWrites=true&w=majority
+* Change the MongoDb host to the MongoDb URL example: mongodb+srv://<username>:<password>@cluster0.fhlbn.mongodb.net/as_dev?retryWrites=true&w=majority
 
 ### Client
 * Copy the config.example.js to config.dev.js
