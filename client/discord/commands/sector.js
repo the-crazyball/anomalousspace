@@ -191,16 +191,17 @@ ${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(sector
                 const btnAttack = client.extends.button({
                     id: 'btn_attack',
                     label: 'Attack',
-                    style: 'DANGER'
+                    style: 'DANGER',
+                    disabled: true
                 });
-                const btnOrbit = client.extends.button({
-                    id: 'btn_orbit',
-                    label: 'Enter Orbit',
+                const btnVisit = client.extends.button({
+                    id: 'btn_visit',
+                    label: 'Visit',
                     style: 'PRIMARY'
                 });
 
                 const row3 = client.extends.row()
-                    .addComponents(btnOrbit)
+                    .addComponents(btnVisit)
                     .addComponents(btnColonize)
                     .addComponents(btnTrade)
                     .addComponents(btnAttack);
@@ -208,6 +209,32 @@ ${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(sector
                 await sectorMessage.edit({
                     components: [rowOrbitSelect, row3]
                 });
+            }
+            if (i.customId === "btn_visit") {
+                const msgEmbed = client.extends.embed();
+                msgEmbed.description = `You are currently visiting \`${selectedObject}\` what shall we do now?`;
+
+                await sectorMessage.edit({
+                    embeds: [msgEmbed], components: []
+                });
+            }
+            if (i.customId === "btn_colonize") {
+                const returnData = await client.requester.send({
+                    method: 'colonize',
+                    user: message.member.user,
+                    data: {
+                        selectedObject
+                    }
+                });
+
+                if (returnData.colonized) {
+                    const msgEmbed = client.extends.embed({ color: 'success' });
+                    msgEmbed.description = `You successfully colonized \`${selectedObject}\`.`;
+
+                    await sectorMessage.edit({
+                        embeds: [msgEmbed], components: []
+                    });
+                }
             }
         });
 
