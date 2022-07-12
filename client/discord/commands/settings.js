@@ -18,7 +18,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         msgEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
 
         const btnPrefix = client.extends.button({
-            id: 'btn_prefix',
+            id: 'btn_prefix@noDefer',
             label: 'Set Prefix',
             style: 'PRIMARY'
         });
@@ -40,7 +40,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 case "myModal":
                     console.log('test');
                     break;
-                case "btn_prefix": {
+                case btnPrefix.customId: {
 
                     // this is where the response will come from the modal submit
                     // called from the interactionCreate event, until there is a
