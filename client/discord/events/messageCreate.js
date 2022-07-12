@@ -39,7 +39,7 @@ module.exports = async (client, message) => {
     // TODO make sure this regex is working properly for prefix check....
     // ^\\
 
-    const prefix = new RegExp(`^(${defaultPrefix}|${settings.prefix}|<@!?${client.user.id}>)`).exec(message.content);
+    const prefix = new RegExp(`^(${defaultPrefix}|${settings.prefix.toLowerCase()}|${settings.prefix.toUpperCase()}|<@!?${client.user.id}>)`).exec(message.content);
 
     // This will return and stop the code from continuing if it's missing
     // our prefix (be it mention or from the settings).
