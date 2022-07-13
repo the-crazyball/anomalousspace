@@ -82,6 +82,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     });
 
                     prefixInput.setMinLength(1);
+                    prefixInput.setMaxLength(128); 
                     prefixInput.setValue(settings.prefix);
 
                     const firstActionRow = client.extends.row().addComponents(prefixInput);

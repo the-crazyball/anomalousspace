@@ -108,6 +108,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         style: 'SHORT'
                     });
                     nameInput.setMinLength(1);
+                    nameInput.setMaxLength(128); 
                     nameInput.setValue(ship.name);
                     const firstActionRow = client.extends.row().addComponents(nameInput);
                     modal.addComponents(firstActionRow);
