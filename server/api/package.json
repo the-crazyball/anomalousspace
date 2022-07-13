@@ -20,6 +20,8 @@
     "mongoose": "^6.2.9",
     "morgan": "^1.10.0",
     "safe-compare": "^1.1.4",
-    "seedrandom": "^3.0.5"
+    "seedrandom": "^3.0.5",
+    "winston": "^3.8.1",
+    "winston-syslog": "^2.6.0"
   }
 }

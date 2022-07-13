@@ -8,9 +8,9 @@ const app = express();
 const helmet = require('helmet');
 const safeCompare = require('safe-compare');
 const bodyParser = require('body-parser');
-const morgan = require('morgan');
 const Game = require('./library/game/index');
 const Database = require('./library/database/index');
+const Logger = require('./library/logger');
 
 Sentry.init({
   dsn: 'https://2cb9c4fc490248c2ade5e701ec189e63@o1229006.ingest.sentry.io/6374962',
@@ -29,11 +29,20 @@ const client = {
   apiSettings: process.env.NODE_ENV === 'prod' ? require('./settings/config.prod.json') : require('./settings/config.dev.json'),
   appid: process.env.APPID || 1,
   game: {},
-  database: {}
+  database: {},
+  logger: {}
 }
 
+client.logger = new Logger(client.apiSettings);
+
+const loggerstream = {
+  write: function (message, encoding) {
+    client.logger.log(message);
+  }
+};
+
 app.use(helmet());
-app.use(morgan('common'));
+app.use(require("morgan")("combined", { "stream": loggerstream }));
 app.set('trust proxy', 1);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -55,19 +64,19 @@ app.use('/stats', require('./routes/private/stats')(client));
 
 /* Listen on http */
 app.listen(client.apiSettings.api.port, () => {
-  console.log(`API ${client.appid} listening on port ${client.apiSettings.api.port}!`);
+  client.logger.log(`API ${client.appid} listening on port ${client.apiSettings.api.port}!`);
 
-  console.log('Attempting to connect to database');
+  client.logger.log('Attempting to connect to database');
 
   const db = new Database(client).connect()
     .then(() => {
         client.game = new Game(client);
         client.game.init();
 
-        console.log('Connected database.');
+        client.logger.log('Connected database.');
     })
     .catch(() => {
-        console.log('Failed to connect to database. Shutting down.');
+      client.logger.log('Failed to connect to database. Shutting down.');
         process.exit(1);
     })
 })

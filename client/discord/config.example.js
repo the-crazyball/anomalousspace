@@ -10,6 +10,11 @@ const config = {
         "stat_post_ms": 3600000
     },
 
+    "papertrail" : {
+        "host": "",
+        "port": 0
+    },
+
     "copyright": "© Anomalous Games, Inc.",
 
     "webhook": 'https://discord.com/api/webhooks/XXX',

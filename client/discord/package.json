@@ -20,7 +20,9 @@
     "fs": "^0.0.1-security",
     "humanize-duration": "^3.27.1",
     "systeminformation": "^5.11.9",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "winston": "^3.8.1",
+    "winston-syslog": "^2.6.0"
   },
   "devDependencies": {
     "eslint": "^8.15.0"

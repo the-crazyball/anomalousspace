@@ -12,5 +12,10 @@
 
     "guild": {
         "prefix": "!s"
+    },
+
+    "papertrail": {
+        "host": "",
+        "port": 0
     }
   }

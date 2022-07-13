@@ -30,6 +30,7 @@ client.canvas = canvas;
 client.config = config;
 client.settings = require("./library/settings");
 client.logger = logger;
+client.logger.init(config);
 client.requester = require("./library/requester")(client);
 client.helpers = require("./library/helpers")(client);
 client.extends = require("./library/extends")(client);
