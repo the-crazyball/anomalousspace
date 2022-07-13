@@ -16,7 +16,7 @@ New to Anomalous Space type \`${message.settings.prefix} play\``;
             helpEmbed.addField('Ship', `\`ship\`, \`cargo\``, false);
             helpEmbed.addField('Movement and Exploration', `\`jump\`, \`warp\`, \`scan\`, \`map\`, \`sector\``, false);
             helpEmbed.addField('Mining', `\`mine\``, false);
-            helpEmbed.addField('Colonies', `\`colonies\`, \`colonize\``, false);
+            helpEmbed.addField('Colonies', `\`colonies\`, \`colonize\`, \`expand\``, false);
             helpEmbed.addField('Extra Information', `\`coordinates\`, \`leaderboard\`, \`info\`, \`about\`, \`settings\``, false);
 
             //helpEmbed.addField('Links', `${emojis.get('bullet')} [Website](${client.config.website})\n${emojis.get('bullet')} [Play & Support Server](${client.config.supportServer})`, false);

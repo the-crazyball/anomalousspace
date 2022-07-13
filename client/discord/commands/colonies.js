@@ -9,14 +9,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             return;
         }
 
-        const colonies = await client.requester.send({
+        const planets = await client.requester.send({
             method: 'getColonies',
             user: message.member.user
         });
 
         const title = `Colonies`;
 
-        if (!colonies.length) {
+        if (!planets.length) {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
             sectorEmbed.description = `You don't have any colonies at this time.`;
@@ -69,18 +69,22 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             .addComponents(blankButton)
             .addComponents(nextButton)
             .addComponents(lastButton);
-
-        const description = `> You currently have \`${colonies.length}\` colonies.\n\n`;
+           
+        let colonyAmount = 0
+        planets.forEach((element) => {
+            colonyAmount += element.colony.length
+        });
+        const description = `> You currently have \`${colonyAmount}\` colon${colonyAmount == 1 ? "y" : "ies"}.\n\n`;
 
         let tmpDescription = '';
 
-        for (var i = 0; i < colonies.length; i++) {
+        for (var i = 0; i < planets.length; i++) {
 
-            tmpDescription += `${emojis.get(colonies[i].type)} **${colonies[i].name}**
-**»** Galaxy: \`${colonies[i].sector.galaxy.name}\` (\`${colonies[i].sector.galaxy.x}\`,\`${colonies[i].sector.galaxy.y}\`,\`${colonies[i].sector.galaxy.z}\`)
-**»** Sector: \`${colonies[i].sector.name}\` (\`${colonies[i].sector.x}\`,\`${colonies[i].sector.y}\`,\`${colonies[i].sector.z}\`)\n\n`;
+            tmpDescription += `${emojis.get(planets[i].type)} **${planets[i].name}** (**Colonies: ${planets[i].colony.length}**)
+**»** Galaxy: \`${planets[i].sector.galaxy.name}\` (\`${planets[i].sector.galaxy.x}\`,\`${planets[i].sector.galaxy.y}\`,\`${planets[i].sector.galaxy.z}\`)
+**»** Sector: \`${planets[i].sector.name}\` (\`${planets[i].sector.x}\`,\`${planets[i].sector.y}\`,\`${planets[i].sector.z}\`)\n\n`;
 
-            if (i + 1 === pageCount * 10 || i + 1 === colonies.length) {
+            if (i + 1 === pageCount * 10 || i + 1 === planets.length) {
                 let components = [];
 
                 const msgEmbed = client.extends.embed();
