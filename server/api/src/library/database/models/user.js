@@ -34,6 +34,7 @@ const schema = mongoose.Schema({
         battlesWon: { type: Number, default: 0 },
         battlesLost: { type: Number, default: 0 },
         colonies: { type: Number, default: 0 },
+        colony_founded: { type: Number, default: 0 }
     },
     credits: { type: Number, default: 0 },
 

@@ -429,6 +429,7 @@ module.exports = class Game {
         if (object) {
             if (!object.ownedBy) {
                 colonized = true;
+                userData.stats.colony_founded += 1
             } else if (object.ownedBy._id.toString() == userData._id.toString()) {
                 colonized = true
                 expansion = true
@@ -436,10 +437,11 @@ module.exports = class Game {
         }
         if (colonized) {
             userData.stats.colonies += 1;
+            
             object.colony.push({
                 population: 0,
                 tier: 0
-            }) // Tier 0 means just about claimed, nothing more. Tier >0 should start adding population
+            }) // Tier 0 means just about founded, nothing more. Tier >0 should start adding significant population
             object.ownedBy = userData._id;
             await object.save();
             await userData.save();
