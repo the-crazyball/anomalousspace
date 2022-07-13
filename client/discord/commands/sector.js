@@ -100,7 +100,7 @@ You can \`jump\` to another sector or \`scan\` the sector again.`;
         if (stellarObject.class === 'AN') {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
-            sectorEmbed.description = `WARNING! Scan detected and anomaly in this sector. To further analyze this anomaly you will need to send a drone to get detailed information.
+            sectorEmbed.description = `WARNING! Scan detected an anomaly in this sector. To further analyze this anomaly you will need to send a drone to get detailed information.
 
 **Position** \`${userData.ship.position.x}\`,\`${userData.ship.position.y}\`,\`${userData.ship.position.z}\``;
 
@@ -230,7 +230,7 @@ ${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(sector
                     msgEmbed.description = `> What shall we do now?
 
 ${emojis.get('bullet')} **Population** \`${client.helpers.numberWithCommas(object.population)}\`
-${emojis.get('bullet')} **Colonies** \`${object.colonies}\`
+${emojis.get('bullet')} **Colonies** \`${object.colony.length}\`
 ${emojis.get('bullet')} **Owner** \`${ownedBy}\`
 
 **Resources**
@@ -249,7 +249,18 @@ ${emojis.get('resource:rock')} Rock \`${Math.round(object.resources.rock * 200)}
                         style: 'PRIMARY',
                         disabled: object.type === 'planet:garden' ? false : true
                     });
-
+                    
+                    let expandable = false
+                    if (object.ownedBy) {
+                        expandable = object.ownedBy._id.toString() == userData._id.toString()
+                    }
+                    const btnExpand = client.extends.button({
+                        id: 'btn_expand',
+                        label: 'Expand',
+                        style: 'PRIMARY',
+                        disabled: !expandable
+                    });
+                
                     const btnHubGateway = client.extends.button({
                         id: 'btn_hubgate',
                         label: 'Hub Gateway',
@@ -264,6 +275,11 @@ ${emojis.get('resource:rock')} Rock \`${Math.round(object.resources.rock * 200)}
                             .addComponents(btnHubGateway)
                             .addComponents(btnTrade);
 
+                        components.push(row);
+                    }
+                    if (expandable) {
+                        const row = client.extends.row()
+                            .addComponents(btnExpand)
                         components.push(row);
                     }
 
@@ -284,6 +300,25 @@ ${emojis.get('resource:rock')} Rock \`${Math.round(object.resources.rock * 200)}
                     if (returnData.colonized) {
                         const msgEmbed = client.extends.embed({ color: 'success' });
                         msgEmbed.description = `You successfully colonized \`${selectedObject}\`.`;
+
+                        await sectorMessage.edit({
+                            embeds: [msgEmbed], components: []
+                        });
+                    }
+                    break;
+                }
+                case "btn_expand": {
+                    const returnData = await client.requester.send({
+                        method: 'colonize',
+                        user: message.member.user,
+                        data: {
+                            selectedObject
+                        }
+                    });
+
+                    if (returnData.expansion) {
+                        const msgEmbed = client.extends.embed({ color: 'success' });
+                        msgEmbed.description = `You successfully reinforced your claim on \`${selectedObject}\`.`;
 
                         await sectorMessage.edit({
                             embeds: [msgEmbed], components: []

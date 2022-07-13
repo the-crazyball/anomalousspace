@@ -43,8 +43,12 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     value: `discoveredSectors`
                 },
                 {
-                    label: `Top Colonizers`,
+                    label: `Top Colony Expander`, // Expanded their foothold on the planet
                     value: `colonies`
+                },
+                {
+                    label: `Top Colony Founder`, // Colonized a planet for the first time
+                    value: `colony_founded`
                 }
             ]
         });
@@ -120,12 +124,20 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                             counter++;
                         });
                         break;
-
+                    
                     case 'colonies':
                         lbEmbed.description += `\n\n**Top Colonizers**\n`;
 
                         returnData.forEach(u => {
-                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - colonized \`${u.value}\` planets.\n`;
+                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - expanded and reinforced \`${u.value}\` colonies.\n`;
+                            counter++;
+                        });
+                        break;
+                        
+                    case 'colony_founded':
+                        lbEmbed.description += `\n\n**Top Terraformers**\n`;
+                        returnData.forEach(u => {
+                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - founded colonies on \`${u.value}\` different planets.\n`;
                             counter++;
                         });
                         break;

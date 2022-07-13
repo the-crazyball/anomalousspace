@@ -231,7 +231,7 @@ const generatePlanets = (count) => {
       object.population = 0;
     }
 
-    object.colonies = 0;
+    object.colony = [];
     object.ring = rndInt(0, 10) == 1;
     object.satellites = [];  
     object.id = objectId;
