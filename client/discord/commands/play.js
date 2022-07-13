@@ -1,6 +1,9 @@
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     try {
-        let userData = await client.requester.getUser(message.member.user);
+        const userData = await client.requester.send({
+            method: 'getUser',
+            user: message.member.user
+        });
 
         const startEmbed = client.extends.embed();
 
@@ -58,7 +61,10 @@ Good luck!`;
         collector.on('collect', async (i) => {
             switch(i.customId) {
                 case "btn_warp": {
-                    let result = await client.requester.warpStart(message.member.user);
+                    const result = await client.requester.send({
+                        method: 'warpStart',
+                        user: message.member.user
+                    });
 
                     // send message to webhook
                     const readyEmbed = client.extends.embed({ color: 'success' });

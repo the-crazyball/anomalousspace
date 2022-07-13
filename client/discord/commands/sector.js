@@ -2,7 +2,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     const { customEmojis: emojis } = client;
 
     try {
-        let userData = await client.requester.getUser(message.member.user);
+        const userData = await client.requester.send({
+            method: 'getUser',
+            user: message.member.user
+        });
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
@@ -249,10 +252,10 @@ ${emojis.get('resource:rock')} Rock \`${Math.round(object.resources.rock * 200)}
                         style: 'PRIMARY',
                         disabled: object.type === 'planet:garden' ? false : true
                     });
-                    
-                    let expandable = false
+
+                    let expandable = false;
                     if (object.ownedBy) {
-                        expandable = object.ownedBy._id.toString() == userData._id.toString()
+                        expandable = object.ownedBy._id.toString() == userData._id.toString();
                     }
                     const btnExpand = client.extends.button({
                         id: 'btn_expand',
@@ -260,7 +263,7 @@ ${emojis.get('resource:rock')} Rock \`${Math.round(object.resources.rock * 200)}
                         style: 'PRIMARY',
                         disabled: !expandable
                     });
-                
+
                     const btnHubGateway = client.extends.button({
                         id: 'btn_hubgate',
                         label: 'Hub Gateway',
@@ -279,7 +282,7 @@ ${emojis.get('resource:rock')} Rock \`${Math.round(object.resources.rock * 200)}
                     }
                     if (expandable) {
                         const row = client.extends.row()
-                            .addComponents(btnExpand)
+                            .addComponents(btnExpand);
                         components.push(row);
                     }
 
@@ -402,11 +405,15 @@ ${emojis.get('resource:rock')} Rock \`${Math.round(object.resources.rock * 200)}
                                 // get selected gateway coordinates
                                 //const hub = userData.ship.galaxy.hubs.find(h => h.x === parseInt(coordinates[0]) && h.y === parseInt(coordinates[1]));
 
-                                await client.requester.warpTo(message.member.user, {
-                                    toCoord: {
-                                        x: parseInt(coordinates[0]),
-                                        y: parseInt(coordinates[1]),
-                                        z: 0
+                                await client.requester.send({
+                                    method: 'warpTo',
+                                    user: message.member.user,
+                                    data: {
+                                        toCoord: {
+                                            x: parseInt(coordinates[0]),
+                                            y: parseInt(coordinates[1]),
+                                            z: 0
+                                        }
                                     }
                                 });
 

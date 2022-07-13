@@ -2,7 +2,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     const { customEmojis: emojis } = client;
 
     try {
-        let userData = await client.requester.getUser(message.member.user);
+        const userData = await client.requester.send({
+            method: 'getUser',
+            user: message.member.user
+        });
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);

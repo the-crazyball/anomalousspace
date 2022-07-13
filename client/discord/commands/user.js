@@ -4,14 +4,20 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     const { customEmojis: emojis } = client;
 
     try {
-        let userData = await client.requester.getUser(message.member.user);
+        const userData = await client.requester.send({
+            method: 'getUser',
+            user: message.member.user
+        });
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
             return;
         }
 
-        const cooldowns = await client.requester.getCooldowns(message.member.user);
+        const cooldowns = await client.requester.send({
+            method: 'getCooldowns',
+            user: message.member.user
+        });
 
         const sectorEmbed = client.extends.embed();
         sectorEmbed.title = `Character Profile`;

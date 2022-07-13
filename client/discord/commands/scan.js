@@ -2,7 +2,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     const { customEmojis: emojis } = client;
 
     try {
-        let userData = await client.requester.getUser(message.member.user);
+        const userData = await client.requester.send({
+            method: 'getUser',
+            user: message.member.user
+        });
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
@@ -23,12 +26,16 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const y = args[1] || null;
         const z = 0;
 
-        let sectorData = await client.requester.scan(message.member.user, {
-            type: 'sector',
-            coordinates: {
-                x: x,
-                y: y,
-                z: z
+        const sectorData = await client.requester.send({
+            method: 'scan',
+            user: message.member.user,
+            data: {
+                type: 'sector',
+                coordinates: {
+                    x: x,
+                    y: y,
+                    z: z
+                }
             }
         });
 
@@ -213,44 +220,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
                     await scanMessage.edit(pages[currentPage]);
                     break;
-
-                case "btn_warp": {
-                    await client.requester.warpStart(message.member.user);
-
-                    const warpEmbed1 = client.extends.embed();
-                    warpEmbed1.title = `The Light`;
-                    warpEmbed1.description = `You enter the warp gate and suddenly feel as if you senses have intensified and see a bright light surrounding you and your ship....`;
-
-                    scanMessage.edit({
-                        embeds: [warpEmbed1],
-                        components: []
-                    }).then(() => { // Wait until the first message is sent
-                        setTimeout(() => {
-                            const warpEmbed2 = client.extends.embed();
-                            warpEmbed2.title = `An Unexpected Event`;
-                            warpEmbed2.description = `Everything is going so fast... You hear something, a noise that you can't identify, you suddenly feel the ship turning out of control...`;
-
-                            message.channel.send({
-                                embeds: [warpEmbed2],
-                                components: []
-                            }).then(() => {
-                                setTimeout(() => {
-                                    const warpEmbed3 = client.extends.embed();
-                                    warpEmbed3.title = `Did I die?`;
-                                    warpEmbed3.description = `You have a feeling that this is it, you are going to die!\n\nBut as soon as your thought of dying ends, the bright light disappears, the ship stops turning and starts difting in space.\n\nYou look around to get your bearings to see where you are...`;
-                                    //warpEmbed3.addField('Current Location', `\`Unknown\` Sector \`Unknown\``, true)
-
-                                    message.channel.send({
-                                        embeds: [warpEmbed3],
-                                        components: []
-                                    });
-
-                                }, 2000);
-                            });
-                        }, 2000);
-                    });
-                    break;
-                }
             }
         });
     } catch (err) {

@@ -6,14 +6,23 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     try {
         const depth = 2;
 
-        let userData = await client.requester.getUser(message.member.user);
+        const userData = await client.requester.send({
+            method: 'getUser',
+            user: message.member.user
+        });
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, [action, key, ...value], level);
             return;
         }
 
-        let mapData = await client.requester.getMap(message.member.user, { depth: depth });
+        const mapData = await client.requester.send({
+            method: 'getMap',
+            user: message.member.user,
+            data: {
+                depth
+            }
+        });
 
         const { canvas, context } = await client.helpers.createMapCanvas(650, 600);
 

@@ -2,14 +2,22 @@ const humanizeDuration = require('humanize-duration');
 
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     try {
-        let userData = await client.requester.getUser(message.member.user);
+        const userData = await client.requester.send({
+            method: 'getUser',
+            user: message.member.user
+        });
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
             return;
         }
         let playerSector = userData.ship.sector;
-        let miningData = await client.requester.mine(message.member.user);
+
+        const miningData = await client.requester.send({
+            method: 'mine',
+            user: message.member.user
+        });
+
         const title = `Mining Results`;
 
         const resultEmbed = client.extends.embed();

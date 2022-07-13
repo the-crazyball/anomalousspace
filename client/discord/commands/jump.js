@@ -8,7 +8,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         let imageCounter = 0;
 
-        let userData = await client.requester.getUser(message.member.user);
+        const userData = await client.requester.send({
+            method: 'getUser',
+            user: message.member.user
+        });
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
@@ -195,8 +198,13 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         // if no coordinates entered show jump map with surrounding sectors that the ship can jump to
         // with the current jump engine level/class.
         if (!args[0]) {
-
-            mapData = await client.requester.getMap(message.member.user, { depth: depth });
+            mapData = await client.requester.send({
+                method: 'getMap',
+                user: message.member.user,
+                data: {
+                    depth
+                }
+            });
 
             embedMsg = client.extends.embed();
             embedMsg.image = {
@@ -248,11 +256,15 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         const z = 0;
 
                         // TODO change to jumpTo engine
-                        let returnData = await client.requester.jumpTo(message.member.user, {
-                            toCoord: {
-                                x: x,
-                                y: y,
-                                z: z
+                        const returnData = await client.requester.send({
+                            method: 'jumpTo',
+                            user: message.member.user,
+                            data: {
+                                toCoord: {
+                                    x: x,
+                                    y: y,
+                                    z: z
+                                }
                             }
                         });
 
@@ -313,11 +325,15 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const y = args[1] || null;
         const z = 0;
 
-        let returnData = await client.requester.jumpTo(message.member.user, {
-            toCoord: {
-                x: x,
-                y: y,
-                z: z
+        const returnData = await client.requester.send({
+            method: 'jumpTo',
+            user: message.member.user,
+            data: {
+                toCoord: {
+                    x: x,
+                    y: y,
+                    z: z
+                }
             }
         });
 

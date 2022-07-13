@@ -2,7 +2,10 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
     const settings = message.settings;
 
     try {
-        let userData = await client.requester.getUser(message.member.user);
+        const userData = await client.requester.send({
+            method: 'getUser',
+            user: message.member.user
+        });
 
         if (!userData.ship) {
             await client.container.commands.get('play').run(client, message, args, level);
@@ -33,11 +36,15 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const y = args[1] || null;
         const z = 0;
 
-        const warpResult = await client.requester.warpTo(message.member.user, {
-            toCoord: {
-                x: x,
-                y: y,
-                z: z
+        const warpResult = await client.requester.send({
+            method: 'warpTo',
+            user: message.member.user,
+            data: {
+                toCoord: {
+                    x: x,
+                    y: y,
+                    z: z
+                }
             }
         });
 

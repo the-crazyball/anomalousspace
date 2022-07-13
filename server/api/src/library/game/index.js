@@ -85,11 +85,23 @@ module.exports = class Game {
     async getGuild(guild) {
         return await this.client.database.findOrCreateGuild(guild, true);
     }
-    async getUser(user, isLean) {
-        return await this.client.database.findOrCreateUser(user, isLean);
+    async getUser(msg) {
+        let isLean = false;
+
+        if (msg.hasOwnProperty('data')) {
+            isLean = msg.data.isLean;
+        } 
+
+        return await this.client.database.findOrCreateUser(msg.user, isLean);
     }
-    async jumpTo(user, blueprint) {
-        const userData = await this.getUser(user, false);
+    async jumpTo(msg) {
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
+        const toCoord = msg.data.toCoord;
 
         const result = {};
         let fuelCost = 0;
@@ -109,21 +121,21 @@ module.exports = class Game {
                     const sectorX = x - q;
                     const sectorY = y - r;
 
-                    if (sectorX === parseInt(blueprint.toCoord.x) && sectorY === parseInt(blueprint.toCoord.y))
+                    if (sectorX === parseInt(toCoord.x) && sectorY === parseInt(toCoord.y))
                         canJump = true;
                 }
             }
         }
 
         if (canJump) {
-            userData.ship.position.x = blueprint.toCoord.x;
-            userData.ship.position.y = blueprint.toCoord.y;
+            userData.ship.position.x = toCoord.x;
+            userData.ship.position.y = toCoord.y;
 
             const sector = await this.client.database.findOrCreateSector({
                 galaxy: userData.ship.galaxy,
                 sector: {
-                    x: blueprint.toCoord.x,
-                    y: blueprint.toCoord.y,
+                    x: toCoord.x,
+                    y: toCoord.y,
                     z: 0
                 }
             });
@@ -147,17 +159,23 @@ module.exports = class Game {
 
         return result;
     }
-    async warpTo(user, blueprint) {
-        const userData = await this.getUser(user, false);
+    async warpTo(msg) {
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
+        const { toCoord, toGalaxy } = msg.data;
 
         const x = userData.ship.position.x;
         const y = userData.ship.position.y;
         const z = userData.ship.position.z;
 
-        if (blueprint.toGalaxy) {
+        if (toGalaxy) {
             const galaxy = await this.client.database.findOrCreateGalaxy({
-                x: blueprint.toGalaxy.x,
-                y: blueprint.toGalaxy.y
+                x: toGalaxy.x,
+                y: toGalaxy.y
             });
 
             const visited = galaxy.visitedBy.find(id => id.toString() === userData._id.toString());
@@ -172,29 +190,29 @@ module.exports = class Game {
         let outsideBounds = false;
 
         // check if outside of galaxy bounds
-        if (blueprint.toCoord.x > userData.ship.galaxy.sectors && blueprint.toCoord.x >= 0) {
+        if (toCoord.x > userData.ship.galaxy.sectors && toCoord.x >= 0) {
             outsideBounds = true;
         }
-        if (blueprint.toCoord.x < -userData.ship.galaxy.sectors && blueprint.toCoord.x <= 0) {
+        if (toCoord.x < -userData.ship.galaxy.sectors && toCoord.x <= 0) {
             outsideBounds = true;
         }
 
-        if (blueprint.toCoord.y > userData.ship.galaxy.sectors && blueprint.toCoord.y >= 0) {
+        if (toCoord.y > userData.ship.galaxy.sectors && toCoord.y >= 0) {
             outsideBounds = true;
         }
-        if (blueprint.toCoord.y < -userData.ship.galaxy.sectors && blueprint.toCoord.y <= 0) {
+        if (toCoord.y < -userData.ship.galaxy.sectors && toCoord.y <= 0) {
             outsideBounds = true;
         }
 
         if (!outsideBounds) {
-            userData.ship.position.x = blueprint.toCoord.x;
-            userData.ship.position.y = blueprint.toCoord.y;
+            userData.ship.position.x = toCoord.x;
+            userData.ship.position.y = toCoord.y;
 
             const sector = await this.client.database.findOrCreateSector({
                 galaxy: userData.ship.galaxy,
                 sector: {
-                    x: blueprint.toCoord.x,
-                    y: blueprint.toCoord.y,
+                    x: toCoord.x,
+                    y: toCoord.y,
                     z: 0
                 }
             });
@@ -221,8 +239,14 @@ module.exports = class Game {
 
         return result;
     }
-    async getMap(user, blueprint) {
-        const userData = await this.getUser(user, true);
+    async getMap(msg) {
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: true
+            }
+        });
+        const { depth } = msg.data;
 
         const x = userData.ship.position.x;
         const y = userData.ship.position.y;
@@ -230,7 +254,7 @@ module.exports = class Game {
 
         const sectorsMax = userData.ship.galaxy.sectors;
 
-        const d = Math.abs(blueprint.depth);
+        const d = Math.abs(depth);
 
         const hexes = new Map();
 
@@ -331,13 +355,18 @@ module.exports = class Game {
         }
         return result;
     }
-    async getCooldowns(user, blueprint) {
+    async getCooldowns(msg) {
         const now = new Date().getTime();
         const cdMining = (5 * 60 * 1000); // 5 min
 
         let miningRemaining = 0;
 
-        const userData = await this.getUser(user, false);
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
 
         if ((now - userData.ship.cooldowns.mining < cdMining) && userData.ship.cooldowns.mining > 0) {
             miningRemaining = cdMining - (now - userData.ship.cooldowns.mining);
@@ -349,7 +378,12 @@ module.exports = class Game {
 
     }
     async getSector(msg) {
-        const userData = await this.getUser(msg.user, false);
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
 
         const x = userData.ship.position.x;
         const y = userData.ship.position.y;
@@ -373,7 +407,12 @@ module.exports = class Game {
 
     }
     async getLeaderboard(msg) {
-        const userData = await this.getUser(msg.user, false);
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
 
         const filter = msg.data.filter;
 
@@ -393,21 +432,36 @@ module.exports = class Game {
         return lb;
     }
     async getColonies(msg) {
-        const userData = await this.getUser(msg.user, false);
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
 
         const colonies = await this.client.database.getColonies(userData);
 
         return colonies;
     }
     async colonizeGetObjects(msg) {
-        const userData = await this.getUser(msg.user, false);
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
         const objects = userData.ship.sector.astronomicalObjects.filter(o => !o.ownedBy);
 
         return objects;
     }
     async colonize(msg) {
 
-        const userData = await this.getUser(msg.user, false);
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
 
         const x = userData.ship.position.x;
         const y = userData.ship.position.y;
@@ -455,7 +509,7 @@ module.exports = class Game {
             expansion
         }
     }
-    async mine(user, blueprint) {
+    async mine(msg) {
         const now = new Date().getTime();
         const cd = (5 * 60 * 1000); // 5 min
 
@@ -465,7 +519,12 @@ module.exports = class Game {
         let amountMined = 0;
         let hasAsteroids = true;
 
-        const userData = await this.getUser(user, false);
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
         const ship = userData.ship;
 
         let asteroidsTotal = ship.sector.asteroids;
@@ -514,13 +573,19 @@ module.exports = class Game {
             asteroidsTotal
         }
     }
-    async scan(user, blueprint) {
+    async scan(msg) {
 
-        const userData = await this.getUser(user, false);
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
+        const { type, coordinates } = msg.data; // TODO type is not used
 
-        const x = blueprint.coordinates.x || userData.ship.position.x;
-        const y = blueprint.coordinates.y || userData.ship.position.y;
-        const z = blueprint.coordinates.z || userData.ship.position.z;
+        const x = coordinates.x || userData.ship.position.x;
+        const y = coordinates.y || userData.ship.position.y;
+        const z = coordinates.z || userData.ship.position.z;
 
         // track scanned sectors
         const sector = await this.client.database.findOrCreateSector({
@@ -631,8 +696,8 @@ module.exports = class Game {
 
         return sector;
     }
-    async warpStart(user) {
-        const userData = await this.client.database.findOrCreateUser(user);
+    async warpStart(msg) {
+        const userData = await this.client.database.findOrCreateUser(msg.user);
         if (!userData.ship) {
             const shipData = new this.client.database.shipModel();
             await shipData.save();
@@ -656,15 +721,18 @@ module.exports = class Game {
         const y = hub.y; //rndInt(-Math.abs(galaxy.sectors), galaxy.sectors);
         const z = 0;
 
-        await this.warpTo(user, {
-            toGalaxy: {
-                x: galaxy.x,
-                y: galaxy.y
-            },
-            toCoord: {
-                x: x,
-                y: y,
-                z: z
+        await this.warpTo({
+            user: msg.user,
+            data: {
+                toGalaxy: {
+                    x: galaxy.x,
+                    y: galaxy.y
+                },
+                toCoord: {
+                    x: x,
+                    y: y,
+                    z: z
+                }
             }
         })
         return userData;
@@ -688,7 +756,12 @@ module.exports = class Game {
     }
 
     async setShipName(msg) {
-        const userData = await this.getUser(msg.user, false);
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
         const ship = userData.ship;
 
         ship.name = msg.data.shipName;
