@@ -98,7 +98,20 @@ You can \`jump\` to another sector or \`scan\` the sector again.`;
         }
 
         const stellarObject = sectorData.stellarObjects[0]; // TODO there is only 1 stellar object at the moment, change to have more later.
-        const astronomicalObjects = sectorData.astronomicalObjects;
+
+        // we filter out asteroid belts from the display, not needed in this case
+        const astronomicalObjects = sectorData.astronomicalObjects.filter(o => o.type !== 'asteroid:belt');
+
+        // now we need to calculate the total asteroids.
+        const asteroidBelts = sectorData.astronomicalObjects.filter(o => o.type === 'asteroid:belt');
+
+        let asteroidsCount = 0;
+
+        if (asteroidBelts) {
+            asteroidBelts.forEach(b => {
+                asteroidsCount += b.asteroidsNum;
+            });
+        }
 
         if (stellarObject.class === 'AN') {
             const sectorEmbed = client.extends.embed();
@@ -117,7 +130,7 @@ You can \`jump\` to another sector or \`scan\` the sector again.`;
         const description = `> System \`${sectorData.name}\` with a class \`${stellarObject.class}\` star and \`${astronomicalObjects.length}\` astronomical object(s).
 
 ${emojis.get('bullet')} **Position** \`${sectorData.x}\`,\`${sectorData.y}\`,\`${sectorData.z}\`
-${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(sectorData.asteroids)}\`
+${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(asteroidsCount)}\` from \`${asteroidBelts.length}\` belts
 
 **Astronomical object(s)**
 `;

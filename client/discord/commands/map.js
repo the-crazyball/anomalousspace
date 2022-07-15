@@ -60,7 +60,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
                         } else if (sectorData.type.class === 'WH') {
                             context.drawImage(client.images.get('ofinterest'), 0, 0, 512, 512, h.centerPixel.x - (50 / 2), h.centerPixel.y - (50 / 2), 50, 50);
                         } else {
-                            const imgSize = 40 * sectorData.type.diameter;
+                            const imgSize = 40 * sectorData.type.radius;
                             context.drawImage(client.images.get(sectorData.type.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
                         }
                     }

@@ -56,7 +56,20 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         }
 
         const stellarObject = sectorData.stellarObjects[0]; // TODO there is only 1 stellar object at the moment, change to have more later.
-        const astronomicalObjects = sectorData.astronomicalObjects;
+
+        // we filter out asteroid belts from the display, not needed in this case
+        const astronomicalObjects = sectorData.astronomicalObjects.filter(o => o.type !== 'asteroid:belt');
+
+        // now we need to calculate the total asteroids.
+        const asteroidBelts = sectorData.astronomicalObjects.filter(o => o.type === 'asteroid:belt');
+
+        let asteroidsCount = 0;
+
+        if (asteroidBelts) {
+            asteroidBelts.forEach(b => {
+                asteroidsCount += b.asteroidsNum;
+            });
+        }
 
         if (stellarObject.class === 'AN') {
             const sectorEmbed = client.extends.embed();
@@ -112,7 +125,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 **Faction** \`unknown\`
 **Anomalies** \`unknown\`
 
-**Asteroids** \`${client.helpers.numberWithCommas(sectorData.asteroids)}\`
+**Asteroids** \`${client.helpers.numberWithCommas(asteroidsCount)}\` from \`${asteroidBelts.length}\` belts
 \u200B`;
 
         let fields = [];

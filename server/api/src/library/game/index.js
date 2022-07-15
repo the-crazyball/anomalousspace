@@ -300,7 +300,7 @@ module.exports = class Game {
                             if (scanned) {
                                 const systemType = {
                                     class: sector.stellarObjects[0].class,
-                                    diameter: sector.stellarObjects[0].diameter,
+                                    radius: sector.stellarObjects[0].radius,
                                     color: sector.stellarObjects[0].color
                                 }
 
@@ -526,8 +526,18 @@ module.exports = class Game {
             }
         });
         const ship = userData.ship;
+        const astronomicalObjects = userData.ship.sector.astronomicalObjects;
 
-        let asteroidsTotal = ship.sector.asteroids;
+        // now we need to calculate the total asteroids.
+        const asteroidBelts = astronomicalObjects.filter(o => o.type === 'asteroid:belt');
+
+        let asteroidsTotal = 0;
+
+        if (asteroidBelts) {
+            asteroidBelts.forEach(b => {
+                asteroidsTotal += b.asteroidsNum;
+            });
+        }
 
         if ((now - ship.cooldowns.mining < cd || ignoreCooldown) && ship.cooldowns.mining > 0) {
             inCooldown = true;
@@ -536,6 +546,10 @@ module.exports = class Game {
             // determine the amount based on the mining laser level.
             // randomly generated
             amountMined = rndInt(5, 15) * ship.miningLaser.level;
+
+            if (amountMined > asteroidsTotal) {
+                amountMined = asteroidsTotal;
+            }
 
             // check if the item exists
             const cargoItem = ship.cargo.find(item => item.name === 'Asteroid Chunk' && item.type === 'asteroids');
@@ -553,7 +567,24 @@ module.exports = class Game {
             // add cooldown
             ship.cooldowns.mining = new Date().getTime();
 
-            ship.sector.asteroids -= amountMined;
+            // deduct the amount of mined asteroids from the asteroid belts
+            let remainingAmount = amountMined;
+
+            asteroidBelts.forEach(b => {
+                if (remainingAmount) {
+                    if (b.asteroidsNum) { // must not be 0
+                        b.asteroidsNum -= amountMined;
+                        if (b.asteroidsNum < 0) {
+                            remainingAmount = +b.asteroidsNum; // left amount to deduct from other belt.
+                            b.asteroidsNum = 0
+                        } else {
+                            remainingAmount = 0;
+                        }
+                        b.save();
+                    }
+                }
+            });
+
             asteroidsTotal -= amountMined;
 
             userData.stats.mining += 1;
@@ -642,8 +673,14 @@ module.exports = class Game {
                     stellarObject.objectId = o.id;
                     stellarObject.type = o.type;
                     stellarObject.class = o.class;
-                    stellarObject.diameter = o.diameter;
+                    stellarObject.radius = o.radius;
+                    stellarObject.mass = o.mass;
+                    stellarObject.magnitude = o.magnitude;
                     stellarObject.color = o.color;
+                    stellarObject.temperature = o.temperature;
+                    stellarObject.luminosity = o.luminosity;
+                    stellarObject.hzInner = o.hzInner;
+                    stellarObject.hzOuter = o.hzOuter;
 
                     sector.stellarObjects.push(stellarObject._id);
 
@@ -660,28 +697,34 @@ module.exports = class Game {
                         objectId: o.id
                     });
 
-                    astronomicalObject.colony = o.colony;
+                    if (o.object === 'asteroidbelt') {
+                        astronomicalObject.asteroidsNum = o.asteroidsNum;
+                    }
 
-                    astronomicalObject.distance = o.distance;
-                    astronomicalObject.diameter = o.diameter;
-                    astronomicalObject.name = o.name;
-                    astronomicalObject.temperature = o.temperature;
-                    astronomicalObject.ring = o.ring;
-                    astronomicalObject.object = o.object;
-                    astronomicalObject.class = o.class;
-                    astronomicalObject.type = o.type;
-                    astronomicalObject.population = o.population;
+                    if (o.object === 'planet') {
+                        astronomicalObject.colony = o.colony;
+                        astronomicalObject.diameter = o.diameter;
+                        astronomicalObject.temperature = o.temperature;
+                        astronomicalObject.ring = o.ring;
+                        astronomicalObject.object = o.object;
+                        astronomicalObject.class = o.class;
+                        astronomicalObject.population = o.population;
 
-                    astronomicalObject.resources.thorium = o.resources.thorium;
-                    astronomicalObject.resources.plutonium = o.resources.plutonium;
-                    astronomicalObject.resources.uranium = o.resources.uranium;
-                    astronomicalObject.resources.rock = o.resources.rock;
+                        astronomicalObject.resources.thorium = o.resources.thorium;
+                        astronomicalObject.resources.plutonium = o.resources.plutonium;
+                        astronomicalObject.resources.uranium = o.resources.uranium;
+                        astronomicalObject.resources.rock = o.resources.rock;
 
-                    o.satellites.forEach(d => {
-                        astronomicalObject.satellites.push({
-                            diameter: d
+                        o.satellites.forEach(d => {
+                            astronomicalObject.satellites.push({
+                                diameter: d
+                            });
                         });
-                    });
+                    }
+
+                    astronomicalObject.name = o.name;
+                    astronomicalObject.type = o.type;
+                    astronomicalObject.distance = o.distance;
 
                     sector.astronomicalObjects.push(astronomicalObject._id);
 

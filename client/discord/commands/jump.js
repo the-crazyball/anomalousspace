@@ -78,7 +78,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                                 const imgSize = 100;
                                 context.drawImage(client.images.get('ofinterest'), 0, 0, 512, 512, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
                             } else {
-                                const imgSize = 70 * sectorData.type.diameter;
+                                const imgSize = 70 * sectorData.type.radius;
                                 context.drawImage(client.images.get(sectorData.type.class), 0, 0, 1024, 1024, h.centerPixel.x - (imgSize / 2), h.centerPixel.y - (imgSize / 2), imgSize, imgSize);
                             }
                         }

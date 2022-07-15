@@ -21,6 +21,7 @@ const schema = mongoose.Schema({
     temperature: { type: Number },
     population: { type: Number },
     ring: { type: Number },
+    asteroidsNum: { type: Number },
 
     satellites: { type: [{
         diameter: { type: Number }

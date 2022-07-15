@@ -7,8 +7,14 @@ const schema = mongoose.Schema({
     type: { type: String },
 
     class: { type: String },
-    diameter: { type: Number },
+    radius: { type: Number },
+    mass: { type: Number },
+    magnitude: { type: Number },
     color: { type: String },
+    temperature: { type: Number },
+    luminosity: { type: Number },
+    hzInner: { type: Number },
+    hzOuter: { type: Number },
 
     userId: { type: mongoose.Schema.ObjectId, ref: 'User' },
 
