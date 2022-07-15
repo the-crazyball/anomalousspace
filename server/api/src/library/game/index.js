@@ -526,7 +526,23 @@ module.exports = class Game {
             }
         });
         const ship = userData.ship;
-        const astronomicalObjects = userData.ship.sector.astronomicalObjects;
+        
+        const x = userData.ship.position.x;
+        const y = userData.ship.position.y;
+        const z = userData.ship.position.z;
+
+        // TODO this is also in the colonize method, perhaps there's a simpler way?
+        // note to self, call cached sector and not the userData sector when edits are needed. doh!
+        const sector = await this.client.database.findOrCreateSector({
+            galaxy: userData.ship.galaxy,
+            sector: {
+                x,
+                y,
+                z
+            }
+        });
+
+        const astronomicalObjects = sector.astronomicalObjects;
 
         // now we need to calculate the total asteroids.
         const asteroidBelts = astronomicalObjects.filter(o => o.type === 'asteroid:belt');
