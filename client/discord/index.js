@@ -35,6 +35,7 @@ client.requester = require("./library/requester")(client);
 client.helpers = require("./library/helpers")(client);
 client.extends = require("./library/extends")(client);
 client.errorHandler = require("./library/errorHandler")(client);
+client.common = require("./library/common")(client)
 
 const init = async () => {
 
