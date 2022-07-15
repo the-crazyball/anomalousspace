@@ -450,7 +450,7 @@ module.exports = class Game {
                 isLean: false
             }
         });
-        const objects = userData.ship.sector.astronomicalObjects.filter(o => !o.ownedBy);
+        const objects = userData.ship.sector.astronomicalObjects.filter(o => !o.ownedBy && o.type !== 'asteroid:belt');
 
         return objects;
     }
