@@ -108,12 +108,12 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 pages.push(page);
                 tmpDescription = '';
             }
-            rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-            rowPaging.components[1].disabled = currentPage === 0 ? true : false;
+            rowPaging.components[0].disabled = currentPage == 0;
+            rowPaging.components[1].disabled = currentPage == 0;
             rowPaging.components[2].disabled = true;
             rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-            rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-            rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
+            rowPaging.components[3].disabled = currentPage == pages.length - 1;
+            rowPaging.components[4].disabled = currentPage == pages.length - 1;
         }
 
         if (currentPage + 1 === pages.length) {
@@ -122,52 +122,32 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const coloniesMessage = await message.channel.send(pages[currentPage]);
 
         const collector = client.extends.collector(coloniesMessage, message.author);
-
+        
+        const updatePaging = async () => {
+            rowPaging.components[0].disabled = currentPage == 0;
+            rowPaging.components[1].disabled = currentPage == 0;
+            rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
+            rowPaging.components[3].disabled = currentPage == pages.length - 1;
+            rowPaging.components[4].disabled = currentPage == pages.length - 1;
+            await coloniesMessage.edit(pages[currentPage]);
+        }
         collector.on('collect', async (i) => {
             switch(i.customId) {
                 case "btn_first":
                     currentPage = 0;
-
-                    rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                    rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-                    await coloniesMessage.edit(pages[currentPage]);
+                    await updatePaging()
                     break;
                 case "btn_last":
                     currentPage = pages.length - 1;
-
-                    rowPaging.components[0].disabled = false;
-                    rowPaging.components[1].disabled = false;
-                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-                    await coloniesMessage.edit(pages[currentPage]);
+                    await updatePaging()
                     break;
                 case "btn_next":
                     currentPage++;
-
-                    rowPaging.components[0].disabled = false;
-                    rowPaging.components[1].disabled = false;
-                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-                    await coloniesMessage.edit(pages[currentPage]);
+                    await updatePaging()
                     break;
                 case "btn_prev":
                     currentPage--;
-
-                    rowPaging.components[0].disabled = currentPage === 0 ? true : false;
-                    rowPaging.components[1].disabled = currentPage === 0 ? true : false;
-                    rowPaging.components[2].label = `Page ${currentPage + 1} of ${pages.length}`;
-                    rowPaging.components[3].disabled = currentPage === pages.length - 1 ? true : false;
-                    rowPaging.components[4].disabled = currentPage === pages.length - 1 ? true : false;
-
-                    await coloniesMessage.edit(pages[currentPage]);
+                    await updatePaging()
                     break;
             }
         });
