@@ -19,12 +19,12 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         
         const title = `Expand`;
         if (!scanned) {
-            client.common.requireScan(message, title)
+            await client.common.requireScan(message, title)
             return;
         }
 
         if (!sectorData.stellarObjects.length) {
-            client.common.emptySpace(message, title)
+            await client.common.emptySpace(message, title)
             return;
         }
         const astronomicalObjects = sectorData.astronomicalObjects;  
