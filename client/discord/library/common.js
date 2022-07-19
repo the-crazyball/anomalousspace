@@ -4,7 +4,13 @@ module.exports = client => {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
             sectorEmbed.description = `Cannot display sector until a \`scan\` has been completed.`;
-
+            
+            const btnScan = client.extends.button({
+                id: 'btn_scan',
+                label: 'Scan Sector',
+                style: 'PRIMARY'
+            });
+            
             const buttons = client.extends.row()
                 .addComponents(btnScan);
 
@@ -30,7 +36,25 @@ module.exports = client => {
             sectorEmbed.description = `There is nothing of interest in this sector, just empty space!
 
 You can \`jump\` to another sector or \`scan\` the sector again.`;
+            
+            
+            const btnScan = client.extends.button({
+                id: 'btn_scan',
+                label: 'Scan Sector',
+                style: 'PRIMARY'
+            });
 
+            const btnJump = client.extends.button({
+                id: 'btn_jump',
+                label: 'Jump',
+                style: 'PRIMARY'
+            });
+
+            const btnMap = client.extends.button({
+                id: 'btn_map',
+                label: 'Map',
+                style: 'PRIMARY'
+            });
             const buttons = client.extends.row()
                 .addComponents(btnScan)
                 .addComponents(btnJump)
