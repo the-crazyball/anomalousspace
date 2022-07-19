@@ -84,7 +84,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         });
                     } else {
                         const msgEmbed = client.extends.embed({ color: 'error' });
-                        msgEmbed.description = `It appears that \`${selectedObject}\` is already colonized.\n\nTry finding another planet that hasn't been colonized.`;
+                        msgEmbed.description = returnData.message;//`It appears that \`${selectedObject}\` is already colonized.\n\nTry finding another planet that hasn't been colonized.`;
 
                         await colonizeMsg.edit({
                             embeds: [msgEmbed], components: []

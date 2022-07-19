@@ -480,10 +480,23 @@ module.exports = class Game {
 
         let colonized = false;
         let expansion = false;
+        let message = '';
+
         if (object) {
             if (!object.ownedBy) {
-                colonized = true;
-                userData.stats.colony_founded += 1
+                // check if we have enough resources for first colony
+                // asteroid chucks needed for first colony, set to 200 for now.
+                const chunks = userData.ship.cargo.find(item => item.name === 'Asteroid Chunk' && item.type === 'asteroids');
+ 
+                if (chunks.quantity >= 200) {
+                    colonized = true;
+                    userData.stats.colony_founded += 1
+                    chunks.quantity -= 200;
+                    await chunks.save();
+                    await userData.ship.save();
+                } else {
+                    message = `Not enough resources to create a colony.\n\n**Resources Needed**\n\`200\` x \`Asteroid Chunk(s)\``;
+                }
             } else if (object.ownedBy._id.toString() == userData._id.toString()) {
                 colonized = true
                 expansion = true
@@ -506,7 +519,8 @@ module.exports = class Game {
         }
         return {
             colonized,
-            expansion
+            expansion,
+            message
         }
     }
     async mine(msg) {
