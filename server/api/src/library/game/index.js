@@ -725,6 +725,7 @@ module.exports = class Game {
                         astronomicalObject.object = o.object;
                         astronomicalObject.class = o.class;
                         astronomicalObject.population = o.population;
+                        astronomicalObject.isHub = o.isHub;
 
                         astronomicalObject.resources.thorium = o.resources.thorium;
                         astronomicalObject.resources.plutonium = o.resources.plutonium;

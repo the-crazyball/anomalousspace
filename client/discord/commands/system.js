@@ -119,6 +119,17 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                     context.strokeStyle = 'rgba(255, 255, 255, 0.2)';
                     context.stroke();
                     context.closePath();
+
+                    // if Hub
+                    if (o.isHub) {
+                        const hubX = x + Math.cos(1) * (30);
+                        const hubY = y + Math.sin(1) * (30);
+                        context.beginPath();
+                        context.arc(hubX, hubY, 5, 0, Math.PI * 2, false);
+                        context.fillStyle = 'green';
+                        context.fill();
+                    }
+
                     // Moon (not sun)
                     /*if (this.velocity > 0) {
                         c.beginPath();

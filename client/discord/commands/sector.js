@@ -99,7 +99,7 @@ ${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(astero
             for (var i = 0; i < astronomicalObjects.length; i++) {
 
                 let ownedBy = astronomicalObjects[i].ownedBy ? `[O] \`${astronomicalObjects[i].ownedBy.discordUsername}\`` : '';
-                let isHub = sectorData.isHub && astronomicalObjects[i].type === 'planet:garden' ? `[H] ${emojis.get('icon:hub')}` : '';
+                let isHub = astronomicalObjects[i].isHub ? `[H] ${emojis.get('icon:hub')}` : '';
 
                 tmpDescription += `${emojis.get(astronomicalObjects[i].type)} \`${astronomicalObjects[i].name}\` ${isHub} [R] ${emojis.get('resource:thorium')} ${emojis.get('resource:plutonium')} ${emojis.get('resource:uranium')} ${emojis.get('resource:rock')} ${ownedBy}\n`;
 
@@ -189,7 +189,7 @@ ${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(astero
                     const object = astronomicalObjects.find(o => o.name === selectedObject);
 
                     let ownedBy = object.ownedBy ? `${object.ownedBy.discordUsername}` : 'Nobody';
-                    let isHub = sectorData.isHub && object.type === 'planet:garden' ? `${emojis.get('icon:hub')}` : '';
+                    let isHub = object.isHub ? `${emojis.get('icon:hub')}` : '';
 
                     const msgEmbed = client.extends.embed();
                     msgEmbed.title = `${selectedObject} ${isHub}`;

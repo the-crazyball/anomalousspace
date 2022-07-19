@@ -23,6 +23,8 @@ const schema = mongoose.Schema({
     ring: { type: Number },
     asteroidsNum: { type: Number },
 
+    isHub: { type: Boolean, default: false },
+    
     satellites: { type: [{
         diameter: { type: Number }
     }]},

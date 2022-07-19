@@ -170,6 +170,15 @@ const generateSector = ({ galaxy, sector: { x, y, z, isHub } }) => {
       do {
         planets = generatePlanets(planetsCount);
       } while (!planets.find(p => p.type === 'planet:garden'));
+
+      let found = false;
+      
+      planets.forEach(p => {
+        if (p.type === 'planet:garden' && !found) {
+          p.isHub = true;
+          found = true;
+        }
+      })
     }
   
     asteroids = Math.max(rndInt(-1000, 150000), 0);
@@ -396,6 +405,8 @@ const generatePlanets = (count) => {
 
     object.id = objectId;
     object.name = `${object.name}-${objectId}`;
+
+    object.isHub = false;
 
     // Add planet to sector
 		planets.push(object);
