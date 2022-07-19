@@ -87,7 +87,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         lbEmbed.description += `\n\n**Top Miners**\n`;
 
                         returnData.forEach(u => {
-                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - mined \`${u.value}\` times.\n`;
+                            lbEmbed.description += `\`${counter}\` - ${u.me ? ':star: ' : ''}${u.name} - mined \`${u.value}\` times.\n`;
                             counter++;
                         });
                         break;
@@ -96,7 +96,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         lbEmbed.description += `\n\n**Top Scanners**\n`;
 
                         returnData.forEach(u => {
-                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - scanned \`${u.value}\` times.\n`;
+                            lbEmbed.description += `\`${counter}\` - ${u.me ? ':star: ' : ''}${u.name} - scanned \`${u.value}\` times.\n`;
                             counter++;
                         });
                         break;
@@ -105,7 +105,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         lbEmbed.description += `\n\n**Top Jumpers**\n`;
 
                         returnData.forEach(u => {
-                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - jumped \`${u.value}\` times.\n`;
+                            lbEmbed.description += `\`${counter}\` - ${u.me ? ':star: ' : ''}${u.name} - jumped \`${u.value}\` times.\n`;
                             counter++;
                         });
                         break;
@@ -114,7 +114,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         lbEmbed.description += `\n\n**Top System Discoverers**\n`;
 
                         returnData.forEach(u => {
-                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - discovered \`${u.value}\` systems.\n`;
+                            lbEmbed.description += `\`${counter}\` - ${u.me ? ':star: ' : ''}${u.name} - discovered \`${u.value}\` systems.\n`;
                             counter++;
                         });
                         break;
@@ -123,24 +123,24 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         lbEmbed.description += `\n\n**Top Sector Discoverers**\n`;
 
                         returnData.forEach(u => {
-                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - discovered \`${u.value}\` sectors.\n`;
+                            lbEmbed.description += `\`${counter}\` - ${u.me ? ':star: ' : ''}${u.name} - discovered \`${u.value}\` sectors.\n`;
                             counter++;
                         });
                         break;
-                    
+
                     case 'colonies':
                         lbEmbed.description += `\n\n**Top Colonizers**\n`;
 
                         returnData.forEach(u => {
-                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - expanded and reinforced \`${u.value}\` colonies.\n`;
+                            lbEmbed.description += `\`${counter}\` - ${u.me ? ':star: ' : ''}${u.name} - expanded and reinforced \`${u.value}\` colonies.\n`;
                             counter++;
                         });
                         break;
-                        
+
                     case 'colony_founded':
                         lbEmbed.description += `\n\n**Top Terraformers**\n`;
                         returnData.forEach(u => {
-                            lbEmbed.description += `**${counter}** - ${u.me ? ':star: ' : ''}${u.name} - founded colonies on \`${u.value}\` different planets.\n`;
+                            lbEmbed.description += `\`${counter}\` - ${u.me ? ':star: ' : ''}${u.name} - founded colonies on \`${u.value}\` different planets.\n`;
                             counter++;
                         });
                         break;

@@ -18,18 +18,18 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         msgEmbed.title = `Ship Details`;
         msgEmbed.description = `> Everything you need to know about your ship.
 
-**»** Name: \`${ship.name}\`
-**»** Class: \`${ship.class}\`
-**»** Level: \`${ship.level}\`
+${emojis.get('bullet')} Name: \`${ship.name}\`
+${emojis.get('bullet')} Class: \`${ship.class}\`
+${emojis.get('bullet')} Level: \`${ship.level}\`
 `;
 
-        msgEmbed.addField('Sector', `**»** Name: \`${ship.sector.name}\`\n**»** Position: \`${ship.sector.x}\`,\`${ship.sector.y}\`,\`${ship.sector.z}\``, true);
-        msgEmbed.addField('Galaxy', `**»** Name: \`${ship.galaxy.name}\`\n**»** Type: \`${userData.ship.galaxy.type}\`\n**»** Position: \`${userData.ship.galaxy.x}\`,\`${userData.ship.galaxy.y}\`,\`${userData.ship.galaxy.z}\``, true);
+        msgEmbed.addField('Sector', `${emojis.get('bullet')} Name: \`${ship.sector.name}\`\n${emojis.get('bullet')} Position: \`${ship.sector.x}\`,\`${ship.sector.y}\`,\`${ship.sector.z}\``, true);
+        msgEmbed.addField('Galaxy', `${emojis.get('bullet')} Name: \`${ship.galaxy.name}\`\n${emojis.get('bullet')} Type: \`${userData.ship.galaxy.type}\`\n${emojis.get('bullet')} Position: \`${userData.ship.galaxy.x}\`,\`${userData.ship.galaxy.y}\`,\`${userData.ship.galaxy.z}\``, true);
 
-        msgEmbed.addField('Jump Drive', `**»** Level: \`${ship.jumpDrive.level}\`/\`${ship.jumpDrive.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}`, false);
-        msgEmbed.addField('Warp Drive', `**»** Level: \`${ship.warpDrive.level}\`/\`${ship.warpDrive.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:off')}${emojis.get('bar:off')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}
-**»** Fuel: \`${ship.warpDrive.fuel}\`/\`${ship.warpDrive.fuelMax}\``, false);
-        msgEmbed.addField('Mining Lasers', `**»** Level: \`${ship.miningLaser.level}\`/\`${ship.miningLaser.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}`, false);
+        msgEmbed.addField('Jump Drive', `${emojis.get('bullet')} Level: \`${ship.jumpDrive.level}\`/\`${ship.jumpDrive.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}`, false);
+        msgEmbed.addField('Warp Drive', `${emojis.get('bullet')} Level: \`${ship.warpDrive.level}\`/\`${ship.warpDrive.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:off')}${emojis.get('bar:off')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}
+${emojis.get('bullet')} Fuel: \`${ship.warpDrive.fuel}\`/\`${ship.warpDrive.fuelMax}\``, false);
+        msgEmbed.addField('Mining Lasers', `${emojis.get('bullet')} Level: \`${ship.miningLaser.level}\`/\`${ship.miningLaser.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}`, false);
 
         msgEmbed.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() });
         msgEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
@@ -111,7 +111,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         style: 'SHORT'
                     });
                     nameInput.setMinLength(1);
-                    nameInput.setMaxLength(128); 
+                    nameInput.setMaxLength(128);
                     nameInput.setValue(ship.name);
                     const firstActionRow = client.extends.row().addComponents(nameInput);
                     modal.addComponents(firstActionRow);

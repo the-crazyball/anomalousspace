@@ -72,7 +72,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             .addComponents(blankButton)
             .addComponents(nextButton)
             .addComponents(lastButton);
-           
+
         let colonyAmount = 0
         planets.forEach((element) => {
             colonyAmount += element.colony.length
@@ -84,8 +84,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         for (var i = 0; i < planets.length; i++) {
 
             tmpDescription += `${emojis.get(planets[i].type)} **${planets[i].name}** (**Colonies: ${planets[i].colony.length}**)
-**»** Galaxy: \`${planets[i].sector.galaxy.name}\` (\`${planets[i].sector.galaxy.x}\`,\`${planets[i].sector.galaxy.y}\`,\`${planets[i].sector.galaxy.z}\`)
-**»** Sector: \`${planets[i].sector.name}\` (\`${planets[i].sector.x}\`,\`${planets[i].sector.y}\`,\`${planets[i].sector.z}\`)\n\n`;
+${emojis.get('bullet')} Galaxy: \`${planets[i].sector.galaxy.name}\` (\`${planets[i].sector.galaxy.x}\`,\`${planets[i].sector.galaxy.y}\`)
+${emojis.get('bullet')} Sector: \`${planets[i].sector.name}\` (\`${planets[i].sector.x}\`,\`${planets[i].sector.y}\`)\n\n`;
 
             if (i + 1 === pageCount * 10 || i + 1 === planets.length) {
                 let components = [];
