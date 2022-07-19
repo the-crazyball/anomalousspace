@@ -65,7 +65,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             context.arc(
                 0,
                 (canvas.height / 2),
-                stellarObjects.hzInner*60,
+                stellarObjects.hzInner*125,
                 0,
                 -2 * Math.PI, // negative -2 here, canvas bug https://github.com/Automattic/node-canvas/issues/1808
                 true
@@ -73,7 +73,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             context.arc(
                 0,
                 (canvas.height / 2),
-                stellarObjects.hzOuter*60,
+                stellarObjects.hzOuter*125,
                 0,
                 2 * Math.PI,
                 true
