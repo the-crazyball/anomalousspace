@@ -16,18 +16,18 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             method: 'getSector',
             user: message.member.user
         });
-        
+
         const title = `Expand`;
         if (!scanned) {
-            await client.common.requireScan(message, title)
+            await client.common.requireScan(message, title, args, level);
             return;
         }
 
         if (!sectorData.stellarObjects.length) {
-            await client.common.emptySpace(message, title)
+            await client.common.emptySpace(message, title, args, level);
             return;
         }
-        const astronomicalObjects = sectorData.astronomicalObjects;  
+        const astronomicalObjects = sectorData.astronomicalObjects;
         let objects = [];
         astronomicalObjects.forEach(o => {
             if (o.ownedBy) {
@@ -41,7 +41,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 }
             }
         });
-        
+
         if (!objects.length) {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
@@ -53,8 +53,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             });
             return;
         }
-            
-        
+
         let selectedObject = null;
 
         const objectSelect = client.extends.select({

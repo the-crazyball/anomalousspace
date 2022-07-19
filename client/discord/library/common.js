@@ -1,6 +1,6 @@
 module.exports = client => {
     return {
-        requireScan: async function(message, title)  {
+        requireScan: async function(message, title, args, level)  {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
             sectorEmbed.description = `Cannot display sector until a \`scan\` has been completed.`;
@@ -30,7 +30,7 @@ module.exports = client => {
             });
         },
 
-        emptySpace: async function(message, title) {
+        emptySpace: async function(message, title, args, level) {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
             sectorEmbed.description = `There is nothing of interest in this sector, just empty space!

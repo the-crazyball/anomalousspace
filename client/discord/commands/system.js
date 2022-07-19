@@ -1,4 +1,4 @@
-exports.run = async (client, message, [action, key, ...value], level) => { // eslint-disable-line no-unused-vars
+exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     try {
         const userData = await client.requester.send({
             method: 'getUser',
@@ -6,7 +6,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         });
 
         if (!userData.ship) {
-            await client.container.commands.get('play').run(client, message, [action, key, ...value], level);
+            await client.container.commands.get('play').run(client, message, args, level);
             return;
         }
 
@@ -18,7 +18,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         const title = `System`;
 
         if (!scanned) {
-            await client.common.requireScan(message, title);
+            await client.common.requireScan(message, title, args, level);
             return;
         }
 
