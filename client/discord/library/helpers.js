@@ -57,7 +57,6 @@ module.exports = client => {
             const background = await client.canvas.loadImage('../shared/images/back.jpg');
 
             context.drawImage(background, 0, 0);
-
             context.setTransform(1, 0, 0, 1, canvas.width / 2 | 0, canvas.height / 2 | 0);
             context.imageSmoothingEnabled = false;
 
@@ -82,6 +81,9 @@ module.exports = client => {
             const x = coor2.x - coor1.x;
             const y = coor2.y - coor1.y;
             return Math.sqrt((x*x) + (y*y));
+        },
+        rndInt: function(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
         }
     };
 };

@@ -38,12 +38,12 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         const title = `Sector`;
 
         if (!scanned) {
-            await client.common.requireScan(message, title)
+            await client.common.requireScan(message, title);
             return;
         }
 
         if (!sectorData.stellarObjects.length) {
-            await client.common.emptySpace(message, title)
+            await client.common.emptySpace(message, title);
             return;
         }
 

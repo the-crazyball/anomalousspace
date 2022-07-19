@@ -60,23 +60,34 @@ const init = async () => {
     client.customEmojis = emojis;
 
     // load images needed for canvas, load once and reuse
-    const starImages = new Map();
-    starImages.set('M', await client.canvas.loadImage('../shared/images/stars/star_red01.png'));
-    starImages.set('K', await client.canvas.loadImage('../shared/images/stars/star_red_giant01.png'));
-    starImages.set('G', await client.canvas.loadImage('../shared/images/stars/star_yellow01.png'));
-    starImages.set('F', await client.canvas.loadImage('../shared/images/stars/star_white01.png'));
-    starImages.set('A', await client.canvas.loadImage('../shared/images/stars/star_white_giant01.png'));
-    starImages.set('B', await client.canvas.loadImage('../shared/images/stars/star_blue01.png'));
-    starImages.set('O', await client.canvas.loadImage('../shared/images/stars/star_blue_giant01.png'));
-    starImages.set('unknown', await client.canvas.loadImage('../shared/images/question-mark.png'));
-    starImages.set('ofinterest', await client.canvas.loadImage('../shared/images/exclamation-mark.png'));
-    starImages.set('icon:hub', await client.canvas.loadImage('../shared/images/hub.png'));
+    const astronomicalObjectImages = new Map();
+    astronomicalObjectImages.set('M', await client.canvas.loadImage('../shared/images/stars/star_red01.png'));
+    astronomicalObjectImages.set('K', await client.canvas.loadImage('../shared/images/stars/star_red_giant01.png'));
+    astronomicalObjectImages.set('G', await client.canvas.loadImage('../shared/images/stars/star_yellow01.png'));
+    astronomicalObjectImages.set('F', await client.canvas.loadImage('../shared/images/stars/star_white01.png'));
+    astronomicalObjectImages.set('A', await client.canvas.loadImage('../shared/images/stars/star_white_giant01.png'));
+    astronomicalObjectImages.set('B', await client.canvas.loadImage('../shared/images/stars/star_blue01.png'));
+    astronomicalObjectImages.set('O', await client.canvas.loadImage('../shared/images/stars/star_blue_giant01.png'));
+    astronomicalObjectImages.set('unknown', await client.canvas.loadImage('../shared/images/question-mark.png'));
+    astronomicalObjectImages.set('ofinterest', await client.canvas.loadImage('../shared/images/exclamation-mark.png'));
+    astronomicalObjectImages.set('icon:hub', await client.canvas.loadImage('../shared/images/hub.png'));
+
+    // load planets images
+    astronomicalObjectImages.set('planet:desert', await client.canvas.loadImage('../shared/images/planets/desert.png'));
+    astronomicalObjectImages.set('planet:rock', await client.canvas.loadImage('../shared/images/planets/rock.png'));
+    astronomicalObjectImages.set('planet:ocean', await client.canvas.loadImage('../shared/images/planets/ocean.png'));
+    astronomicalObjectImages.set('planet:gasgiant', await client.canvas.loadImage('../shared/images/planets/gasgiant.png'));
+    astronomicalObjectImages.set('planet:garden', await client.canvas.loadImage('../shared/images/planets/garden.png'));
+    astronomicalObjectImages.set('planet:ice', await client.canvas.loadImage('../shared/images/planets/ice.png'));
+
+    // load asteroids images
+    astronomicalObjectImages.set('asteroid:belt', await client.canvas.loadImage('../shared/images/asteroids/asteroids.png'));
 
     // BH (blackhole)
     // AN (anomaly)
     // WH (wormhole)
 
-    client.images = starImages;
+    client.images = astronomicalObjectImages;
 
     // game related commands are loaded in the game loader.
     const commands = readdirSync("./commands/").filter(file => file.endsWith(".js"));

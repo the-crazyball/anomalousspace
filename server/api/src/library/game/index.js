@@ -18,7 +18,7 @@ module.exports = class Game {
         //this.createGalaxy(74, 13);
     }
     createUniverse() {
-        seedrandom(`ANOMALOUSSPACE-02`, {
+        seedrandom(`ANOMALOUSSPACE-03`, {
             global: true
         });
     }

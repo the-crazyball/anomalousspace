@@ -14,7 +14,7 @@ New to Anomalous Space type \`${message.settings.prefix} play\``;
 
             helpEmbed.addField('Your Information', `\`user\``, false);
             helpEmbed.addField('Ship', `\`ship\`, \`cargo\``, false);
-            helpEmbed.addField('Movement and Exploration', `\`jump\`, \`warp\`, \`scan\`, \`map\`, \`sector\``, false);
+            helpEmbed.addField('Movement and Exploration', `\`jump\`, \`warp\`, \`scan\`, \`map\`, \`sector\`, \`system\``, false);
             helpEmbed.addField('Mining', `\`mine\``, false);
             helpEmbed.addField('Colonies', `\`colonies\`, \`colonize\`, \`expand\``, false);
             helpEmbed.addField('Extra Information', `\`coordinates\`, \`leaderboard\`, \`info\`, \`about\`, \`settings\``, false);

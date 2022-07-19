@@ -4,13 +4,13 @@ module.exports = client => {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
             sectorEmbed.description = `Cannot display sector until a \`scan\` has been completed.`;
-            
+
             const btnScan = client.extends.button({
                 id: 'btn_scan',
                 label: 'Scan Sector',
                 style: 'PRIMARY'
             });
-            
+
             const buttons = client.extends.row()
                 .addComponents(btnScan);
 
@@ -28,16 +28,15 @@ module.exports = client => {
                         break;
                 }
             });
-        }
-        
+        },
+
         emptySpace: async function(message, title) {
             const sectorEmbed = client.extends.embed();
             sectorEmbed.title = title;
             sectorEmbed.description = `There is nothing of interest in this sector, just empty space!
 
 You can \`jump\` to another sector or \`scan\` the sector again.`;
-            
-            
+
             const btnScan = client.extends.button({
                 id: 'btn_scan',
                 label: 'Scan Sector',
