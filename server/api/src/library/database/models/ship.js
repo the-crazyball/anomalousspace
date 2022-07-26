@@ -2,9 +2,12 @@ const mongoose = require("mongoose");
 
 const schema = mongoose.Schema({
     name: { type: String, default: 'none' },
+
     class: { type: String, default: 'Explorer' },
-    xp: { type: Number, default: 0 },
-    level: { type: Number, default: 1 },
+    tier: { type: Number, default: 1},
+    hp: { type: Number, default: 120 },
+    size: { type: String, default: 'small'},
+    sizeNum: { type: Number, default: 2},
 
     galaxy: { type: mongoose.Schema.ObjectId, ref: 'Galaxy' },
     sector: { type: mongoose.Schema.ObjectId, ref: 'Sector' },
@@ -15,40 +18,12 @@ const schema = mongoose.Schema({
         z: { type: Number, default: 0 }
     },
 
-    warpDrive: {
-        fuel: { type: Number, default: 0 },
-        fuelMax: { type: Number, default: 100 },
-        class: { type: Number, default: 1 },
-        level: { type: Number, default: 1 },
-        levelMax: { type: Number, default: 3 }
-    },
-    jumpDrive: {
-        fuel: { type: Number, default: 10 },
-        fuelMax: { type: Number, default: 10 },
-        class: { type: Number, default: 1 },
-        level: { type: Number, default: 1 },
-        levelMax: { type: Number, default: 1 }
-    },
-    shields: {
-        level: { type: Number, default: 1 },
-        levelMax: { type: Number, default: 1 }
-    },
-    sensors: {
-        level: { type: Number, default: 1 },
-        levelMax: { type: Number, default: 5 }
-    },
-    cargo: [{
-        name: { type: String },
-        quantity: { type: Number },
-        type: { type: String },
-        amount: { type: Number }
-    }],
-    miningLaser: {
-        class: { type: Number, default: 1 },
-        level: { type: Number, default: 1 },
-        levelMax: { type: Number, default: 1 }
-    },
-    fuel: { type: Number },
+    engine: {},
+
+    cargo: [],
+
+    modulesMax: { type: Number, default: 3 },
+    modules: [],
 
     /* COOLDOWN */
 	cooldowns: { 

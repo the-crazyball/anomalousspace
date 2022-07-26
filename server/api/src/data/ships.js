@@ -1,14 +1,23 @@
-const ships = {
-    'Light Freighter': {
+module.exports = {
+    'Explorer': {
         size: 'small',
-        hp: 40,
-        level: 1,
-        cargoBay: 1,
-        engine: 'light',
-        thrusters: 'S6',
-        armor: 10,
-        shields: 0,
-        fuel: 50,
-        jumpRange: 50
+        sizeNum: 2, // used as modifier to calculate max module slots
+
+        cost: 12000,
+
+        hp: 120,
+        hpIncrement: 15,
+
+        tier: 1,
+
+        cargo: [],
+
+        engine: 'Ion thruster',
+
+        modules: [
+            'Weak Mining Laser',    // mining
+            'RTG',                  // power
+            'Cargo Hold'            // for cargo
+        ]
     }
 };

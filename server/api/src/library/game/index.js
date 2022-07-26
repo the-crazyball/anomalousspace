@@ -4,7 +4,9 @@ const chance = new Chance();
 const seedrandom = require('seedrandom');
 const { rndInt, rndDouble, selectByChance } = require('../helpers');
 const { generateSector } = require('./sectorFactory');
-
+const ships = require('../../data/ships');
+const modules = require('../../data/modules');
+const resources = require('../../data/resources');
 module.exports = class Game {
     constructor(client) {
         this.client = client;
@@ -772,8 +774,18 @@ module.exports = class Game {
     }
     async warpStart(msg) {
         const userData = await this.client.database.findOrCreateUser(msg.user);
+
         if (!userData.ship) {
+            // 'Explore' class ship when new player.
+            const ship = ships['Explorer'];
             const shipData = new this.client.database.shipModel();
+
+            ship.modules.forEach(m => {
+                shipData.modules.push(modules[m]);
+            });
+            shipData.engine = modules[ship.engine];
+            shipData.modulesMax = ship.sizeNum ^ 1.4 * ship.tier;
+
             await shipData.save();
             userData.ship = shipData;
         }

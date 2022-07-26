@@ -14,22 +14,35 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             return;
         }
 
+        let modules = '';
+        let count = 1;
+        let shipNameOld = ship.name;
+
+        ship.modules.forEach(m => {
+            modules += `\`${m.name}\``;
+            if (count < ship.modules.length) {
+                modules += `, `;
+            }
+            count++;
+        });
+
         const msgEmbed = client.extends.embed();
-        msgEmbed.title = `Ship Details`;
-        msgEmbed.description = `> Everything you need to know about your ship.
+        msgEmbed.title = `Ship`;
+        msgEmbed.description = `> Everything you need to know about your ship.`;
 
-${emojis.get('bullet')} Name: \`${ship.name}\`
-${emojis.get('bullet')} Class: \`${ship.class}\`
+        msgEmbed.addField('Details', `${emojis.get('bullet')} Name: \`${ship.name}\`
 ${emojis.get('bullet')} Level: \`${ship.level}\`
-`;
+${emojis.get('bullet')} Experience: \`${ship.xp}/200\`
+${emojis.get('bullet')} HP: \`${ship.hp}/40\`
+`, true);
+        msgEmbed.addField('Extra', `${emojis.get('bullet')} Class: \`${ship.class}\`
+${emojis.get('bullet')} Cargo Bays: \`${ship.cargoBay}\`
+${emojis.get('bullet')} Size: \`${ship.size}\`
+`, true);
 
-        msgEmbed.addField('Sector', `${emojis.get('bullet')} Name: \`${ship.sector.name}\`\n${emojis.get('bullet')} Position: \`${ship.sector.x}\`,\`${ship.sector.y}\`,\`${ship.sector.z}\``, true);
-        msgEmbed.addField('Galaxy', `${emojis.get('bullet')} Name: \`${ship.galaxy.name}\`\n${emojis.get('bullet')} Type: \`${userData.ship.galaxy.type}\`\n${emojis.get('bullet')} Position: \`${userData.ship.galaxy.x}\`,\`${userData.ship.galaxy.y}\`,\`${userData.ship.galaxy.z}\``, true);
-
-        msgEmbed.addField('Jump Drive', `${emojis.get('bullet')} Level: \`${ship.jumpDrive.level}\`/\`${ship.jumpDrive.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}`, false);
-        msgEmbed.addField('Warp Drive', `${emojis.get('bullet')} Level: \`${ship.warpDrive.level}\`/\`${ship.warpDrive.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:off')}${emojis.get('bar:off')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}
-${emojis.get('bullet')} Fuel: \`${ship.warpDrive.fuel}\`/\`${ship.warpDrive.fuelMax}\``, false);
-        msgEmbed.addField('Mining Lasers', `${emojis.get('bullet')} Level: \`${ship.miningLaser.level}\`/\`${ship.miningLaser.levelMax}\` ${emojis.get('bar:on')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}${emojis.get('bar:disabled')}`, false);
+        msgEmbed.addField(`Modules \`${ship.modules.length}/${ship.modulesMax}\``, modules, false);
+        msgEmbed.addField('Sector', `${emojis.get('bullet')} Name: \`${ship.sector.name}\`\n${emojis.get('bullet')} Position: \`${ship.sector.x}\`,\`${ship.sector.y}\``, true);
+        msgEmbed.addField('Galaxy', `${emojis.get('bullet')} Name: \`${ship.galaxy.name}\`\n${emojis.get('bullet')} Type: \`${userData.ship.galaxy.type}\`\n${emojis.get('bullet')} Position: \`${userData.ship.galaxy.x}\`,\`${userData.ship.galaxy.y}\``, true);
 
         msgEmbed.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() });
         msgEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
@@ -39,6 +52,13 @@ ${emojis.get('bullet')} Fuel: \`${ship.warpDrive.fuel}\`/\`${ship.warpDrive.fuel
             label: 'Cargo',
             style: 'PRIMARY'
         });
+
+        const btnModules = client.extends.button({
+            id: 'btn_modules',
+            label: 'Modules',
+            style: 'PRIMARY'
+        });
+
         const btnRename = client.extends.button({
             id: 'btn_rename@noDefer',
             label: 'Rename',
@@ -46,6 +66,7 @@ ${emojis.get('bullet')} Fuel: \`${ship.warpDrive.fuel}\`/\`${ship.warpDrive.fuel
         });
         const row = client.extends.row()
             .addComponents(btnCargo)
+            .addComponents(btnModules)
             .addComponents(btnRename);
 
         const shipMsg = await message.channel.send({
@@ -79,8 +100,7 @@ ${emojis.get('bullet')} Fuel: \`${ship.warpDrive.fuel}\`/\`${ship.warpDrive.fuel
                                 embeds: [renameSuccessEmbed],
                                 components: []
                             });
-                            //ship.name = shipName;
-                            //await ship.save();
+
                             await client.requester.send({
                                 method: 'setShipName',
                                 user: message.member.user,
@@ -89,11 +109,11 @@ ${emojis.get('bullet')} Fuel: \`${ship.warpDrive.fuel}\`/\`${ship.warpDrive.fuel
                                 }
                             });
                             await new Promise(resolve => setTimeout(resolve, 2000));
-                            msgEmbed.description = `> Everything you need to know about your ship.
-                            **»** Name: \`${shipName}\`
-                            **»** Class: \`${ship.class}\`
-                            **»** Level: \`${ship.level}\`
-                            `;
+
+                            msgEmbed.fields[0].value = msgEmbed.fields[0].value.replace(shipNameOld, shipName);
+                            ship.name = shipName;
+                            shipNameOld = shipName;
+
                             await shipMsg.edit({
                                 embeds: [msgEmbed],
                                 components: [row]
