@@ -82,6 +82,9 @@ ${emojis.get('bullet')} HP: \`${ship.stats.hp}/${ship.stats.hpMax}\`
 
         collector.on('collect', async (i) => {
             switch(i.customId) {
+                case "btn_modules":
+                    await client.container.commands.get('modules').run(client, message, args, level);
+                    break;
                 case "btn_cargo":
                     await client.container.commands.get('cargo').run(client, message, args, level);
                     break;
