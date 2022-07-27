@@ -270,7 +270,15 @@ ${emojis.get('resource:rock')} Rock \`${Math.round(object.resources.rock * 200)}
                         await sectorMessage.edit({
                             embeds: [msgEmbed], components: []
                         });
+                    } else {
+                        const msgEmbed = client.extends.embed({ color: 'error' });
+                        msgEmbed.description = returnData.message;//`It appears that \`${selectedObject}\` is already colonized.\n\nTry finding another planet that hasn't been colonized.`;
+
+                        await sectorMessage.edit({
+                            embeds: [msgEmbed], components: []
+                        });
                     }
+
                     break;
                 }
                 case "btn_expand": {
