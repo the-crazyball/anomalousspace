@@ -1,5 +1,6 @@
 module.exports = {
     'Weak Mining Laser': {
+        name: 'Weak Mining Laser',
         size: 'tiny',
         sizeNum: 1,
         tier: 1,
@@ -18,6 +19,7 @@ module.exports = {
         moduleSpace: 1
     },
     'Nuclear Powerplant': {
+        name: 'Nuclear Powerplant',
         size: 'medium',
         sizeNum: 3,
         tier: 1,
@@ -36,6 +38,7 @@ module.exports = {
         moduleSpace: 1
     },
     'RTG': {
+        name: 'RTG',
         size: 'tiny',
         sizeNum: 1,
         tier: 1,
@@ -54,6 +57,7 @@ module.exports = {
         moduleSpace: 1
     },
     'Solar Sails': {
+        name: 'Solar Sails',
         size: 'small',
         sizeNum: 2,
         tier: 1,
@@ -72,6 +76,7 @@ module.exports = {
         moduleSpace: 1
     },
     'Cargo Hold': {
+        name: 'Cargo Hold',
         size: 'tiny',
         sizeNum: 1,
         tier: 1,
@@ -89,7 +94,8 @@ module.exports = {
 
         moduleSpace: 1
     },
-    'Ion thruster': {
+    'Ion Thruster': {
+        name: 'Ion Thruster',
         size: 'tiny',
         sizeNum: 1,
         tier: 1,

@@ -12,12 +12,13 @@ module.exports = {
 
         cargo: [],
 
-        engine: 'Ion thruster',
+        engine: 'Ion Thruster',
 
         modules: [
             'Weak Mining Laser',    // mining
             'RTG',                  // power
-            'Cargo Hold'            // for cargo
+            'Cargo Hold',           // for cargo
+            'Ion Thruster'          // engine (no module space)
         ]
     }
 };
