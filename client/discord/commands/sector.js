@@ -124,6 +124,10 @@ ${emojis.get('bullet')} **Asteroids** \`${client.helpers.numberWithCommas(astero
             tmpDescription += `Nothing`;
         }
 
+        // show ships in the sector
+        // TODO show ships in the sector and be able to launch attack if applicable
+        tmpDescription += `\n**Ship(s)**\n\`No other ships except you!\``;
+
         const sectorEmbed = client.extends.embed();
         sectorEmbed.title = title;
         sectorEmbed.description = description;
