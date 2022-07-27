@@ -15,8 +15,6 @@ module.exports = {
 
         cargo: [],
 
-        engine: 'Ion Thruster',
-
         modules: [
             'Weak Mining Laser',    // mining
             'RTG',                  // power

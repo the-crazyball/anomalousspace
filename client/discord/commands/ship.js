@@ -15,7 +15,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         }
 
         let modules = '';
-        let count = 1;
         let shipNameOld = ship.name;
 
         const engine = ship.modules.find(m => m.type === 'engine');
@@ -26,10 +25,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         modulesFiltered.forEach(m => {
             if (m.type !== 'engine' && m.type !== 'generator') {
                 modules += `${emojis.get('bullet')} Name: \`${m.name}\` ${emojis.get('bullet')} Tier: \`${m.tier}/${m.tierMax}\` ${emojis.get('bullet')} PC: \`-${m.powerConsumption}\`\n`;
-                if (count < modulesFiltered.length) {
-                    //modules += `, `;
-                }
-                count++;
             }
         });
 

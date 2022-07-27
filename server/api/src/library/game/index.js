@@ -788,7 +788,7 @@ module.exports = class Game {
             ship.modules.forEach(m => {
                 shipData.modules.push(modules[m]);
             });
-            shipData.engine = ship.engine;
+
             shipData.modulesMax = ship.sizeNum ^ 1.4 * ship.tier;
 
             // calculations
