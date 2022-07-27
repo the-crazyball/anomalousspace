@@ -8,7 +8,10 @@ module.exports = {
         hp: 120,
         hpIncrement: 15,
 
+        armor: 3,
+
         tier: 1,
+        tierMax: 10,
 
         cargo: [],
 

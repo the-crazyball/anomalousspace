@@ -7,6 +7,7 @@ const { generateSector } = require('./sectorFactory');
 const ships = require('../../data/ships');
 const modules = require('../../data/modules');
 const resources = require('../../data/resources');
+const common = require('../common');
 module.exports = class Game {
     constructor(client) {
         this.client = client;
@@ -112,7 +113,9 @@ module.exports = class Game {
         const y = userData.ship.position.y;
         const z = userData.ship.position.z;
 
-        const d = Math.abs(userData.ship.jumpDrive.class);
+        //const engine = userData.ship.modules.find(m => m.type === 'engine');
+        //const d = Math.abs(engine.tier);
+        const d = 1; // TODO hardcoded for now, since the jump map any bigger than 1-2 gets tiny and unreadable.
 
         // this is a check to make sure we aren't jumping to a sector outside our jump range
         let canJump = false;
@@ -488,16 +491,16 @@ module.exports = class Game {
             if (!object.ownedBy) {
                 // check if we have enough resources for first colony
                 // asteroid chucks needed for first colony, set to 200 for now.
-                const chunks = userData.ship.cargo.find(item => item.name === 'Asteroid Chunk' && item.type === 'asteroids');
+                const chunks = userData.ship.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
  
-                if (chunks.quantity >= 200) {
+                if (chunks.quantity >= 60) {
                     colonized = true;
                     userData.stats.colony_founded += 1
-                    chunks.quantity -= 200;
+                    chunks.quantity -= 60;
                     await chunks.save();
                     await userData.ship.save();
                 } else {
-                    message = `Not enough resources to create a colony.\n\n**Resources Needed**\n\`200\` x \`Asteroid Chunk(s)\``;
+                    message = `Not enough resources to create a colony.\n\n**Resources Needed**\n\`60\` x \`Asteroid Chunks\``;
                 }
             } else if (object.ownedBy._id.toString() == userData._id.toString()) {
                 colonized = true
@@ -575,23 +578,25 @@ module.exports = class Game {
             inCooldown = true;
             cdRemaining = cd - (now - ship.cooldowns.mining);
         } else if (asteroidsTotal) {
+            // get mining module
+            const miningModule = ship.modules.find(m => m.type === 'mining');
             // determine the amount based on the mining laser level.
             // randomly generated
-            amountMined = rndInt(5, 15) * ship.miningLaser.level;
+            amountMined = rndInt(5, 15) * miningModule.tier;
 
             if (amountMined > asteroidsTotal) {
                 amountMined = asteroidsTotal;
             }
 
             // check if the item exists
-            const cargoItem = ship.cargo.find(item => item.name === 'Asteroid Chunk' && item.type === 'asteroids');
+            const cargoItem = ship.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
 
             if (cargoItem) {
                 cargoItem.quantity += amountMined;
             } else {
                 ship.cargo.push({
-                    name: 'Asteroid Chunk',
-                    type: 'asteroids',
+                    name: 'Asteroid Chunks',
+                    type: 'asteroid',
                     quantity: amountMined
                 });
             }
@@ -785,6 +790,12 @@ module.exports = class Game {
             });
             shipData.engine = ship.engine;
             shipData.modulesMax = ship.sizeNum ^ 1.4 * ship.tier;
+
+            // calculations
+            const AP = common.calculateAP(shipData.modules);
+            shipData.stats.AP = AP;
+            const DP = common.calculateDP({ modules: shipData.modules, shipArmor: ship.armor });
+            shipData.stats.DP = DP;
 
             await shipData.save();
             userData.ship = shipData;

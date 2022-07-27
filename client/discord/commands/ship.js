@@ -25,7 +25,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         modulesFiltered.forEach(m => {
             if (m.type !== 'engine' && m.type !== 'generator') {
-                modules += `${emojis.get('bullet')} Name: \`${m.name}\` ${emojis.get('bullet')} Tier: \`${m.tier}\` ${emojis.get('bullet')} PC: \`-${m.powerConsumption}\`\n`;
+                modules += `${emojis.get('bullet')} Name: \`${m.name}\` ${emojis.get('bullet')} Tier: \`${m.tier}/${m.tierMax}\` ${emojis.get('bullet')} PC: \`-${m.powerConsumption}\`\n`;
                 if (count < modulesFiltered.length) {
                     //modules += `, `;
                 }
@@ -38,12 +38,17 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         msgEmbed.description = `> Everything you need to know about your ship.`;
 
         msgEmbed.addField('Details', `${emojis.get('bullet')} Name: \`${ship.name}\`
-${emojis.get('bullet')} Tier: \`${ship.tier}\` ${emojis.get('bullet')} Class: \`${ship.class}\` ${emojis.get('bullet')} Size: \`${ship.size}\`
-${emojis.get('bullet')} HP: \`${ship.hp}/${ship.hp}\`
-`, false);
+${emojis.get('bullet')} Tier: \`${ship.tier}/${ship.tierMax}\`
+${emojis.get('bullet')} Class: \`${ship.class}\`
+${emojis.get('bullet')} Size: \`${ship.size}\`
+`, true);
+        msgEmbed.addField('Stats', `${emojis.get('bullet')} Attack: \`${ship.stats.AP}\`
+${emojis.get('bullet')} Defense: \`${ship.stats.DP}\`
+${emojis.get('bullet')} HP: \`${ship.stats.hp}/${ship.stats.hpMax}\`
+`, true);
 
-        msgEmbed.addField(`Power`, `${emojis.get('bullet')} Name: \`${power.name}\` ${emojis.get('bullet')} Tier: \`${power.tier}\` ${emojis.get('bullet')} PP: \`+${power.powerProduction}\``, false);
-        msgEmbed.addField(`Engine`, `${emojis.get('bullet')} Name: \`${engine.name}\` ${emojis.get('bullet')} Tier: \`${engine.tier}\` ${emojis.get('bullet')} PC: \`-${engine.powerConsumption}\``, false);
+        msgEmbed.addField(`Power`, `${emojis.get('bullet')} Name: \`${power.name}\` ${emojis.get('bullet')} Tier: \`${power.tier}/${power.tierMax}\` ${emojis.get('bullet')} PP: \`+${power.powerProduction}\``, false);
+        msgEmbed.addField(`Engine`, `${emojis.get('bullet')} Name: \`${engine.name}\` ${emojis.get('bullet')} Tier: \`${engine.tier}/${engine.tierMax}\` ${emojis.get('bullet')} PC: \`-${engine.powerConsumption}\``, false);
         msgEmbed.addField(`Extra(s)`, modules, false);
         msgEmbed.addField('Sector', `${emojis.get('bullet')} Name: \`${ship.sector.name}\`\n${emojis.get('bullet')} Position: \`${ship.sector.x}\`,\`${ship.sector.y}\``, true);
         msgEmbed.addField('Galaxy', `${emojis.get('bullet')} Name: \`${ship.galaxy.name}\`\n${emojis.get('bullet')} Type: \`${userData.ship.galaxy.type}\`\n${emojis.get('bullet')} Position: \`${userData.ship.galaxy.x}\`,\`${userData.ship.galaxy.y}\``, true);

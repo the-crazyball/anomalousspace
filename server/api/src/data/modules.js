@@ -10,6 +10,8 @@ module.exports = {
         powerConsumption: 5, // in kW/h
         powerProduction: 0, // in kW/h
 
+        AP: 1, // mining lasers can attack, just not very efficiently
+
         cost: 1000,
         
         upgradeCost: {

@@ -3,9 +3,17 @@ const mongoose = require("mongoose");
 const schema = mongoose.Schema({
     name: { type: String, default: 'none' },
 
+    stats: {
+        hp: { type: Number, default: 120 },
+        hpMax: { type: Number, default: 120 },
+        AP: { type: Number, default: 0 }, // attack power (tier + weapons)
+        DP: { type: Number, default: 0 } // defense power (tier + shields + armor)
+
+    },
+
     class: { type: String, default: 'Explorer' },
     tier: { type: Number, default: 1},
-    hp: { type: Number, default: 120 },
+    tierMax: { type: Number, default: 10},
     size: { type: String, default: 'small'},
     sizeNum: { type: Number, default: 2},
 
