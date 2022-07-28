@@ -13,13 +13,36 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             return;
         }
 
+        // check if we have the cargo hold module equiped
+        const cargoHold = ship.modules.find(m => m.type === 'cargo');
+        if (!cargoHold) {
+            const noCargoEmbed = client.extends.embed({ color: 'error' });
+            noCargoEmbed.title = `Oops....`;
+            noCargoEmbed.description = `It would appear that your ship has no \`cargo hold\` equipped\n\nTry again when you have a \`cargo hold module\` equipped.`;
+
+            await message.channel.send({
+                embeds: [noCargoEmbed],
+                components: []
+            });
+            return;
+        }
+
         let items = '';
+        let cargoHoldQtyCurrent = 0;
+
+        cargoHold.cargo.forEach(c => {
+            if (c.quantity) {
+                cargoHoldQtyCurrent += c.quantity;
+            }
+        });
+
+        const cargoSpace = cargoHold.cargoMax - cargoHoldQtyCurrent;
 
         const msgEmbed = client.extends.embed();
-        msgEmbed.title = `Ship Cargo Details`;
-        msgEmbed.description = `> Your ship cargo.\n\n`;
+        msgEmbed.title = `Cargo Hold Details`;
+        msgEmbed.description = `> Your ship cargo hold has \`${cargoSpace}\` available space.\n\n`;
 
-        ship.cargo.forEach(item => {
+        cargoHold.cargo.forEach(item => {
             // TODO change cargo amount to quantity and add name
             items += `\`${item.quantity}\` x \`${item.name}\`\n`;
         });
@@ -36,7 +59,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         const collector = client.extends.collector(cargoMsg, message.author);
 
-        collector.on('collect', async (_) => {
+        collector.on('collect', async () => {
             // collector
         });
 

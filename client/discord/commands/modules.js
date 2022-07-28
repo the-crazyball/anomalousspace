@@ -32,37 +32,29 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         msgEmbed.title = `Ship Modules`;
         msgEmbed.description = `> It's all about ship modules.`;
 
-        
         msgEmbed.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() });
         msgEmbed.setThumbnail('https://i.ibb.co/KDGh8m6/6400115.png');
 
-        const btnCargo = client.extends.button({
-            id: 'btn_cargo',
-            label: 'Cargo',
-            style: 'PRIMARY'
-        });
-
-        const btnModules = client.extends.button({
-            id: 'btn_modules',
-            label: 'Modules',
+        const btnShip = client.extends.button({
+            id: 'btn_ship',
+            label: 'Ship',
             style: 'PRIMARY'
         });
 
         const row = client.extends.row()
-            .addComponents(btnCargo)
-            .addComponents(btnModules);
+            .addComponents(btnShip);
 
         const shipMsg = await message.channel.send({
             embeds: [msgEmbed],
-            components: []
+            components: [row]
         });
 
         const collector = client.extends.collector(shipMsg, message.author);
 
         collector.on('collect', async (i) => {
             switch(i.customId) {
-                case "btn_cargo":
-                    await client.container.commands.get('cargo').run(client, message, args, level);
+                case "btn_ship":
+                    await client.container.commands.get('ship').run(client, message, args, level);
                     break;
             }
         });

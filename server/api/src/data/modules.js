@@ -83,13 +83,16 @@ module.exports = {
         sizeNum: 1,
         tier: 1,
         tierMax: 10,
-        type: 'misc',
+        type: 'cargo',
 
         powerConsumption: 0, // in kW/h
         powerProduction: 0, // in kW/h
 
         cost: 200,
         
+        cargoMax: 200, // tier  + 100
+        cargo: [],
+
         upgradeCost: {
             'Asteroid Chunks': 200 // tier * 100
         },
@@ -114,5 +117,26 @@ module.exports = {
         },
 
         moduleSpace: 0
-    }
+    },
+    'Small Hanger Expansion': {
+        name: 'Small Hanger Expansion',
+        size: 'tiny',
+        sizeNum: 1,
+        tier: 1,
+        tierMax: 5,
+        type: 'hanger',
+
+        powerConsumption: 0, // in kW/h
+        powerProduction: 0, // in kW/h
+
+        cost: 200,
+        
+        hangerMax: 10,
+
+        upgradeCost: {
+            'Asteroid Chunks': 200 // tier * 100
+        },
+
+        moduleSpace: 1
+    },
 };

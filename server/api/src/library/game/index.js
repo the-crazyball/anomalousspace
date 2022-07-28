@@ -491,16 +491,21 @@ module.exports = class Game {
             if (!object.ownedBy) {
                 // check if we have enough resources for first colony
                 // asteroid chucks needed for first colony, set to 200 for now.
-                const chunks = userData.ship.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
- 
-                if (chunks.quantity >= 60) {
-                    colonized = true;
-                    userData.stats.colony_founded += 1
-                    chunks.quantity -= 60;
-                    await chunks.save();
-                    await userData.ship.save();
+                const cargoHold = userData.ship.modules.find(m => m.type === 'cargo');
+                if (cargoHold) {
+                    const chunks = cargoHold.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
+    
+                    if (chunks.quantity >= 60) {
+                        colonized = true;
+                        userData.stats.colony_founded += 1
+                        chunks.quantity -= 60;
+                        await chunks.save();
+                        await userData.ship.save();
+                    } else {
+                        message = `Not enough resources to create a colony.\n\n**Resources Needed**\n\`60\` x \`Asteroid Chunks\``;
+                    }
                 } else {
-                    message = `Not enough resources to create a colony.\n\n**Resources Needed**\n\`60\` x \`Asteroid Chunks\``;
+                    message = `You don't appear to have a \`cargo hold\` equipped.`;
                 }
             } else if (object.ownedBy._id.toString() == userData._id.toString()) {
                 colonized = true
@@ -537,6 +542,7 @@ module.exports = class Game {
         let ignoreCooldown = false;
         let amountMined = 0;
         let hasAsteroids = true;
+        let message = '';
 
         const userData = await this.getUser({
             user: msg.user,
@@ -580,6 +586,8 @@ module.exports = class Game {
         } else if (asteroidsTotal) {
             // get mining module
             const miningModule = ship.modules.find(m => m.type === 'mining');
+            const cargoHold = ship.modules.find(m => m.type === 'cargo');
+
             // determine the amount based on the mining laser level.
             // randomly generated
             amountMined = rndInt(5, 15) * miningModule.tier;
@@ -588,17 +596,39 @@ module.exports = class Game {
                 amountMined = asteroidsTotal;
             }
 
-            // check if the item exists
-            const cargoItem = ship.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
+            // if there's a cargo hold, we can store the mined resources, otherwise....
+            if (cargoHold) {
+                const cargoHoldQtyMax = cargoHold.cargoMax;
+                let cargoHoldQtyCurrent = 0;
 
-            if (cargoItem) {
-                cargoItem.quantity += amountMined;
-            } else {
-                ship.cargo.push({
-                    name: 'Asteroid Chunks',
-                    type: 'asteroid',
-                    quantity: amountMined
+                cargoHold.cargo.forEach(c => {
+                    if (c.quantity) {
+                        cargoHoldQtyCurrent += c.quantity;
+                    }
                 });
+
+                let cargoHoldQtyAvail = cargoHoldQtyMax - cargoHoldQtyCurrent;
+
+                // check if the item exists
+                const cargoItem = cargoHold.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
+
+                if (amountMined > cargoHoldQtyAvail) {
+                    amountMined = cargoHoldQtyAvail;
+                }
+
+                if (cargoItem) {
+                    cargoItem.quantity += amountMined;
+                } else {
+                    cargoHold.cargo.push({
+                        name: 'Asteroid Chunks',
+                        type: 'asteroid',
+                        quantity: amountMined
+                    });
+                }
+  
+                ship.markModified('modules'); // trigger a change for MongoDb since this is a nested object
+            } else {
+                message = `Oh no, you were able to mine, but you don't have a \`cargo hold\` to store all those resources...`
             }
 
             // add cooldown
@@ -625,7 +655,6 @@ module.exports = class Game {
             asteroidsTotal -= amountMined;
 
             userData.stats.mining += 1;
-
             await ship.save();
             await ship.sector.save();
             await userData.save();
@@ -638,7 +667,8 @@ module.exports = class Game {
             cdRemaining,
             amountMined,
             hasAsteroids,
-            asteroidsTotal
+            asteroidsTotal,
+            message
         }
     }
     async scan(msg) {

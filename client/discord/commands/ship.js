@@ -19,6 +19,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         const engine = ship.modules.find(m => m.type === 'engine');
         const power = ship.modules.find(m => m.type === 'generator');
+        const cargo = ship.modules.find(m => m.type === 'cargo');
 
         const modulesFiltered = ship.modules.filter(m => m.type !== 'engine');
 
@@ -53,7 +54,13 @@ ${emojis.get('bullet')} HP: \`${ship.stats.hp}/${ship.stats.hpMax}\`
 
         const btnCargo = client.extends.button({
             id: 'btn_cargo',
-            label: 'Cargo',
+            label: 'Cargo Hold',
+            style: 'PRIMARY'
+        });
+
+        const btnHanger = client.extends.button({
+            id: 'btn_hanger',
+            label: 'Hanger Bay',
             style: 'PRIMARY'
         });
 
@@ -68,10 +75,16 @@ ${emojis.get('bullet')} HP: \`${ship.stats.hp}/${ship.stats.hpMax}\`
             label: 'Rename',
             style: 'PRIMARY'
         });
-        const row = client.extends.row()
-            .addComponents(btnCargo)
-            .addComponents(btnModules)
-            .addComponents(btnRename);
+
+        const row = client.extends.row();
+
+        if (cargo) {
+            row.addComponents(btnCargo);
+        }
+
+        row.addComponents(btnModules);
+        row.addComponents(btnHanger);
+        row.addComponents(btnRename);
 
         const shipMsg = await message.channel.send({
             embeds: [msgEmbed],
@@ -82,6 +95,9 @@ ${emojis.get('bullet')} HP: \`${ship.stats.hp}/${ship.stats.hpMax}\`
 
         collector.on('collect', async (i) => {
             switch(i.customId) {
+                case "btn_hanger":
+                    await client.container.commands.get('hanger').run(client, message, args, level);
+                    break;
                 case "btn_modules":
                     await client.container.commands.get('modules').run(client, message, args, level);
                     break;

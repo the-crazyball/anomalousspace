@@ -26,9 +26,11 @@ const schema = mongoose.Schema({
         z: { type: Number, default: 0 }
     },
 
-    engine: {},
+    //engine: {},
+    //cargo: [],
 
-    cargo: [],
+    hangerMax: { type: Number, default: 5 },
+    hanger: [],
 
     modulesMax: { type: Number, default: 3 },
     modules: [],
