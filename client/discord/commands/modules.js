@@ -37,7 +37,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         const btnShip = client.extends.button({
             id: 'btn_ship',
-            label: 'Ship',
+            label: '<',
             style: 'PRIMARY'
         });
 
