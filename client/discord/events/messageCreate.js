@@ -3,6 +3,12 @@
 // goes `client, other, args` when this function is run.
 
 module.exports = async (client, message) => {
+    // check if DM
+    // TODO perhaps we can do something in DM later on?
+    if (message.channel.type === 'DM') {
+        return;
+    }
+
     const permlevel = client.helpers.permlevel;
     const config = message.config = client.config;
 
