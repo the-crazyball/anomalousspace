@@ -27,15 +27,15 @@ module.exports = {
                 tierMin: 1,
                 tierMax: 5,
                 resources: [
-                    { name: 'Asteroid Chunks', quantity: 100 } // tier * 100
+                    { name: 'Asteroid Chunks', quantity: 60 } // tier * 100
                 ]
             },
             {
                 tierMin: 6,
                 tierMax: 10,
                 resources: [
-                    { name: 'Asteroid Chunks', quantity: 100 }, // tier * 100
-                    { name: 'Iron Ore', quantity: 100 }, // tier * 100
+                    { name: 'Asteroid Chunks', quantity: 60 }, // tier * 100
+                    { name: 'Iron Ore', quantity: 60 }, // tier * 100
                 ]
             }
         ],
@@ -67,7 +67,7 @@ module.exports = {
                 tierMin: 1,
                 tierMax: 10,
                 resources: [
-                    { name: 'Asteroid Chunks', quantity: 400 } // tier * 100
+                    { name: 'Asteroid Chunks', quantity: 100 } // tier * 100
                 ]
             }
         ],
@@ -99,7 +99,7 @@ module.exports = {
                 tierMin: 1,
                 tierMax: 10,
                 resources: [
-                    { name: 'Asteroid Chunks', quantity: 100 } // tier * 100
+                    { name: 'Asteroid Chunks', quantity: 60 } // tier * 100
                 ]
             }
         ],
@@ -131,7 +131,7 @@ module.exports = {
                 tierMin: 1,
                 tierMax: 10,
                 resources: [
-                    { name: 'Asteroid Chunks', quantity: 200 } // tier * 100
+                    { name: 'Asteroid Chunks', quantity: 120 } // tier * 100
                 ]
             }
         ],
@@ -166,7 +166,7 @@ module.exports = {
                 tierMin: 1,
                 tierMax: 10,
                 resources: [
-                    { name: 'Asteroid Chunks', quantity: 200 } // tier * 100
+                    { name: 'Asteroid Chunks', quantity: 80 } // tier * 100
                 ]
             }
         ],
@@ -198,7 +198,7 @@ module.exports = {
                 tierMin: 1,
                 tierMax: 10,
                 resources: [
-                    { name: 'Asteroid Chunks', quantity: 200 } // tier * 100
+                    { name: 'Asteroid Chunks', quantity: 80 } // tier * 100
                 ]
             }
         ],
@@ -232,7 +232,7 @@ module.exports = {
                 tierMin: 1,
                 tierMax: 5,
                 resources: [
-                    { name: 'Asteroid Chunks', quantity: 200 } // tier * 100
+                    { name: 'Asteroid Chunks', quantity: 120 } // tier * 100
                 ]
             }
         ],
