@@ -8,4 +8,7 @@ module.exports = {
     user: new Enmap({
         name: "userSettings",
     }),
+    notifier: new Enmap({
+        name: "notifier",
+    })
 };

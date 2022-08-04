@@ -36,6 +36,8 @@ client.helpers = require("./library/helpers")(client);
 client.extends = require("./library/extends")(client);
 client.errorHandler = require("./library/errorHandler")(client);
 client.common = require("./library/common")(client);
+client.notifier = require("./library/notifier")(client);
+client.notifier.start();
 
 const init = async () => {
 
