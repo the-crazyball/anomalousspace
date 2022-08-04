@@ -404,7 +404,7 @@ module.exports = class Game {
             }
         });*/
         const sector = userData.ship.sector;
-        console.log(sector)
+
         const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString());
 
         return {
