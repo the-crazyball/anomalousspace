@@ -24,6 +24,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         resultEmbed.title = title;
         if (miningResult.success) {
             if (miningResult.hasAsteroids) {
+                // TODO maybe a better way of doing this? Since the server doesn't talk to discord directly
+                // TODO need to store this here on the client site to process for notifications.
+                client.settings.notifier.set(message.member.user.id, { cooldowns: { mining: miningResult.cooldownTime } });
                 resultEmbed.description = `Congratulations, you mined \`${client.helpers.numberWithCommas(miningResult.amountMined)}\` asteroids.\n\nSector \`${playerSector.name}\` has \`${client.helpers.numberWithCommas(miningResult.asteroidsTotal)}\` asteroids left.`;
             } else {
                 resultEmbed.description = `Sector \`${playerSector.name}\` has \`0\` asteroids left to mine.`;

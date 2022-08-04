@@ -708,6 +708,7 @@ module.exports = class Game {
         let hasAsteroids = true;
         let message = '';
         let success = false;
+        let cooldownTime = 0;
 
         const userData = await this.getUser({
             user: msg.user,
@@ -795,7 +796,8 @@ module.exports = class Game {
                     ship.markModified('modules'); // trigger a change for MongoDb since this is a nested object
                 
                     // add cooldown
-                    ship.cooldowns.mining = new Date().getTime();
+                    cooldownTime = new Date().getTime();
+                    ship.cooldowns.mining = cooldownTime;
 
                     // deduct the amount of mined asteroids from the asteroid belts
                     let remainingAmount = amountMined;
@@ -836,6 +838,7 @@ module.exports = class Game {
         }
 
         return {
+            cooldownTime,
             inCooldown,
             cdRemaining,
             amountMined,
