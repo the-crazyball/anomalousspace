@@ -52,14 +52,18 @@ module.exports = class Database {
 	}
   async findOrCreateUser({ id: userID, username, discriminator }, isLean) {
     if(this.cache.users.get(userID)){
-      return isLean ? this.cache.users.get(userID).toJSON() : this.cache.users.get(userID);
+      let cachedUser = this.cache.users.get(userID).populate({ 
+        path: 'ship', 
+        populate: [{ path: 'galaxy' }, { path: 'sector', populate: [{path: 'stellarObjects'}, {path: 'astronomicalObjects', populate: [{path: 'ownedBy', select: 'discordUsername rank'}]}] }] 
+      })
+      return cachedUser;
     } else {
       let user = (isLean ? await this.userModel.findOne({ discordId: userID }).populate({ 
         path: 'ship', 
-        populate: [{ path: 'galaxy' }, { path: 'sector', populate: [{path: 'stellarObjects'}, {path: 'astronomicalObjects'}] }]
+        populate: [{ path: 'galaxy' }, { path: 'sector', populate: [{path: 'stellarObjects'}, {path: 'astronomicalObjects', populate: [{path: 'ownedBy', select: 'discordUsername rank'}]}] }] 
       }).lean() : await this.userModel.findOne({ discordId: userID }).populate({ 
         path: 'ship', 
-        populate: [{ path: 'galaxy' }, { path: 'sector', populate: [{path: 'stellarObjects'}, {path: 'astronomicalObjects'}] }] 
+        populate: [{ path: 'galaxy' }, { path: 'sector', populate: [{path: 'stellarObjects'}, {path: 'astronomicalObjects', populate: [{path: 'ownedBy', select: 'discordUsername rank'}]}] }] 
       }));
       if(user){
         if(!isLean) this.cache.users.set(userID, user);

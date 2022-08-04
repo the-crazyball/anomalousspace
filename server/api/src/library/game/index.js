@@ -248,7 +248,7 @@ module.exports = class Game {
         const userData = await this.getUser({
             user: msg.user,
             data: {
-                isLean: true
+                isLean: false
             }
         });
         const { depth } = msg.data;
@@ -395,14 +395,16 @@ module.exports = class Game {
         const z = userData.ship.position.z;
 
         // track scanned sectors
-        const sector = await this.client.database.findOrCreateSector({
+        /*const sector = await this.client.database.findOrCreateSector({
             galaxy: userData.ship.galaxy,
             sector: {
                 x,
                 y,
                 z
             }
-        });
+        });*/
+        const sector = userData.ship.sector;
+        console.log(sector)
         const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString());
 
         return {
@@ -473,14 +475,17 @@ module.exports = class Game {
         const z = userData.ship.position.z;
 
         // note to self, call cached sector and not the userData sector when edits are needed. doh!
-        const sector = await this.client.database.findOrCreateSector({
+        /*const sector = await this.client.database.findOrCreateSector({
             galaxy: userData.ship.galaxy,
             sector: {
                 x,
                 y,
                 z
             }
-        });
+        });*/
+
+        const sector = userData.ship.sector;
+
         const object = sector.astronomicalObjects.find(o => o.name == msg.data.selectedObject);
 
         let colonized = false;
@@ -500,7 +505,6 @@ module.exports = class Game {
                         userData.stats.colony_founded += 1
                         chunks.quantity -= 60;
                         userData.ship.markModified('modules');
-                        //await chunks.save();
                         await userData.ship.save();
                     } else {
                         message = `Not enough resources to create a colony.\n\n**Resources Needed**\n\`60\` x \`Asteroid Chunks\``;
@@ -725,14 +729,16 @@ module.exports = class Game {
 
         // TODO this is also in the colonize method, perhaps there's a simpler way?
         // note to self, call cached sector and not the userData sector when edits are needed. doh!
-        const sector = await this.client.database.findOrCreateSector({
+        /*const sector = await this.client.database.findOrCreateSector({
             galaxy: userData.ship.galaxy,
             sector: {
                 x,
                 y,
                 z
             }
-        });
+        });*/
+
+        const sector = userData.ship.sector;
 
         const astronomicalObjects = sector.astronomicalObjects;
 
@@ -864,14 +870,15 @@ module.exports = class Game {
         const z = coordinates.z || userData.ship.position.z;
 
         // track scanned sectors
-        const sector = await this.client.database.findOrCreateSector({
+        /*const sector = await this.client.database.findOrCreateSector({
             galaxy: userData.ship.galaxy,
             sector: {
                 x,
                 y,
                 z
             }
-        });
+        });*/
+        const sector = userData.ship.sector;
         const scanned = sector.scannedBy.find(id => id.toString() === userData._id.toString());
 
         if (!scanned) {

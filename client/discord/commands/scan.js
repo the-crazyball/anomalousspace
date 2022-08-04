@@ -133,7 +133,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         if (astronomicalObjects.length) {
             for (var i = 0; i < astronomicalObjects.length; i++) {
 
-                let ownedBy = astronomicalObjects[i].ownedBy ? `${astronomicalObjects[i].ownedBy.discordUsername} the ${astronomicalObjects[i].ownedBy.rank}` : 'Nobody';
+                let ownedBy = astronomicalObjects[i].ownedBy ? `${astronomicalObjects[i].ownedBy.discordUsername}` : 'Nobody';
 
                 fields.push({
                     name: `${astronomicalObjects[i].name}`,
