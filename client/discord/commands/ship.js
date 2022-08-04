@@ -18,16 +18,20 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         let shipNameOld = ship.name;
 
         const engine = ship.modules.find(m => m.type === 'engine');
-        const power = ship.modules.find(m => m.type === 'generator');
+        //const power = ship.modules.find(m => m.type === 'generator');
         const cargo = ship.modules.find(m => m.type === 'cargo');
 
         const modulesFiltered = ship.modules.filter(m => m.type !== 'engine');
 
         modulesFiltered.forEach(m => {
-            if (m.type !== 'engine' && m.type !== 'generator') {
-                modules += `${emojis.get('bullet')} Name: \`${m.name}\` ${emojis.get('bullet')} Tier: \`${m.tier}/${m.tierMax}\` ${emojis.get('bullet')} PC: \`-${m.powerConsumption}\`\n`;
+            if (m.type !== 'engine') {
+                modules += `${emojis.get(m.icon)} \`${m.name}\` <:tier:1004106548777320469> \`${m.tier}/${m.tierMax}\` <:power_prod:1004109268208861334> \`${m.powerProduction}\` <:power_consumption:1004112112190242866> \`${m.powerConsumption}\`\n`;
             }
         });
+
+        if (!modulesFiltered.length) {
+            modules = '*You have no modules equipped at this time.*';
+        }
 
         const msgEmbed = client.extends.embed();
         msgEmbed.title = `Ship`;
@@ -43,9 +47,9 @@ ${emojis.get('bullet')} Defense: \`${ship.stats.DP}\`
 ${emojis.get('bullet')} HP: \`${ship.stats.hp}/${ship.stats.hpMax}\`
 `, true);
 
-        msgEmbed.addField(`Power`, `${emojis.get('bullet')} Name: \`${power.name}\` ${emojis.get('bullet')} Tier: \`${power.tier}/${power.tierMax}\` ${emojis.get('bullet')} PP: \`+${power.powerProduction}\``, false);
-        msgEmbed.addField(`Engine`, `${emojis.get('bullet')} Name: \`${engine.name}\` ${emojis.get('bullet')} Tier: \`${engine.tier}/${engine.tierMax}\` ${emojis.get('bullet')} PC: \`-${engine.powerConsumption}\``, false);
-        msgEmbed.addField(`Extra(s)`, modules, false);
+        //msgEmbed.addField(`Power`, `${emojis.get(power.icon)} \`${power.name}\` <:tier:1004106548777320469> \`${power.tier}/${power.tierMax}\` <:power_prod:1004109268208861334> \`${power.powerProduction}\``, false);
+        msgEmbed.addField(`Engine`, `${emojis.get(engine.icon)} \`${engine.name}\` <:tier:1004106548777320469> \`${engine.tier}/${engine.tierMax}\` <:power_prod:1004109268208861334> \`${engine.powerProduction}\` <:power_consumption:1004112112190242866> \`${engine.powerConsumption}\``, false);
+        msgEmbed.addField(`Equipped Modules`, modules, false);
         msgEmbed.addField('Sector', `${emojis.get('bullet')} Name: \`${ship.sector.name}\`\n${emojis.get('bullet')} Position: \`${ship.sector.x}\`,\`${ship.sector.y}\``, true);
         msgEmbed.addField('Galaxy', `${emojis.get('bullet')} Name: \`${ship.galaxy.name}\`\n${emojis.get('bullet')} Type: \`${userData.ship.galaxy.type}\`\n${emojis.get('bullet')} Position: \`${userData.ship.galaxy.x}\`,\`${userData.ship.galaxy.y}\``, true);
 
@@ -58,9 +62,9 @@ ${emojis.get('bullet')} HP: \`${ship.stats.hp}/${ship.stats.hpMax}\`
             style: 'PRIMARY'
         });
 
-        const btnHanger = client.extends.button({
-            id: 'btn_hanger',
-            label: 'Hanger Bay',
+        const btnHangar = client.extends.button({
+            id: 'btn_hangar',
+            label: 'Hangar Bay',
             style: 'PRIMARY'
         });
 
@@ -83,7 +87,7 @@ ${emojis.get('bullet')} HP: \`${ship.stats.hp}/${ship.stats.hpMax}\`
         }
 
         row.addComponents(btnModules);
-        row.addComponents(btnHanger);
+        row.addComponents(btnHangar);
         row.addComponents(btnRename);
 
         const shipMsg = await message.channel.send({
@@ -95,8 +99,8 @@ ${emojis.get('bullet')} HP: \`${ship.stats.hp}/${ship.stats.hpMax}\`
 
         collector.on('collect', async (i) => {
             switch(i.customId) {
-                case "btn_hanger":
-                    await client.container.commands.get('hanger').run(client, message, args, level);
+                case "btn_hangar":
+                    await client.container.commands.get('hangar').run(client, message, args, level);
                     break;
                 case "btn_modules":
                     await client.container.commands.get('modules').run(client, message, args, level);

@@ -7,8 +7,8 @@ const schema = mongoose.Schema({
         hp: { type: Number, default: 120 },
         hpMax: { type: Number, default: 120 },
         AP: { type: Number, default: 0 }, // attack power (tier + weapons)
-        DP: { type: Number, default: 0 } // defense power (tier + shields + armor)
-
+        DP: { type: Number, default: 0 }, // defense power (tier + shields + armor)
+        armor: { type: Number, default: 3 }
     },
 
     class: { type: String, default: 'Explorer' },
@@ -29,8 +29,8 @@ const schema = mongoose.Schema({
     //engine: {},
     //cargo: [],
 
-    hangerMax: { type: Number, default: 5 },
-    hanger: [],
+    hangarMax: { type: Number, default: 5 },
+    hangar: [],
 
     modulesMax: { type: Number, default: 3 },
     modules: [],

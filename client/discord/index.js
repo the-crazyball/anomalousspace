@@ -35,7 +35,7 @@ client.requester = require("./library/requester")(client);
 client.helpers = require("./library/helpers")(client);
 client.extends = require("./library/extends")(client);
 client.errorHandler = require("./library/errorHandler")(client);
-client.common = require("./library/common")(client)
+client.common = require("./library/common")(client);
 
 const init = async () => {
 
@@ -56,6 +56,10 @@ const init = async () => {
     emojis.set('bar:disabled', '<:bar_disabled:976940680347779102>');
     emojis.set('icon:github', '<:github:977315434216964106>');
     emojis.set('icon:hub', '<:icon_hub:984909417206141048>');
+    emojis.set('icon:mininglaser', '<:mining_laser:1004114269312405516>');
+    emojis.set('icon:cargohold', '<:cargo_hold:1004114285460463756>');
+    emojis.set('icon:generator', '<:power:1004104890613768192>');
+    emojis.set('icon:engine', '<:engine:1004103140804677785>');
 
     client.customEmojis = emojis;
 

@@ -13,8 +13,8 @@ module.exports = {
         tier: 1,
         tierMax: 10,
 
-        hangerMax: 5,
-        hanger: [],
+        hangarMax: 5,
+        hangar: [],
 
         modules: [
             'Weak Mining Laser',    // mining

@@ -533,6 +533,170 @@ module.exports = class Game {
             message
         }
     }
+    async unequipModule(msg) {
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
+
+        const ship = userData.ship;
+
+        const module = ship.modules.find(m => m.id === msg.data.id);
+        const moduleIndex = ship.modules.findIndex(m => m.id === msg.data.id);
+
+        // new id since it's going into the hangar
+        module.id = common.getNextId(ship.hangar);
+        
+        // add to hangar
+        ship.hangar.push(module);
+
+        // remove from modules
+        ship.modules.splice(moduleIndex, 1);
+
+        // TODO perhaps we can simplify this? also used in warpStart
+        // calculations
+        ship.stats.AP = common.calculateAP(ship.modules);
+        ship.stats.DP = common.calculateDP({ modules: ship.modules, shipArmor: ship.stats.armor });
+
+        await ship.save();
+
+        return {
+            success: true,
+            message: ''
+        }
+    }
+    async equipModule(msg) {
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
+
+        const ship = userData.ship;
+
+        const module = ship.hangar.find(m => m.id === msg.data.id);
+        const moduleIndex = ship.hangar.findIndex(m => m.id === msg.data.id);
+
+        // new id since it's going into the hangar
+        module.id = common.getNextId(ship.modules);
+        
+        // add to hangar
+        ship.modules.push(module);
+
+        // remove from modules
+        ship.hangar.splice(moduleIndex, 1);
+
+        // TODO perhaps we can simplify this? also used in warpStart
+        // calculations
+        ship.stats.AP = common.calculateAP(ship.modules);
+        ship.stats.DP = common.calculateDP({ modules: ship.modules, shipArmor: ship.stats.armor });
+
+        await ship.save();
+        
+        return {
+            success: true,
+            message: ''
+        }
+    }
+    async upgradeModule(msg) {
+        let success = false;
+        let message = '';
+
+        const userData = await this.getUser({
+            user: msg.user,
+            data: {
+                isLean: false
+            }
+        });
+
+        const ship = userData.ship;
+
+        const module = ship.hangar.find(m => m.id === msg.data.id);
+
+        // can we upgrade this module?
+        // is tier maxed out?
+        if (module.tier !== module.tierMax) {
+            // check for resource(s) usually in cargo hold if it's equipped?
+            const cargoHold = ship.modules.find(m => m.type === 'cargo');
+
+            if (cargoHold) {
+                // check for upgrade costs (resources) of the module
+                let enoughResources = true;
+                let resourcesMessage = '';
+                const resourcesNeeded = [];
+
+                module.upgradeCost.forEach(c => {
+                    const tier = module.tier + 1;
+
+                    if (tier >= c.tierMin && tier <= c.tierMax) {
+                        c.resources.forEach(r => {
+                            const quantity = r.quantity * tier;
+                            const cargoItem = cargoHold.cargo.find(item => item.name === r.name && quantity <= item.quantity);
+
+                            if (cargoItem) {
+                                resourcesNeeded.push({
+                                    name: r.name,
+                                    quantity
+                                })
+                            } else {
+                                resourcesMessage += `\`${quantity}\` x \`${r.name}\`\n`;
+                                enoughResources = false;
+                            }
+                        })
+                    }
+                })
+
+                if (enoughResources) {
+                    let upgradeMessage = '';
+
+                    // remove the quantity from the cargo
+                    resourcesNeeded.forEach(r => {
+                        const cargoItem = cargoHold.cargo.find(item => item.name === r.name);
+                        
+                        cargoItem.quantity -= r.quantity;
+                        //TODO stats for spent resources, good for leaderboard 
+                        //userData.stats.resources_spent += r.quantity;
+                    });
+
+                    // increment tier
+                    module.tier += 1;
+                    upgradeMessage += `Tier: \`${module.tier}\`\n`;
+
+                    // modifiers
+                    for (let v in module.modifiers) { 
+                        module[v] = module.modifiers[v] * module.tier;
+
+                        if (v === 'AP') {
+                            upgradeMessage += `Attack: \`${module[v]}\`\n`;
+                        }
+                        if (v === 'powerConsumption') {
+                            upgradeMessage += `Power Consumption: \`${module[v]}\`\n`;
+                        }
+                    }
+
+                    success = true;
+                    message = `Success! You have successfully upgraded the \`${module.name}\` module.\n\n**Upgrade Details**\n${upgradeMessage}\n`
+                    ship.markModified('hangar');
+                    ship.markModified('modules');
+                    await ship.save();
+                } else {
+                    message = `You do not have enough resources to upgrade the \`${module.name}\` module.\n\n**Resources Needed**\n${resourcesMessage}`;
+                }
+            } else {
+                message = `No resources found in cargo hold, it would appear that the cargo hold is not equipped.`;
+            }
+        } else {
+            message = `This module cannot be upgraded, it's already at it's maximum tier.`;
+        }
+        
+        return {
+            success,
+            message
+        }
+    }
     async mine(msg) {
         const now = new Date().getTime();
         const cd = (5 * 60 * 1000); // 5 min
@@ -543,6 +707,7 @@ module.exports = class Game {
         let amountMined = 0;
         let hasAsteroids = true;
         let message = '';
+        let success = false;
 
         const userData = await this.getUser({
             user: msg.user,
@@ -588,78 +753,86 @@ module.exports = class Game {
             const miningModule = ship.modules.find(m => m.type === 'mining');
             const cargoHold = ship.modules.find(m => m.type === 'cargo');
 
-            // determine the amount based on the mining laser level.
-            // randomly generated
-            amountMined = rndInt(5, 15) * miningModule.tier;
+            if (miningModule) {
+                // determine the amount based on the mining laser level.
+                // randomly generated
+                amountMined = rndInt(5, 15) * miningModule.tier;
 
-            if (amountMined > asteroidsTotal) {
-                amountMined = asteroidsTotal;
-            }
-
-            // if there's a cargo hold, we can store the mined resources, otherwise....
-            if (cargoHold) {
-                const cargoHoldQtyMax = cargoHold.cargoMax;
-                let cargoHoldQtyCurrent = 0;
-
-                cargoHold.cargo.forEach(c => {
-                    if (c.quantity) {
-                        cargoHoldQtyCurrent += c.quantity;
-                    }
-                });
-
-                let cargoHoldQtyAvail = cargoHoldQtyMax - cargoHoldQtyCurrent;
-
-                // check if the item exists
-                const cargoItem = cargoHold.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
-
-                if (amountMined > cargoHoldQtyAvail) {
-                    amountMined = cargoHoldQtyAvail;
+                if (amountMined > asteroidsTotal) {
+                    amountMined = asteroidsTotal;
                 }
 
-                if (cargoItem) {
-                    cargoItem.quantity += amountMined;
-                } else {
-                    cargoHold.cargo.push({
-                        name: 'Asteroid Chunks',
-                        type: 'asteroid',
-                        quantity: amountMined
-                    });
-                }
-  
-                ship.markModified('modules'); // trigger a change for MongoDb since this is a nested object
-            } else {
-                message = `Oh no, you were able to mine, but you don't have a \`cargo hold\` to store all those resources...`
-            }
+                // if there's a cargo hold, we can store the mined resources, otherwise....
+                if (cargoHold) {
+                    const cargoHoldQtyMax = cargoHold.cargoMax;
+                    let cargoHoldQtyCurrent = 0;
 
-            // add cooldown
-            ship.cooldowns.mining = new Date().getTime();
-
-            // deduct the amount of mined asteroids from the asteroid belts
-            let remainingAmount = amountMined;
-
-            asteroidBelts.forEach(b => {
-                if (remainingAmount) {
-                    if (b.asteroidsNum) { // must not be 0
-                        b.asteroidsNum -= amountMined;
-                        if (b.asteroidsNum < 0) {
-                            remainingAmount = +b.asteroidsNum; // left amount to deduct from other belt.
-                            b.asteroidsNum = 0
-                        } else {
-                            remainingAmount = 0;
+                    cargoHold.cargo.forEach(c => {
+                        if (c.quantity) {
+                            cargoHoldQtyCurrent += c.quantity;
                         }
-                        b.save();
+                    });
+
+                    let cargoHoldQtyAvail = cargoHoldQtyMax - cargoHoldQtyCurrent;
+
+                    // check if the item exists
+                    const cargoItem = cargoHold.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
+
+                    if (amountMined > cargoHoldQtyAvail) {
+                        amountMined = cargoHoldQtyAvail;
                     }
+
+                    if (cargoItem) {
+                        cargoItem.quantity += amountMined;
+                    } else {
+                        cargoHold.cargo.push({
+                            name: 'Asteroid Chunks',
+                            type: 'asteroid',
+                            quantity: amountMined
+                        });
+                    }
+    
+                    ship.markModified('modules'); // trigger a change for MongoDb since this is a nested object
+                
+                    // add cooldown
+                    ship.cooldowns.mining = new Date().getTime();
+
+                    // deduct the amount of mined asteroids from the asteroid belts
+                    let remainingAmount = amountMined;
+
+                    asteroidBelts.forEach(b => {
+                        if (remainingAmount) {
+                            if (b.asteroidsNum) { // must not be 0
+                                b.asteroidsNum -= amountMined;
+                                if (b.asteroidsNum < 0) {
+                                    remainingAmount = +b.asteroidsNum; // left amount to deduct from other belt.
+                                    b.asteroidsNum = 0
+                                } else {
+                                    remainingAmount = 0;
+                                }
+                                b.save();
+                            }
+                        }
+                    });
+
+                    asteroidsTotal -= amountMined;
+
+                    userData.stats.mining += 1;
+
+                    success = true;
+
+                    await ship.save();
+                    await ship.sector.save();
+                    await userData.save();
+                } else {
+                    message = `Oh no, you were able to mine, but you don't have a \`cargo hold\` to store all those resources...`;
                 }
-            });
-
-            asteroidsTotal -= amountMined;
-
-            userData.stats.mining += 1;
-            await ship.save();
-            await ship.sector.save();
-            await userData.save();
+            } else {
+                message = `Oh no, you don't appear the have a mining module equipped.\n\nYou are unable to mine at this time.`;
+            }
         } else {
             hasAsteroids = false;
+            message = `There are no asteroids to mine in this sector.`;
         }
 
         return {
@@ -668,6 +841,7 @@ module.exports = class Game {
             amountMined,
             hasAsteroids,
             asteroidsTotal,
+            success,
             message
         }
     }
@@ -816,7 +990,9 @@ module.exports = class Game {
             const shipData = new this.client.database.shipModel();
 
             ship.modules.forEach(m => {
-                shipData.modules.push(modules[m]);
+                let module = modules[m];
+                module.id = common.getNextId(shipData.modules);
+                shipData.modules.push(module);
             });
 
             shipData.modulesMax = ship.sizeNum ^ 1.4 * ship.tier;

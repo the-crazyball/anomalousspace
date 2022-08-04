@@ -13,7 +13,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         }
         let playerSector = userData.ship.sector;
 
-        const miningData = await client.requester.send({
+        const miningResult = await client.requester.send({
             method: 'mine',
             user: message.member.user
         });
@@ -22,12 +22,18 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         const resultEmbed = client.extends.embed();
         resultEmbed.title = title;
-        if (miningData.inCooldown) {
-            resultEmbed.description = `You are unable to mine at this time, please try again when the cooldown has completed.\n\n**Available in** \`${humanizeDuration(miningData.cdRemaining, { maxDecimalPoints: 0 })}\``;
-        } else if (miningData.hasAsteroids) {
-            resultEmbed.description = `Congratulations, you mined \`${client.helpers.numberWithCommas(miningData.amountMined)}\` asteroids.\n\nSector \`${playerSector.name}\` has \`${client.helpers.numberWithCommas(miningData.asteroidsTotal)}\` asteroids left.`;
+        if (miningResult.success) {
+            if (miningResult.hasAsteroids) {
+                resultEmbed.description = `Congratulations, you mined \`${client.helpers.numberWithCommas(miningResult.amountMined)}\` asteroids.\n\nSector \`${playerSector.name}\` has \`${client.helpers.numberWithCommas(miningResult.asteroidsTotal)}\` asteroids left.`;
+            } else {
+                resultEmbed.description = `Sector \`${playerSector.name}\` has \`0\` asteroids left to mine.`;
+            }
         } else {
-            resultEmbed.description = `Sector \`${playerSector.name}\` has \`0\` asteroids left to mine.`;
+            if (miningResult.inCooldown) {
+                resultEmbed.description = `You are unable to mine at this time, please try again when the cooldown has completed.\n\n**Available in** \`${humanizeDuration(miningResult.cdRemaining, { maxDecimalPoints: 0 })}\``;
+            } else {
+                resultEmbed.description = miningResult.message;
+            }
         }
 
         await message.channel.send({

@@ -25,5 +25,17 @@ module.exports = {
     },
     calculateHPMax: function (msg) {
 
+    },
+    getNextId: function(items) {
+        let id = 0;
+        let iLen = items.length;
+    
+        for (let i = 0; i < iLen; i++) {
+            let fItem = items[i];
+            if (fItem.id >= id) 
+                id = fItem.id + 1;
+        }
+    
+        return id;
     }
 };
