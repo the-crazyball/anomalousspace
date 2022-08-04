@@ -493,13 +493,14 @@ module.exports = class Game {
                 // asteroid chucks needed for first colony, set to 200 for now.
                 const cargoHold = userData.ship.modules.find(m => m.type === 'cargo');
                 if (cargoHold) {
-                    const chunks = cargoHold.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid' && item.quantity >= 60);
+                    const chunks = cargoHold.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
     
-                    if (chunks) {
+                    if (chunks && chunks.quantity >= 60) {
                         colonized = true;
                         userData.stats.colony_founded += 1
                         chunks.quantity -= 60;
-                        await chunks.save();
+                        userData.ship.markModified('modules');
+                        //await chunks.save();
                         await userData.ship.save();
                     } else {
                         message = `Not enough resources to create a colony.\n\n**Resources Needed**\n\`60\` x \`Asteroid Chunks\``;
