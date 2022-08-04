@@ -493,9 +493,9 @@ module.exports = class Game {
                 // asteroid chucks needed for first colony, set to 200 for now.
                 const cargoHold = userData.ship.modules.find(m => m.type === 'cargo');
                 if (cargoHold) {
-                    const chunks = cargoHold.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid');
+                    const chunks = cargoHold.cargo.find(item => item.name === 'Asteroid Chunks' && item.type === 'asteroid' && item.quantity >= 60);
     
-                    if (chunks.quantity >= 60) {
+                    if (chunks) {
                         colonized = true;
                         userData.stats.colony_founded += 1
                         chunks.quantity -= 60;
