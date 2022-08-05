@@ -594,7 +594,7 @@ module.exports = class Game {
         // remove from modules
         ship.hangar.splice(moduleIndex, 1);
 
-        // TODO perhaps we can simplify this? also used in warpStart
+        // TODO perhaps we can simplify this? also used in warpStart and moduleUpgrade
         // calculations
         ship.stats.AP = common.calculateAP(ship.modules);
         ship.stats.DP = common.calculateDP({ modules: ship.modules, shipArmor: ship.stats.armor });
@@ -619,7 +619,15 @@ module.exports = class Game {
 
         const ship = userData.ship;
 
-        const module = ship.hangar.find(m => m.id === msg.data.id);
+        const equipped = msg.data.equipped;
+
+        let moduleLocation = 'modules';
+
+        if (!equipped) {
+            moduleLocation = 'hangar';
+        }
+
+        const module = ship[moduleLocation].find(m => m.id === msg.data.id);
 
         // can we upgrade this module?
         // is tier maxed out?
@@ -682,8 +690,15 @@ module.exports = class Game {
                         }
                     }
 
+                    // need to run calculations so they apply right away to the ship.
+                    if (equipped) {
+                        ship.stats.AP = common.calculateAP(ship.modules);
+                        ship.stats.DP = common.calculateDP({ modules: ship.modules, shipArmor: ship.stats.armor });
+                    }
+
                     success = true;
                     message = `Success! You have successfully upgraded the \`${module.name}\` module.\n\n**Upgrade Details**\n${upgradeMessage}\n`
+                    
                     ship.markModified('hangar');
                     ship.markModified('modules');
                     await ship.save();

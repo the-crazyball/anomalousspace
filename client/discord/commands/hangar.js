@@ -93,7 +93,13 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         style: 'PRIMARY'
                     });
 
-                    components[1].addComponents(btnUpgrade);
+                    const btnEquip = client.extends.button({
+                        id: 'btn_equip',
+                        label: 'Equip',
+                        style: 'PRIMARY'
+                    });
+
+                    components[1].addComponents(btnUpgrade).addComponents(btnEquip);
 
                     await moduleMsg.edit({
                         components: components
@@ -107,7 +113,8 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                         method: 'upgradeModule',
                         user: message.member.user,
                         data: {
-                            id: selectedModule.id
+                            id: selectedModule.id,
+                            equipped: false
                         }
                     });
 
@@ -132,6 +139,29 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
                         await client.container.commands.get('hangar').run(client, message, args, level);
                     }
+                    break;
+                }
+                case "btn_equip": {
+
+                    const successEmbed = client.extends.embed({ color: 'success' });
+                    successEmbed.setDescription(`Success! You have equipped \`${selectedModule.name}\`.`);
+                    await moduleMsg.edit({
+                        embeds: [successEmbed],
+                        components: []
+                    });
+
+                    await client.requester.send({
+                        method: 'equipModule',
+                        user: message.member.user,
+                        data: {
+                            id: selectedModule.id
+                        }
+                    });
+
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    await client.container.commands.get('hangar').run(client, message, args, level);
+
                     break;
                 }
             }

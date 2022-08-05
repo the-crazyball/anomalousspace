@@ -16,18 +16,14 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
         let modules = '';
         let equippedModules = [];
-        let hangarBay = [];
         let selectedModule = null;
-        let modulesUnequipSelect = null;
-        let equipSelect = null;
+        let modulesSelect = null;
         let components = [];
 
         const modulesFiltered = ship.modules.filter(m => m.type !== 'engine');
 
         modulesFiltered.forEach(m => {
-            //if (m.type !== 'engine' && m.type !== 'generator') {
             modules += `${emojis.get(m.icon)} \`${m.name}\` <:tier:1004106548777320469> \`${m.tier}/${m.tierMax}\` <:power_prod:1004109268208861334> \`${m.powerProduction}\` <:power_consumption:1004112112190242866> \`${m.powerConsumption}\`\n`;
-            //}
             equippedModules.push({
                 label: `${m.name}`,
                 value: `${m.id}`,
@@ -39,17 +35,9 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
             modules = '*You have no modules equipped at this time.*';
         }
 
-        ship.hangar.forEach(m => {
-            hangarBay.push({
-                label: `${m.name}`,
-                value: `${m.id}`,
-                emoji: emojis.get(m.icon)
-            });
-        });
-
         const msgEmbed = client.extends.embed();
         msgEmbed.title = `Ship Modules`;
-        msgEmbed.description = `> Equip or Unequip modules to enhance/expand your ship.\n\nYour ship currently has a capacity of having \`${ship.modulesMax}\` modules equipped at a time. `;
+        msgEmbed.description = `> A list of equipped modules on your ship.\n\nYour ship currently has a capacity of having \`${ship.modulesMax}\` modules equipped at a time. `;
 
         msgEmbed.addField(`Equipped \`${modulesFiltered.length}/${ship.modulesMax}\``, modules, false);
 
@@ -63,27 +51,15 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
         });
 
         if (modulesFiltered.length) {
-            modulesUnequipSelect = client.extends.select({
-                id: 'select_unquip',
-                placeHolder: 'Unequip...',
+            modulesSelect = client.extends.select({
+                id: 'select_module',
+                placeHolder: 'Select a module...',
                 options: equippedModules
             });
 
-            const rowUnequip = client.extends.row().addComponents(modulesUnequipSelect);
+            const rowUnequip = client.extends.row().addComponents(modulesSelect);
 
             components.push(rowUnequip);
-        }
-
-        if (ship.hangar.length) {
-            equipSelect = client.extends.select({
-                id: 'select_equip',
-                placeHolder: 'Equip from hangar...',
-                options: hangarBay
-            });
-
-            const rowEquip = client.extends.row().addComponents(equipSelect);
-
-            components.push(rowEquip);
         }
 
         const row = client.extends.row()
@@ -103,14 +79,69 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
                 case "btn_ship":
                     await client.container.commands.get('ship').run(client, message, args, level);
                     break;
-                case "select_unquip": {
-                    modulesUnequipSelect.options.forEach(r => {
+                case "select_module": {
+                    modulesSelect.options.forEach(r => {
                         if (r.value === i.values[0]) r.default = true;
                         else r.default = false;
                     });
 
                     selectedModule = ship.modules.find(m => m.id == i.values[0]);
 
+                    const btnUpgrade = client.extends.button({
+                        id: 'btn_upgrade',
+                        label: 'Upgrade',
+                        style: 'PRIMARY'
+                    });
+
+                    const btnUnequip = client.extends.button({
+                        id: 'btn_unequip',
+                        label: 'Unequip',
+                        style: 'PRIMARY'
+                    });
+
+                    components[1].addComponents(btnUpgrade).addComponents(btnUnequip);
+
+                    await moduleMsg.edit({
+                        components: components
+                    });
+
+                    break;
+                }
+                case "btn_upgrade": {
+                    const returnData = await client.requester.send({
+                        method: 'upgradeModule',
+                        user: message.member.user,
+                        data: {
+                            id: selectedModule.id,
+                            equipped: true
+                        }
+                    });
+
+                    if (!returnData.success) {
+                        const msgEmbed = client.extends.embed({ color: 'error' });
+                        msgEmbed.description = returnData.message;
+
+                        await moduleMsg.edit({
+                            embeds: [msgEmbed], components: []
+                        });
+                    } else {
+
+                        const successEmbed = client.extends.embed({ color: 'success' });
+                        successEmbed.description = returnData.message;
+
+                        await moduleMsg.edit({
+                            embeds: [successEmbed],
+                            components: []
+                        });
+
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+
+                        await client.container.commands.get('modules').run(client, message, args, level);
+                    }
+
+                    break;
+                }
+                case "btn_unequip": {
                     const successEmbed = client.extends.embed({ color: 'success' });
                     successEmbed.setDescription(`Success! You have unequipped \`${selectedModule.name}\`.`);
                     await moduleMsg.edit({
@@ -120,35 +151,6 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
 
                     await client.requester.send({
                         method: 'unequipModule',
-                        user: message.member.user,
-                        data: {
-                            id: selectedModule.id
-                        }
-                    });
-
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-
-                    await client.container.commands.get('modules').run(client, message, args, level);
-
-                    break;
-                }
-                case "select_equip": {
-                    equipSelect.options.forEach(r => {
-                        if (r.value === i.values[0]) r.default = true;
-                        else r.default = false;
-                    });
-
-                    selectedModule = ship.hangar.find(m => m.id == i.values[0]);
-
-                    const successEmbed = client.extends.embed({ color: 'success' });
-                    successEmbed.setDescription(`Success! You have equipped \`${selectedModule.name}\`.`);
-                    await moduleMsg.edit({
-                        embeds: [successEmbed],
-                        components: []
-                    });
-
-                    await client.requester.send({
-                        method: 'equipModule',
                         user: message.member.user,
                         data: {
                             id: selectedModule.id
