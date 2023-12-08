@@ -13,7 +13,7 @@ module.exports = client => {
   })
 
   router.post('/', (req, res) => {
-      client.gameallowedMethods.includes(req.body.method) ? req.body.method : 'handleInvalidMethod': req.body
+      client.game[allowedMethods.includes(req.body.method) ? req.body.method : 'handleInvalidMethod'](req.body);
       .then((result) => {
         res.json({ status: 'success', result })
       })
