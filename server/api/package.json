@@ -17,7 +17,7 @@
     "chance": "^1.1.8",
     "express": "^4.17.3",
     "helmet": "^5.0.2",
-    "mongoose": "^6.2.9",
+    "mongoose": "^8.9.5",
     "morgan": "^1.10.0",
     "safe-compare": "^1.1.4",
     "seedrandom": "^3.0.5",
